@@ -79,7 +79,8 @@
 copy manifest.json dist
 copy preview.png dist
 copy index.js dist
-copy taskbar-lyrics.exe dist</Command>
+move taskbar-lyrics.exe dist
+del taskbar-lyrics.pdb</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
