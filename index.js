@@ -40,6 +40,6 @@ mutationObserver.observe(mLyric, { childList: true, subtree: true });
 
 
 plugin.onLoad(async () => {
-    let cmdCommand = `"${loadedPlugins["taskbar-lyrics"].pluginPath}\\taskbar-lyrics.exe" ${TaskbarLyricsApiPort}`;
-    await betterncm.app.exec(`cmd /c "${cmdCommand}"`, false, false);
+    let exePath = `"${loadedPlugins["Taskbar-Lyrics"].pluginPath}\\taskbar-lyrics.exe"`;
+    await betterncm.app.exec(`${exePath} ${TaskbarLyricsApiPort}`, false, true);
 });
