@@ -1,0 +1,55 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Install VCPKG Packages
+        run: |
+          vcpkg install cpp-httplib:x86-windows
+          vcpkg integrate install
+
+      - name: Build
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
+        run: msbuild ./project.sln -p:Configuration=Release -p:Platform="x86"
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: dist
+          path: dist
+
+  deploy:
+    concurrency: ci-${{ github.ref }}
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: dist
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: main
+          target-folder: dist
+          folder: dist
