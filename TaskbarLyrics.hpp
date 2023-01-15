@@ -9,9 +9,7 @@
 #include <gdiplus.h>
 #include <string>
 #include <codecvt>
-#include <regex>
 #include <thread>
-#include <sstream>
 
 #pragma comment (lib, "Gdiplus.lib")
 
@@ -22,15 +20,14 @@ using namespace Gdiplus;
 class 任务栏歌词
 {
     public:
-    int 寿命 = 30;
-    std::thread* 寿命线程 = nullptr;
-    void 寿命检测();
-
+    static 任务栏歌词* _this;
+    HANDLE 互斥锁;
 
     private:
     HINSTANCE hInstance;
     LPWSTR lpCmdLine;
     int nCmdShow;
+    HANDLE waitHandle;
 
 
     private:
@@ -91,18 +88,13 @@ class 任务栏歌词
 
 
     private:
-    HDC hdc;
-    PAINTSTRUCT ps;
-    RECT rect;
-
-
-    private:
     //UINT 任务栏_运行中的程序_左侧按钮大小 = DPI(48);
     //UINT 任务栏_运行中的程序_左侧搜索大小 = DPI(110);
     Color 画笔颜色 = Color(255, 255, 255);
 
 
     private:
+    static void CALLBACK 网易云进程结束(PVOID, BOOLEAN);
     static LRESULT CALLBACK 窗口过程(HWND, UINT, WPARAM, LPARAM);
     void OnPaint();
     bool OnEraseBkgnd();
@@ -110,3 +102,5 @@ class 任务栏歌词
     void OnClose();
     void OnDestroy();
 };
+
+任务栏歌词* 任务栏歌词::_this = nullptr;

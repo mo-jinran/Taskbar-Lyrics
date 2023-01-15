@@ -10,10 +10,10 @@ int WINAPI wWinMain(
     任务栏歌词 任务栏歌词(hInstance, lpCmdLine, nCmdShow);
     任务栏歌词.注册窗口();
     任务栏歌词.创建窗口();
-    任务栏歌词.寿命检测();
     任务栏歌词.网络线程();
     任务栏歌词.显示窗口();
     任务栏歌词.窗口消息();
+
     return 0;
 }
 
@@ -23,6 +23,15 @@ int WINAPI wWinMain(
     LPWSTR      lpCmdLine,
     int         nCmdShow
 ) {
+    this->互斥锁 = CreateMutex(NULL, TRUE, this->窗口类名.c_str());
+    if (GetLastError() == ERROR_ALREADY_EXISTS) {
+        HWND taskbarHwnd = FindWindow(L"Shell_TrayWnd", NULL);
+        HWND oldHwnd = FindWindowEx(taskbarHwnd, NULL, this->窗口类名.c_str(), NULL);
+        PostMessage(oldHwnd, WM_CLOSE, NULL, NULL);
+    }
+
+    this->_this = this;
+
     this->hInstance = hInstance;
     this->lpCmdLine = lpCmdLine;
     this->nCmdShow = nCmdShow;
@@ -38,32 +47,35 @@ int WINAPI wWinMain(
 
     LocalFree(szArgList);
     GdiplusStartup(&this->gdiplusToken, &this->gdiplusStartupInput, NULL);
+
+    HWND OrpheusHwnd = FindWindow(L"OrpheusBrowserHost", NULL);
+    if (OrpheusHwnd)
+    {
+        DWORD pid;
+        GetWindowThreadProcessId(OrpheusHwnd, &pid);
+        HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
+        RegisterWaitForSingleObject(
+            &this->waitHandle,
+            process,
+            this->网易云进程结束,
+            NULL,
+            INFINITE,
+            WT_EXECUTEONLYONCE
+        );
+    }
 }
 
 
 任务栏歌词::~任务栏歌词()
 {
     GdiplusShutdown(this->gdiplusToken);
+    UnregisterWaitEx(this->网易云进程结束, INVALID_HANDLE_VALUE);
+    ReleaseMutex(this->互斥锁);
     this->网络服务器_线程->detach();
     delete this->网络服务器_线程;
     this->网络服务器_线程 = nullptr;
-    this->寿命线程->detach();
-    delete this->寿命线程;
-    this->寿命线程 = nullptr;
-}
-
-
-void 任务栏歌词::寿命检测()
-{
-    auto 线程函数 = [&] () {
-        while (this->寿命)
-        {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            this->寿命 -= 1;
-        }
-        PostMessage(this->hwnd, WM_CLOSE, NULL, NULL);
-    };
-    this->寿命线程 = new std::thread(线程函数);
+    delete this->_this;
+    this->_this = nullptr;
 }
 
 
@@ -111,11 +123,6 @@ void 任务栏歌词::创建窗口()
 
 void 任务栏歌词::网络线程()
 {
-    auto heartbeat = [&] (const httplib::Request& req, httplib::Response& res) {
-        this->寿命 = 30;
-        res.status = 200;
-    };
-
     auto lyrics = [&] (const httplib::Request& req, httplib::Response& res) {
         auto basic_value = req.get_param_value("basic");
         auto extra_value = req.get_param_value("extra");
@@ -128,7 +135,6 @@ void 任务栏歌词::网络线程()
     };
 
     auto 线程函数 = [&] () {
-        this->网络服务器.Get("/taskbar/heartbeat", heartbeat);
         this->网络服务器.Get("/taskbar/lyrics", lyrics);
         this->网络服务器.listen("127.0.0.1", this->网络服务器_端口);
     };
@@ -154,19 +160,23 @@ void 任务栏歌词::窗口消息()
 }
 
 
+void 任务栏歌词::网易云进程结束(
+    PVOID lpParameter,
+    BOOLEAN TimerOrWaitFired
+) {
+    任务栏歌词 * _this = 任务栏歌词::_this;
+    PostMessage(_this->hwnd, WM_CLOSE, NULL, NULL);
+    _this = nullptr;
+}
+
+
 LRESULT CALLBACK 任务栏歌词::窗口过程(
     HWND    hwnd,
     UINT    message,
     WPARAM  wParam,
     LPARAM  lParam
 ) {
-    任务栏歌词* _this = nullptr;
-    if (message == WM_CREATE)
-    {
-        _this = (任务栏歌词*) (((LPCREATESTRUCT) lParam)->lpCreateParams);
-        SetWindowLong(hwnd, GWL_USERDATA, (LONG) _this);
-    }
-    _this = (任务栏歌词*) GetWindowLong(hwnd, GWL_USERDATA);
+    任务栏歌词* _this = 任务栏歌词::_this;
 
     switch (message) {
         case WM_PAINT: _this->OnPaint(); break;
@@ -177,20 +187,23 @@ LRESULT CALLBACK 任务栏歌词::窗口过程(
         default: return DefWindowProc(hwnd, message, wParam, lParam);
     }
 
+    _this = nullptr;
     return 0;
 }
 
 
 void 任务栏歌词::OnPaint()
 {
-    this->hdc = BeginPaint(this->hwnd, &this->ps);
-    GetClientRect(this->hwnd, &this->rect);
+    PAINTSTRUCT ps;
+    RECT rect;
+    HDC hdc = BeginPaint(this->hwnd, &ps);
+    GetClientRect(this->hwnd, &rect);
 
-    auto 宽 = this->rect.right - this->rect.left;
-    auto 高 = this->rect.bottom - this->rect.top;
+    auto 宽 = rect.right - rect.left;
+    auto 高 = rect.bottom - rect.top;
 
     HBITMAP memBitmap = CreateCompatibleBitmap(hdc, 宽, 高);
-    HDC memDC = CreateCompatibleDC(this->hdc);
+    HDC memDC = CreateCompatibleDC(hdc);
     HBITMAP oldBitmap = (HBITMAP) SelectObject(memDC, memBitmap);
 
 
@@ -204,21 +217,24 @@ void 任务栏歌词::OnPaint()
     if (this->扩展歌词.empty())
     {
         Font font(&fontFamily, this->DPI(20), FontStyleRegular, UnitPixel);
-        graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, PointF((REAL) this->DPI(11), (REAL) this->DPI(11)), &brush);
+        PointF 基本歌词位置((REAL) this->DPI(11), (REAL) this->DPI(11));
+        graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, 基本歌词位置, &brush);
     }
     else
     {
         Font font(&fontFamily, this->DPI(16), FontStyleRegular, UnitPixel);
-        graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, PointF((REAL) this->DPI(3), (REAL) this->DPI(3)), &brush);
-        graphics.DrawString(this->扩展歌词.c_str(), this->扩展歌词.size(), &font, PointF((REAL) this->DPI(3), (REAL) this->DPI(23)), &brush);
+        PointF 基本歌词位置((REAL) this->DPI(3), (REAL) this->DPI(3));
+        PointF 扩展歌词位置((REAL) this->DPI(3), (REAL) this->DPI(23));
+        graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, 基本歌词位置, &brush);
+        graphics.DrawString(this->扩展歌词.c_str(), this->扩展歌词.size(), &font, 扩展歌词位置, &brush);
     }
 
 
-    BitBlt(this->hdc, 0, 0, 宽, 高, memDC, 0, 0, SRCCOPY);
+    BitBlt(hdc, 0, 0, 宽, 高, memDC, 0, 0, SRCCOPY);
     SelectObject(memDC, oldBitmap);
     DeleteObject(memBitmap);
     DeleteDC(memDC);
-    EndPaint(this->hwnd, &this->ps);
+    EndPaint(this->hwnd, &ps);
 }
 
 
@@ -241,7 +257,7 @@ void 任务栏歌词::OnSettingChange()
         result = RegQueryValueEx(key, L"SystemUsesLightTheme", NULL, NULL, (LPBYTE) &value, &bufferSize);
         if (result == ERROR_SUCCESS) {
             if (value) {
-                this->画笔颜色 = Color(31,47,63);
+                this->画笔颜色 = Color(31, 47, 63);
             }
             else {
                 this->画笔颜色 = Color(255, 255, 255);
