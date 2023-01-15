@@ -3,7 +3,7 @@
     "name": "Taskbar Lyrics",
     "description": "在任务栏上嵌入歌词，目前仅支持Windows 11，任务栏对齐方式为居中",
     "preview": "preview.png",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "author": "沫烬染",
     "author_links": [
         "https://github.com/mo-jinran"
@@ -15,14 +15,5 @@
                 "file": "index.js"
             }
         ]
-    },
-    "hijacks": {
-        ">= 2.10.2 <= 2.10.6": {
-            "orpheus://orpheus/pub/app.html": {
-                "type": "replace",
-                "from": "<meta http-equiv=\"Content-Security-Policy\" content=\"script-src ",
-                "to": "<meta http-equiv=\"Content-Security-Policy\" content=\"script-src data: blob: "
-            }
-        }
     }
 }
