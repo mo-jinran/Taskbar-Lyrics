@@ -1,7 +1,12 @@
 ﻿#include "TaskbarLyrics.hpp"
 
 
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
+int WINAPI wWinMain(
+    _In_        HINSTANCE   hInstance,
+    _In_opt_    HINSTANCE   hPrevInstance,
+    _In_        LPWSTR      lpCmdLine,
+    _In_        int         nCmdShow
+) {
     任务栏歌词 任务栏歌词(hInstance, lpCmdLine, nCmdShow);
     任务栏歌词.注册窗口();
     任务栏歌词.创建窗口();
@@ -13,7 +18,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 }
 
 
-任务栏歌词::任务栏歌词(HINSTANCE hInstance, LPWSTR lpCmdLine, int nCmdShow) {
+任务栏歌词::任务栏歌词(
+    HINSTANCE   hInstance,
+    LPWSTR      lpCmdLine,
+    int         nCmdShow
+) {
     this->hInstance = hInstance;
     this->lpCmdLine = lpCmdLine;
     this->nCmdShow = nCmdShow;
@@ -62,7 +71,7 @@ void 任务栏歌词::注册窗口()
 {
     this->wcex.cbSize = sizeof(WNDCLASSEX);
     this->wcex.style = CS_HREDRAW | CS_VREDRAW;
-    this->wcex.lpfnWndProc = &任务栏歌词::窗口过程;
+    this->wcex.lpfnWndProc = this->窗口过程;
     this->wcex.cbClsExtra = 0;
     this->wcex.cbWndExtra = 0;
     this->wcex.hInstance = this->hInstance;
@@ -73,22 +82,30 @@ void 任务栏歌词::注册窗口()
 
 void 任务栏歌词::创建窗口()
 {
-    this->parentHwnd = FindWindow(L"Shell_TrayWnd", NULL);
     this->hwnd = CreateWindowEx(
         WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE,
         this->窗口类名.c_str(),
         this->窗口名字.c_str(),
-        WS_POPUP | WS_CLIPSIBLINGS,
+        WS_POPUP,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
-        this->DPI(500),
-        this->DPI(48),
-        this->parentHwnd,
-        nullptr,
-        hInstance,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        this->hInstance,
         (LPVOID) this
     );
-    SetParent(this->hwnd, this->parentHwnd);
+
+    this->taskbarHwnd = FindWindow(L"Shell_TrayWnd", NULL);
+    this->rebarHwnd = FindWindowEx(this->taskbarHwnd, NULL, L"ReBarWindow32", NULL);
+    this->trayNotifyHwnd = ::FindWindowEx(this->taskbarHwnd, 0, L"TrayNotifyWnd", NULL);
+
+    GetWindowRect(this->taskbarHwnd, &this->taskbarRect);
+    GetWindowRect(this->rebarHwnd, &this->rebarRect);
+    GetWindowRect(this->trayNotifyHwnd, &this->trayNotifyRect);
+
+    SetParent(this->hwnd, this->taskbarHwnd);
 }
 
 
@@ -122,6 +139,7 @@ void 任务栏歌词::网络线程()
 
 void 任务栏歌词::显示窗口()
 {
+    this->更新窗口大小();
     ShowWindow(this->hwnd, this->nCmdShow);
     UpdateWindow(this->hwnd);
 }
@@ -136,8 +154,12 @@ void 任务栏歌词::窗口消息()
 }
 
 
-LRESULT CALLBACK 任务栏歌词::窗口过程(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
+LRESULT CALLBACK 任务栏歌词::窗口过程(
+    HWND    hwnd,
+    UINT    message,
+    WPARAM  wParam,
+    LPARAM  lParam
+) {
     任务栏歌词* _this = nullptr;
     if (message == WM_CREATE)
     {
@@ -147,10 +169,11 @@ LRESULT CALLBACK 任务栏歌词::窗口过程(HWND hwnd, UINT message, WPARAM w
     _this = (任务栏歌词*) GetWindowLong(hwnd, GWL_USERDATA);
 
     switch (message) {
-        case WM_PAINT:      _this->OnPaint();       break;
-        case WM_ERASEBKGND: _this->OnEraseBkgnd();  break;
-        case WM_CLOSE:      _this->OnClose();       break;
-        case WM_DESTROY:    _this->OnDestroy();     break;
+        case WM_PAINT: _this->OnPaint(); break;
+        case WM_ERASEBKGND: _this->OnEraseBkgnd(); break;
+        case WM_SETTINGCHANGE: _this->OnSettingChange(); break;
+        case WM_CLOSE: _this->OnClose(); break;
+        case WM_DESTROY: _this->OnDestroy(); break;
         default: return DefWindowProc(hwnd, message, wParam, lParam);
     }
 
@@ -161,27 +184,37 @@ LRESULT CALLBACK 任务栏歌词::窗口过程(HWND hwnd, UINT message, WPARAM w
 void 任务栏歌词::OnPaint()
 {
     this->hdc = BeginPaint(this->hwnd, &this->ps);
-    GetClientRect(this->hwnd, &this->clientRect);
+    GetClientRect(this->hwnd, &this->rect);
 
-    auto 宽 = this->clientRect.right - this->clientRect.left;
-    auto 高 = this->clientRect.bottom - this->clientRect.top;
+    auto 宽 = this->rect.right - this->rect.left;
+    auto 高 = this->rect.bottom - this->rect.top;
 
     HBITMAP memBitmap = CreateCompatibleBitmap(hdc, 宽, 高);
     HDC memDC = CreateCompatibleDC(this->hdc);
     HBITMAP oldBitmap = (HBITMAP) SelectObject(memDC, memBitmap);
 
+
     Graphics graphics(memDC);
 
-    SolidBrush brush(Color(255, 255, 255));
+    SolidBrush brush(this->画笔颜色);
     FontFamily fontFamily(L"Microsoft YaHei");
-    Font font(&fontFamily, this->DPI(16), FontStyleRegular, UnitPixel);
 
-    graphics.SetTextRenderingHint(TextRenderingHintSystemDefault);
-    graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, PointF((REAL) this->DPI(3), (REAL) this->DPI(3)), &brush);
-    graphics.DrawString(this->扩展歌词.c_str(), this->扩展歌词.size(), &font, PointF((REAL) this->DPI(3), (REAL) this->DPI(23)), &brush);
+    graphics.SetTextRenderingHint(TextRenderingHintAntiAlias);
+
+    if (this->扩展歌词.empty())
+    {
+        Font font(&fontFamily, this->DPI(20), FontStyleRegular, UnitPixel);
+        graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, PointF((REAL) this->DPI(11), (REAL) this->DPI(11)), &brush);
+    }
+    else
+    {
+        Font font(&fontFamily, this->DPI(16), FontStyleRegular, UnitPixel);
+        graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, PointF((REAL) this->DPI(3), (REAL) this->DPI(3)), &brush);
+        graphics.DrawString(this->扩展歌词.c_str(), this->扩展歌词.size(), &font, PointF((REAL) this->DPI(3), (REAL) this->DPI(23)), &brush);
+    }
+
 
     BitBlt(this->hdc, 0, 0, 宽, 高, memDC, 0, 0, SRCCOPY);
-
     SelectObject(memDC, oldBitmap);
     DeleteObject(memBitmap);
     DeleteDC(memDC);
@@ -189,9 +222,34 @@ void 任务栏歌词::OnPaint()
 }
 
 
-int 任务栏歌词::OnEraseBkgnd()
+bool 任务栏歌词::OnEraseBkgnd()
 {
-    return 1;
+    return true;
+}
+
+
+void 任务栏歌词::OnSettingChange()
+{
+    HKEY key;
+    DWORD value;
+    DWORD bufferSize;
+
+    std::wstring path = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
+    LONG result = RegOpenKeyEx(HKEY_CURRENT_USER, path.c_str(), NULL, KEY_READ, &key);
+
+    if (result == ERROR_SUCCESS) {
+        result = RegQueryValueEx(key, L"SystemUsesLightTheme", NULL, NULL, (LPBYTE) &value, &bufferSize);
+        if (result == ERROR_SUCCESS) {
+            if (value) {
+                this->画笔颜色 = Color(31,47,63);
+            }
+            else {
+                this->画笔颜色 = Color(255, 255, 255);
+            }
+        }
+        RegCloseKey(key);
+        InvalidateRect(this->hwnd, nullptr, true);
+    }
 }
 
 
@@ -207,8 +265,20 @@ void 任务栏歌词::OnDestroy()
 }
 
 
-UINT 任务栏歌词::DPI(UINT pixel)
-{
-    UINT dpi = GetDpiForWindow(this->parentHwnd);
+UINT 任务栏歌词::DPI(
+    UINT pixel
+) {
+    UINT dpi = GetDpiForWindow(this->taskbarHwnd);
     return dpi * pixel / 96;
+}
+
+
+void 任务栏歌词::更新窗口大小()
+{
+    UINT x = this->DPI(0);
+    UINT y = this->DPI(0);
+    UINT 宽 = this->DPI(this->rebarRect.left);
+    UINT 高 = this->DPI(this->taskbarRect.bottom - this->taskbarRect.top);
+    MoveWindow(this->hwnd, x, y, 宽, 高, true);
+    InvalidateRect(this->hwnd, nullptr, true);
 }

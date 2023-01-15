@@ -13,7 +13,6 @@
 #include <thread>
 #include <sstream>
 
-
 #pragma comment (lib, "Gdiplus.lib")
 
 
@@ -37,15 +36,24 @@ class 任务栏歌词
     private:
     std::wstring_convert<std::codecvt_utf8<wchar_t>> 字符转换;
     std::wstringstream 宽字符转换流;
-    ;
     UINT DPI(UINT);
+    void 更新窗口大小();
 
 
     private:
     WNDCLASSEX wcex;
-    HWND hwnd;
-    HWND parentHwnd;
     MSG msg;
+    HWND hwnd;
+
+
+    private:
+    HWND taskbarHwnd;
+    HWND rebarHwnd;
+    HWND trayNotifyHwnd;
+
+    RECT taskbarRect;
+    RECT rebarRect;
+    RECT trayNotifyRect;
 
 
     private:
@@ -67,6 +75,9 @@ class 任务栏歌词
     public:
     任务栏歌词(HINSTANCE, LPWSTR, int);
     ~任务栏歌词();
+
+
+    public:
     void 注册窗口();
     void 创建窗口();
     void 网络线程();
@@ -78,16 +89,24 @@ class 任务栏歌词
     ULONG_PTR gdiplusToken;
     GdiplusStartupInput gdiplusStartupInput;
 
+
     private:
     HDC hdc;
     PAINTSTRUCT ps;
-    RECT clientRect;
+    RECT rect;
+
+
+    private:
+    //UINT 任务栏_运行中的程序_左侧按钮大小 = DPI(48);
+    //UINT 任务栏_运行中的程序_左侧搜索大小 = DPI(110);
+    Color 画笔颜色 = Color(255, 255, 255);
 
 
     private:
     static LRESULT CALLBACK 窗口过程(HWND, UINT, WPARAM, LPARAM);
     void OnPaint();
-    int OnEraseBkgnd();
+    bool OnEraseBkgnd();
+    void OnSettingChange();
     void OnClose();
     void OnDestroy();
 };
