@@ -27,14 +27,21 @@ class 任务栏歌词
     HINSTANCE hInstance;
     LPWSTR lpCmdLine;
     int nCmdShow;
+
+
+    private:
     HANDLE waitHandle;
+    std::thread* 最小化区域检测_线程 = nullptr;
+    void 最小化区域检测();
 
 
     private:
     std::wstring_convert<std::codecvt_utf8<wchar_t>> 字符转换;
     std::wstringstream 宽字符转换流;
     UINT DPI(UINT);
-    void 更新窗口大小();
+    void DPI(RECT&);
+    void 更新窗口();
+    bool 读取注册表(std::wstring, std::wstring, DWORD&);
 
 
     private:
@@ -46,11 +53,9 @@ class 任务栏歌词
     private:
     HWND taskbarHwnd;
     HWND rebarHwnd;
-    HWND trayNotifyHwnd;
 
     RECT taskbarRect;
     RECT rebarRect;
-    RECT trayNotifyRect;
 
 
     private:
@@ -88,9 +93,19 @@ class 任务栏歌词
 
 
     private:
-    //UINT 任务栏_运行中的程序_左侧按钮大小 = DPI(48);
-    //UINT 任务栏_运行中的程序_左侧搜索大小 = DPI(110);
-    Color 画笔颜色 = Color(255, 255, 255);
+    bool 深浅模式;
+    bool 组件按钮;
+    bool 搜索按钮;
+    bool 任务按钮;
+    bool 聊天按钮;
+
+
+    private:
+    std::wstring 字体名称 = L"Microsoft YaHei";
+    Color 字体颜色_浅色_基本歌词 = Color(0, 0, 0);
+    Color 字体颜色_浅色_扩展歌词 = Color(0, 0, 0);
+    Color 字体颜色_深色_基本歌词 = Color(255, 255, 255);
+    Color 字体颜色_深色_扩展歌词 = Color(255, 255, 255);
 
 
     private:
@@ -104,3 +119,10 @@ class 任务栏歌词
 };
 
 任务栏歌词* 任务栏歌词::_this = nullptr;
+
+
+struct RegistrySetting {
+    std::wstring path;
+    std::wstring key;
+    bool& value;
+};
