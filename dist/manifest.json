@@ -1,9 +1,9 @@
 {
     "manifest_version": 1,
     "name": "Taskbar Lyrics",
-    "description": "在任务栏上嵌入歌词，目前仅支持Windows 11，任务栏对齐方式为居中",
+    "description": "在任务栏上嵌入歌词，目前仅支持Windows 11 22H2",
     "preview": "preview.png",
-    "version": "1.0.4",
+    "version": "1.1.0",
     "author": "沫烬染",
     "author_links": [
         "https://github.com/mo-jinran"
