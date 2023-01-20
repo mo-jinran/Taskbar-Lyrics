@@ -11,12 +11,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TaskbarLyrics.hpp">
+    <ClInclude Include="src\taskbar-lyrics\TaskbarLyrics.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TaskbarLyrics.cpp">
+    <ClCompile Include="src\taskbar-lyrics\TaskbarLyrics.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,6 +1,10 @@
 .vs
+.vscode
+
 Release
 Debug
+
+dist_debug
 
 betterncm-plugin.vcxproj.user
 taskbar-lyrics.vcxproj.user

@@ -7,15 +7,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="manifest.json">
+    <None Include="src\betterncm-plugin\index.js">
       <Filter>源文件</Filter>
     </None>
-    <None Include="index.js">
+    <None Include="src\betterncm-plugin\manifest.json">
       <Filter>源文件</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="preview.png">
+    <Image Include="src\betterncm-plugin\preview.png">
       <Filter>源文件</Filter>
     </Image>
   </ItemGroup>

@@ -10,6 +10,12 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\taskbar-lyrics\TaskbarLyrics.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\taskbar-lyrics\TaskbarLyrics.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -45,9 +51,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)</OutDir>
+    <IntDir>$(Configuration)\taskbar-lyrics\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)</OutDir>
+    <IntDir>$(Configuration)\taskbar-lyrics\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -60,6 +68,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>move taskbar-lyrics.exe dist_debug
+del taskbar-lyrics.pdb</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -78,20 +90,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir dist
-copy manifest.json dist
-copy preview.png dist
-copy index.js dist
-move taskbar-lyrics.exe dist
+      <Command>move taskbar-lyrics.exe dist
 del taskbar-lyrics.pdb</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="TaskbarLyrics.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="TaskbarLyrics.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
