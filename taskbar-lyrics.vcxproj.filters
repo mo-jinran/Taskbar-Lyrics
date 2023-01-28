@@ -11,12 +11,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\taskbar-lyrics\TaskbarLyrics.hpp">
+    <CIInclude Include="src\taskbar-lyrics\TaskbarLyrics.hpp">
       <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
+    </CIInclude>
+    <CIInclude Include="src\taskbar-lyrics\NetworkServer.hpp">
+      <Filter>头文件</Filter>
+    </CIInclude>
+    <CIInclude Include="src\taskbar-lyrics\TaskbarWindow.hpp">
+      <Filter>头文件</Filter>
+    </CIInclude>
     <ClCompile Include="src\taskbar-lyrics\TaskbarLyrics.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\taskbar-lyrics\NetworkServer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\taskbar-lyrics\TaskbarWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

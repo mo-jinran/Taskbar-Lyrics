@@ -51,9 +51,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>$(Configuration)\betterncm-plugin\</IntDir>
+    <OutDir>$(SolutionDir)\dist_debug\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>$(Configuration)\betterncm-plugin\</IntDir>
+    <OutDir>$(SolutionDir)\dist\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -68,8 +70,8 @@
     </Link>
     <PostBuildEvent>
       <Command>copy src\betterncm-plugin\index.js dist_debug
-copy src\betterncm-plugin\manifest.json dist_debug
-copy src\betterncm-plugin\preview.png dist_debug</Command>
+                copy src\betterncm-plugin\manifest.json dist_debug
+                copy src\betterncm-plugin\preview.png dist_debug</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -89,15 +91,13 @@ copy src\betterncm-plugin\preview.png dist_debug</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy src\betterncm-plugin\index.js dist
-copy src\betterncm-plugin\manifest.json dist
-copy src\betterncm-plugin\preview.png dist</Command>
+                copy src\betterncm-plugin\manifest.json dist
+                copy src\betterncm-plugin\preview.png dist</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="src\betterncm-plugin\index.js" />
     <None Include="src\betterncm-plugin\manifest.json" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="src\betterncm-plugin\preview.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
