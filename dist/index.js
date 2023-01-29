@@ -1,9 +1,9 @@
 "use strict";
 
 
-const TaskbarLyricsPort = BETTERNCM_API_PORT + 1;
+const TaskbarLyricsPort = BETTERNCM_API_PORT + 2;
 
-const TaskbarLyricsAPI = {
+window.TaskbarLyricsAPI = {
     lyrics(basic, extra) {
         const params = `basic=${basic}&extra=${extra}`;
         fetch(`http://127.0.0.1:${TaskbarLyricsPort}/taskbar/lyrics?${new URLSearchParams(params)}`);
@@ -27,6 +27,9 @@ const TaskbarLyricsAPI = {
     screen(parent_taskbar) {
         const params = `parent_taskbar=${parent_taskbar}`;
         fetch(`http://127.0.0.1:${TaskbarLyricsPort}/taskbar/screen?${new URLSearchParams(params)}`);
+    },
+    close() {
+        fetch(`http://127.0.0.1:${TaskbarLyricsPort}/taskbar/close`);
     }
 }
 
@@ -300,4 +303,6 @@ plugin.onLoad(async () => {
 
     const exePath = `"${loadedPlugins["Taskbar-Lyrics"].pluginPath}\\taskbar-lyrics.exe"`;
     await betterncm.app.exec(`${exePath} ${TaskbarLyricsPort}`, false, true);
+
+    addEventListener("beforeunload", () => TaskbarLyricsAPI.close());
 });
