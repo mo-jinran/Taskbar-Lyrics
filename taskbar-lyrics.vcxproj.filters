@@ -20,6 +20,9 @@
     <CIInclude Include="src\taskbar-lyrics\TaskbarWindow.hpp">
       <Filter>头文件</Filter>
     </CIInclude>
+    <CIInclude Include="src\taskbar-lyrics\Utilities.hpp">
+      <Filter>头文件</Filter>
+    </CIInclude>
     <ClCompile Include="src\taskbar-lyrics\TaskbarLyrics.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -27,6 +30,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\taskbar-lyrics\TaskbarWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\taskbar-lyrics\Utilities.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

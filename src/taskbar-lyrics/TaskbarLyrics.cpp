@@ -5,6 +5,10 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 
+任务栏窗口类* 任务栏歌词类::任务栏窗口;
+网络服务器类* 任务栏歌词类::网络服务器;
+
+
 任务栏歌词类::任务栏歌词类(
     HINSTANCE   hInstance,
     int         nCmdShow
@@ -14,6 +18,9 @@
 
     this->任务栏窗口 = new 任务栏窗口类(hInstance, nCmdShow);
     this->网络服务器 = new 网络服务器类(this->任务栏窗口, this->端口);
+
+    this->网易云进程检测();
+
     this->任务栏窗口->注册窗口();
     this->任务栏窗口->创建窗口();
     this->任务栏窗口->显示窗口();
@@ -23,6 +30,8 @@
 
 任务栏歌词类::~任务栏歌词类()
 {
+    FreeConsole();
+    static_cast<void>(UnregisterWaitEx(this->关闭窗口, INVALID_HANDLE_VALUE));
     delete this->网络服务器;
     delete this->任务栏窗口;
     this->网络服务器 = nullptr;
@@ -58,6 +67,34 @@ void 任务栏歌词类::获取端口()
 }
 
 
+void 任务栏歌词类::网易云进程检测()
+{
+    HWND 网易云句柄 = FindWindow(L"OrpheusBrowserHost", NULL);
+    if (网易云句柄)
+    {
+        DWORD pid;
+        GetWindowThreadProcessId(网易云句柄, &pid);
+        HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
+        RegisterWaitForSingleObject(
+            &this->waitHandle,
+            process,
+            this->关闭窗口,
+            NULL,
+            INFINITE,
+            WT_EXECUTEONLYONCE
+        );
+    }
+}
+
+
+void CALLBACK 任务栏歌词类::关闭窗口(
+    PVOID lpParameter,
+    BOOLEAN TimerOrWaitFired
+) {
+    SendMessage(任务栏窗口->hwnd, WM_CLOSE, NULL, NULL);
+}
+
+
 int APIENTRY wWinMain(
     _In_        HINSTANCE   hInstance,
     _In_opt_    HINSTANCE   hPrevInstance,
@@ -66,7 +103,8 @@ int APIENTRY wWinMain(
 ) {
     #ifdef _DEBUG
         AllocConsole();
-        freopen("conout$", "w", stdout);
+        SetConsoleOutputCP(65001);
+        static_cast<void>(freopen("conout$", "w", stdout));
     #endif
 
     任务栏歌词类 任务栏歌词(hInstance, nCmdShow);

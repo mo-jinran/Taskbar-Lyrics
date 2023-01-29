@@ -3,8 +3,6 @@
 #include <Windows.h>
 #include <gdiplus.h>
 #include <string>
-#include <sstream>
-#include <codecvt>
 #include <thread>
 
 
@@ -23,17 +21,8 @@ class 任务栏窗口类
 
 
     private:
-    HANDLE waitHandle;
     std::thread* 剩余宽度检测_线程 = nullptr;
     void 剩余宽度检测();
-
-
-    public:
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> 字符转换;
-    std::wstringstream 宽字符转换流;
-    UINT DPI(UINT);
-    void 更新窗口();
-    bool 读取注册表(std::wstring, std::wstring, DWORD&);
 
 
     public:
@@ -69,6 +58,7 @@ class 任务栏窗口类
     void 创建窗口();
     void 显示窗口();
     void 窗口消息();
+    void 更新窗口();
 
 
     private:
@@ -100,10 +90,7 @@ class 任务栏窗口类
 
 
     private:
-    static void CALLBACK 网易云进程结束(PVOID, BOOLEAN);
     static LRESULT CALLBACK 窗口过程(HWND, UINT, WPARAM, LPARAM);
-
-    private:
     void OnPaint();
     void OnEraseBkgnd();
     void OnSettingChange();

@@ -1,12 +1,13 @@
 ﻿#include "NetworkServer.hpp"
 #include "TaskbarWindow.hpp"
+#include "Utilities.hpp"
 
 
 网络服务器类::网络服务器类(
     任务栏窗口类* 任务栏窗口,
     unsigned short 端口
 ) {
-    std::cout << (unsigned short) 端口 << std::endl;
+    std::cout << u8"端口号：" << 端口 << std::endl;
     this->任务栏窗口 = 任务栏窗口;
 
     std::vector<Route> routes = {
@@ -24,7 +25,6 @@
     }
 
     auto 线程函数 = [端口, this] () {
-        std::cout << 端口 << std::endl;
         this->网络服务器.listen("127.0.0.1", 端口);
     };
 
@@ -48,11 +48,14 @@ void 网络服务器类::歌词(
     auto basic = req.get_param_value("basic");
     auto extra = req.get_param_value("extra");
 
-    this->任务栏窗口->基本歌词 = this->任务栏窗口->字符转换.from_bytes(basic);
-    this->任务栏窗口->扩展歌词 = this->任务栏窗口->字符转换.from_bytes(extra);
+    this->任务栏窗口->基本歌词 = 工具类::字符转换.from_bytes(basic);
+    this->任务栏窗口->扩展歌词 = 工具类::字符转换.from_bytes(extra);
 
     this->任务栏窗口->更新窗口();
     res.status = 200;
+
+    std::cout << u8"基本歌词：" << basic << std::endl;
+    std::cout << u8"扩展歌词：" << extra << std::endl;
 }
 
 
@@ -76,12 +79,12 @@ void 网络服务器类::字体(
         NULL,
         NULL,
         NULL,
-        this->任务栏窗口->字符转换.from_bytes(font_family).c_str()
+        工具类::字符转换.from_bytes(font_family).c_str()
     );
 
     if (font)
     {
-        this->任务栏窗口->字体名称 = this->任务栏窗口->字符转换.from_bytes(font_family).c_str();
+        this->任务栏窗口->字体名称 = 工具类::字符转换.from_bytes(font_family).c_str();
         DeleteObject(font);
     }
 
@@ -198,7 +201,7 @@ void 网络服务器类::屏幕(
 ) {
     auto parent_taskbar = req.get_param_value("parent_taskbar");
 
-    this->任务栏窗口->任务栏_句柄 = FindWindow(this->任务栏窗口->字符转换.from_bytes(parent_taskbar).c_str(), NULL);
+    this->任务栏窗口->任务栏_句柄 = FindWindow(工具类::字符转换.from_bytes(parent_taskbar).c_str(), NULL);
     this->任务栏窗口->开始按钮_句柄 = FindWindowEx(this->任务栏窗口->任务栏_句柄, NULL, L"Start", NULL);
 
     GetWindowRect(this->任务栏窗口->任务栏_句柄, &this->任务栏窗口->任务栏_矩形);

@@ -69,10 +69,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy src\betterncm-plugin\index.js dist_debug
-                copy src\betterncm-plugin\manifest.json dist_debug
-                copy src\betterncm-plugin\preview.png dist_debug</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>copy src\betterncm-plugin\index.js dist_debug
+copy src\betterncm-plugin\manifest.json dist_debug
+copy src\betterncm-plugin\preview.png dist_debug</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -90,10 +94,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy src\betterncm-plugin\index.js dist
-                copy src\betterncm-plugin\manifest.json dist
-                copy src\betterncm-plugin\preview.png dist</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>copy src\betterncm-plugin\index.js dist
+copy src\betterncm-plugin\manifest.json dist
+copy src\betterncm-plugin\preview.png dist</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="src\betterncm-plugin\index.js" />

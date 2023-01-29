@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -14,9 +14,11 @@
     <CIInclude Include="src\taskbar-lyrics\TaskbarLyrics.hpp" />
     <CIInclude Include="src\taskbar-lyrics\NetworkServer.hpp" />
     <CIInclude Include="src\taskbar-lyrics\TaskbarWindow.hpp" />
+    <CIInclude Include="src\taskbar-lyrics\Utilities.hpp" />
     <ClCompile Include="src\taskbar-lyrics\TaskbarLyrics.cpp" />
     <ClCompile Include="src\taskbar-lyrics\NetworkServer.cpp" />
     <ClCompile Include="src\taskbar-lyrics\TaskbarWindow.cpp" />
+    <ClCompile Include="src\taskbar-lyrics\Utilities.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

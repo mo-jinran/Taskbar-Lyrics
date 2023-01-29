@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "杂项", "杂项", "{682F0C3C-6A14-4C74-9834-A9AE0772FB3C}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		.github\workflows\build.yml = .github\workflows\build.yml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection

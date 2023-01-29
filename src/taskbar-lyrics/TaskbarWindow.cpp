@@ -1,9 +1,11 @@
 ﻿#include "TaskbarWindow.hpp"
+#include "Utilities.hpp"
+#include <iostream>
 
 #pragma comment (lib, "Gdiplus.lib")
 
 
-任务栏窗口类* 任务栏窗口类::_this = nullptr;
+任务栏窗口类* 任务栏窗口类::_this;
 
 
 任务栏窗口类::任务栏窗口类(
@@ -12,26 +14,9 @@
 ) {
     this->hInstance = hInstance;
     this->nCmdShow = nCmdShow;
-
     this->_this = this;
 
     GdiplusStartup(&this->gdiplusToken, &this->gdiplusStartupInput, NULL);
-
-    HWND 网易云句柄 = FindWindow(L"OrpheusBrowserHost", NULL);
-    if (网易云句柄)
-    {
-        DWORD pid;
-        GetWindowThreadProcessId(网易云句柄, &pid);
-        HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
-        RegisterWaitForSingleObject(
-            &this->waitHandle,
-            process,
-            this->网易云进程结束,
-            NULL,
-            INFINITE,
-            WT_EXECUTEONLYONCE
-        );
-    }
 
     this->任务栏_句柄 = FindWindow(L"Shell_TrayWnd", NULL);
     this->开始按钮_句柄 = FindWindowEx(this->任务栏_句柄, NULL, L"Start", NULL);
@@ -50,7 +35,6 @@
 任务栏窗口类::~任务栏窗口类()
 {
     Gdiplus::GdiplusShutdown(this->gdiplusToken);
-    UnregisterWaitEx(this->网易云进程结束, INVALID_HANDLE_VALUE);
     this->剩余宽度检测_线程->detach();
     delete this->剩余宽度检测_线程;
     this->剩余宽度检测_线程 = nullptr;
@@ -108,24 +92,6 @@ void 任务栏窗口类::窗口消息()
 }
 
 
-void 任务栏窗口类::网易云进程结束(
-    PVOID lpParameter,
-    BOOLEAN TimerOrWaitFired
-) {
-    任务栏窗口类* _this = 任务栏窗口类::_this;
-    PostMessage(_this->hwnd, WM_CLOSE, NULL, NULL);
-    _this = nullptr;
-}
-
-
-UINT 任务栏窗口类::DPI(
-    UINT pixel
-) {
-    UINT dpi = GetDpiForWindow(this->任务栏_句柄);
-    return pixel * dpi / 96;
-}
-
-
 void 任务栏窗口类::更新窗口()
 {
     GetWindowRect(this->任务栏_句柄, &this->任务栏_矩形);
@@ -140,36 +106,21 @@ void 任务栏窗口类::更新窗口()
 
     if (this->居中对齐)
     {
-        左 = (this->组件按钮 ? this->DPI(160) : 0);
+        左 = static_cast<UINT>(this->组件按钮 ? 工具类::DPI(160) : 0);
         上 = 0;
-        宽 = this->开始按钮_矩形.left - (this->组件按钮 ? this->DPI(160) : 0);
+        宽 = this->开始按钮_矩形.left - static_cast<UINT>(this->组件按钮 ? 工具类::DPI(160) : 0);
         高 = this->任务栏_矩形.bottom - this->任务栏_矩形.top;
     }
     else
     {
         左 = this->活动区域_矩形.right;
         上 = 0;
-        宽 = this->通知区域_矩形.left - this->活动区域_矩形.right - (this->组件按钮 ? this->DPI(160) : 0);
+        宽 = this->通知区域_矩形.left - this->活动区域_矩形.right - static_cast<UINT>(this->组件按钮 ? 工具类::DPI(160) : 0);
         高 = this->任务栏_矩形.bottom - this->任务栏_矩形.top;
     }
 
-
     MoveWindow(this->hwnd, 左, 上, 宽, 高, true);
     InvalidateRect(this->hwnd, nullptr, true);
-}
-
-
-bool 任务栏窗口类::读取注册表(
-    std::wstring path,
-    std::wstring keyName,
-    DWORD& value
-) {
-    HKEY key;
-    DWORD bufferSize = sizeof(DWORD);
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, path.c_str(), NULL, KEY_READ, &key)) return true;
-    if (RegQueryValueEx(key, keyName.c_str(), NULL, NULL, (LPBYTE) &value, &bufferSize)) return true;
-    RegCloseKey(key);
-    return false;
 }
 
 
@@ -252,6 +203,7 @@ void 任务栏窗口类::OnPaint()
     RECT rect;
     HDC hdc = BeginPaint(this->hwnd, &ps);
     GetClientRect(this->hwnd, &rect);
+    工具类::任务栏_句柄 = this->任务栏_句柄;
 
     auto 宽 = rect.right - rect.left;
     auto 高 = rect.bottom - rect.top;
@@ -264,35 +216,50 @@ void 任务栏窗口类::OnPaint()
     Graphics graphics(memDC);
     graphics.SetTextRenderingHint(TextRenderingHintAntiAlias);
 
+
     #ifdef _DEBUG
-        Pen myPen(Color(255, 255, 255), this->DPI(1));
-        Rect myRect(rect.left, rect.top, rect.right, rect.bottom);
-        graphics.DrawRectangle(&myPen, myRect);
+    Pen myPen(Color(255, 255, 255), 1);
+    Rect myRect(rect.left, rect.top, rect.right - 1, rect.bottom - 1);
+    graphics.DrawRectangle(&myPen, myRect);
     #endif
+
 
     FontFamily fontFamily(this->字体名称.c_str());
     StringFormat stringFormat;
-    stringFormat.SetLineAlignment(StringAlignmentCenter);
+    stringFormat.SetLineAlignment(StringAlignmentFar);
+    stringFormat.SetFormatFlags(StringFormatFlagsNoWrap);
 
     SolidBrush 画笔_基本歌词(this->深浅模式 ? this->字体颜色_浅色_基本歌词 : this->字体颜色_深色_基本歌词);
     SolidBrush 画笔_扩展歌词(this->深浅模式 ? this->字体颜色_浅色_扩展歌词 : this->字体颜色_深色_扩展歌词);
 
     if (this->扩展歌词.empty())
     {
-        Font font(&fontFamily, this->DPI(20), FontStyleRegular, UnitPixel);
-        RectF 基本歌词_矩形((REAL) this->DPI(10), (REAL) this->DPI(10), rect.right - this->DPI(20), rect.bottom - this->DPI(20));
+        Font font(&fontFamily, 工具类::DPI(20), FontStyleRegular, UnitPixel);
+        RectF 基本歌词_矩形(工具类::DPI(10), 工具类::DPI(10), rect.right - 工具类::DPI(20), rect.bottom - 工具类::DPI(20));
         stringFormat.SetAlignment(this->对齐方式_基本歌词);
         graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, 基本歌词_矩形, &stringFormat, &画笔_基本歌词);
+
+        #ifdef _DEBUG
+        graphics.DrawRectangle(&myPen, 基本歌词_矩形);
+        #endif
     }
     else
     {
-        Font font(&fontFamily, this->DPI(16), FontStyleRegular, UnitPixel);
-        RectF 基本歌词_矩形((REAL) this->DPI(3), (REAL) this->DPI(3), rect.right - this->DPI(6), rect.bottom / 2 - this->DPI(3));
-        RectF 扩展歌词_矩形((REAL) this->DPI(3), rect.bottom / 2, rect.right - this->DPI(6), rect.bottom / 2 - this->DPI(3));
+        Font font(&fontFamily, 工具类::DPI(16), FontStyleRegular, UnitPixel);
+
+        RectF 基本歌词_矩形(工具类::DPI(3), 工具类::DPI(3), rect.right - 工具类::DPI(6), rect.bottom / 2 - 工具类::DPI(3));
+        RectF 扩展歌词_矩形(工具类::DPI(3), rect.bottom / 2, rect.right - 工具类::DPI(6), rect.bottom / 2 - 工具类::DPI(3));
+
         stringFormat.SetAlignment(this->对齐方式_基本歌词);
-        graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, 基本歌词_矩形, &stringFormat, &画笔_基本歌词);
         stringFormat.SetAlignment(this->对齐方式_扩展歌词);
+
+        graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, 基本歌词_矩形, &stringFormat, &画笔_基本歌词);
         graphics.DrawString(this->扩展歌词.c_str(), this->扩展歌词.size(), &font, 扩展歌词_矩形, &stringFormat, &画笔_扩展歌词);
+
+        #ifdef _DEBUG
+        graphics.DrawRectangle(&myPen, 基本歌词_矩形);
+        graphics.DrawRectangle(&myPen, 扩展歌词_矩形);
+        #endif
     }
 
 
@@ -316,7 +283,7 @@ void 任务栏窗口类::OnSettingChange()
         DWORD value;
         std::wstring path = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
         std::wstring key = L"SystemUsesLightTheme";
-        if (!this->读取注册表(path, key, value))
+        if (!工具类::读取注册表(path, key, value))
         {
             this->深浅模式 = (bool) value;
         }
@@ -326,7 +293,7 @@ void 任务栏窗口类::OnSettingChange()
         DWORD value;
         std::wstring path = L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced";
         std::wstring key = L"TaskbarAl";
-        if (!this->读取注册表(path, key, value))
+        if (!工具类::读取注册表(path, key, value))
         {
             if (!this->强制使用设置位置选项)
             {
@@ -339,7 +306,7 @@ void 任务栏窗口类::OnSettingChange()
         DWORD value;
         std::wstring path = L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced";
         std::wstring key = L"TaskbarDa";
-        if (!this->读取注册表(path, key, value))
+        if (!工具类::读取注册表(path, key, value))
         {
             this->组件按钮 = (bool) value;
         }
