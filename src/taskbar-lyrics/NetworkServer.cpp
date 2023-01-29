@@ -16,7 +16,8 @@
         {"/taskbar/color", std::bind(&网络服务器类::颜色, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/position", std::bind(&网络服务器类::位置, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/align", std::bind(&网络服务器类::对齐, this, std::placeholders::_1, std::placeholders::_2)},
-        {"/taskbar/screen", std::bind(&网络服务器类::屏幕, this, std::placeholders::_1, std::placeholders::_2)}
+        {"/taskbar/screen", std::bind(&网络服务器类::屏幕, this, std::placeholders::_1, std::placeholders::_2)},
+        {"/taskbar/close", std::bind(&网络服务器类::关闭, this, std::placeholders::_1, std::placeholders::_2)}
     };
 
     for (const auto& route : routes)
@@ -209,5 +210,15 @@ void 网络服务器类::屏幕(
 
     SetParent(this->任务栏窗口->hwnd, this->任务栏窗口->任务栏_句柄);
     this->任务栏窗口->更新窗口();
+    res.status = 200;
+}
+
+
+void 网络服务器类::关闭(
+    const httplib::Request& req,
+    httplib::Response& res
+) {
+    std::cout << u8"正在关闭任务栏歌词" << std::endl;
+    SendMessage(任务栏窗口->hwnd, WM_CLOSE, NULL, NULL);
     res.status = 200;
 }
