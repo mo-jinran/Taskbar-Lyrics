@@ -4,6 +4,9 @@
 #include <gdiplus.h>
 #include <string>
 #include <thread>
+#include <vector>
+
+#define _DEBUG
 
 
 using namespace Gdiplus;
@@ -23,6 +26,12 @@ class 任务栏窗口类
     private:
     std::thread* 剩余宽度检测_线程 = nullptr;
     void 剩余宽度检测();
+
+
+    private:
+    HKEY 注册表句柄;
+    std::thread* 监听注册表_线程 = nullptr;
+    void 监听注册表();
 
 
     public:
@@ -70,7 +79,6 @@ class 任务栏窗口类
     bool 深浅模式;
     bool 组件按钮;
     bool 居中对齐;
-    bool 强制使用设置位置选项;
 
 
     public:
@@ -93,7 +101,14 @@ class 任务栏窗口类
     static LRESULT CALLBACK 窗口过程(HWND, UINT, WPARAM, LPARAM);
     void OnPaint();
     void OnEraseBkgnd();
-    void OnSettingChange();
     void OnClose();
     void OnDestroy();
+};
+
+
+struct Registry
+{
+    std::wstring 路径;
+    std::wstring 键;
+    bool &值;
 };

@@ -17,7 +17,8 @@
         {"/taskbar/position", std::bind(&网络服务器类::位置, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/align", std::bind(&网络服务器类::对齐, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/screen", std::bind(&网络服务器类::屏幕, this, std::placeholders::_1, std::placeholders::_2)},
-        {"/taskbar/close", std::bind(&网络服务器类::关闭, this, std::placeholders::_1, std::placeholders::_2)}
+        {"/taskbar/start", std::bind(&网络服务器类::开始, this, std::placeholders::_1, std::placeholders::_2)},
+        {"/taskbar/stop", std::bind(&网络服务器类::停止, this, std::placeholders::_1, std::placeholders::_2)}
     };
 
     for (const auto& route : routes)
@@ -128,7 +129,6 @@ void 网络服务器类::位置(
     httplib::Response& res
 ) {
     auto position = req.get_param_value("position");
-    auto force_use = req.get_param_value("force_use");
 
     if (position == std::string("left"))
     {
@@ -138,15 +138,6 @@ void 网络服务器类::位置(
     if (position == std::string("right"))
     {
         this->任务栏窗口->居中对齐 = false;
-    }
-
-    if (force_use == std::string("true"))
-    {
-        this->任务栏窗口->强制使用设置位置选项 = true;
-    }
-    else
-    {
-        this->任务栏窗口->强制使用设置位置选项 = false;
     }
 
     this->任务栏窗口->更新窗口();
@@ -214,11 +205,26 @@ void 网络服务器类::屏幕(
 }
 
 
-void 网络服务器类::关闭(
+void 网络服务器类::开始(
     const httplib::Request& req,
     httplib::Response& res
 ) {
-    std::cout << u8"正在关闭任务栏歌词" << std::endl;
+    this->任务栏窗口->基本歌词 = L"成功连接到插件端";
+    this->任务栏窗口->扩展歌词 = L"等待下一句歌词...";
+
+    this->任务栏窗口->更新窗口();
+    res.status = 200;
+}
+
+
+void 网络服务器类::停止(
+    const httplib::Request& req,
+    httplib::Response& res
+) {
+    this->任务栏窗口->基本歌词 = L"检测到网易云音乐重载页面";
+    this->任务栏窗口->扩展歌词 = L"正在尝试关闭任务栏歌词...";
+
+    this->任务栏窗口->更新窗口();
     SendMessage(任务栏窗口->hwnd, WM_CLOSE, NULL, NULL);
     res.status = 200;
 }

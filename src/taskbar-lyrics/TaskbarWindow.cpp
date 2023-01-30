@@ -21,6 +21,7 @@
     this->任务栏_句柄 = FindWindow(L"Shell_TrayWnd", NULL);
     this->开始按钮_句柄 = FindWindowEx(this->任务栏_句柄, NULL, L"Start", NULL);
     this->活动区域_句柄 = FindWindowEx(this->任务栏_句柄, NULL, L"ReBarWindow32", NULL);
+    this->活动区域_句柄 = FindWindowEx(this->活动区域_句柄, NULL, L"MSTaskSwWClass", NULL);
     this->通知区域_句柄 = FindWindowEx(this->任务栏_句柄, NULL, L"TrayNotifyWnd", NULL);
 
     GetWindowRect(this->任务栏_句柄, &this->任务栏_矩形);
@@ -29,6 +30,7 @@
     GetWindowRect(this->通知区域_句柄, &this->通知区域_矩形);
 
     this->剩余宽度检测();
+    this->监听注册表();
 }
 
 
@@ -38,6 +40,10 @@
     this->剩余宽度检测_线程->detach();
     delete this->剩余宽度检测_线程;
     this->剩余宽度检测_线程 = nullptr;
+
+    this->监听注册表_线程->detach();
+    delete this->监听注册表_线程;
+    this->监听注册表_线程 = nullptr;
 }
 
 
@@ -115,7 +121,7 @@ void 任务栏窗口类::更新窗口()
     {
         左 = this->活动区域_矩形.right;
         上 = 0;
-        宽 = this->通知区域_矩形.left - this->活动区域_矩形.right - static_cast<UINT>(this->组件按钮 ? 工具类::DPI(160) : 0);
+        宽 = this->通知区域_矩形.left - this->活动区域_矩形.right;
         高 = this->任务栏_矩形.bottom - this->任务栏_矩形.top;
     }
 
@@ -175,6 +181,67 @@ void 任务栏窗口类::剩余宽度检测()
 }
 
 
+void 任务栏窗口类::监听注册表()
+{
+    auto 奇怪函数 = [this] () {
+        std::vector<Registry> 注册表列表 = {
+            {
+                L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                L"SystemUsesLightTheme",
+                this->深浅模式
+            },
+            {
+                L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                L"TaskbarAl",
+                this->居中对齐
+            },
+            {
+                L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                L"TaskbarDa",
+                this->组件按钮
+            }
+        };
+
+        for (const auto& 注册表 : 注册表列表)
+        {
+            DWORD value;
+            if (!工具类::读取注册表(注册表.路径, 注册表.键, value))
+            {
+                注册表.值 = static_cast<bool>(value);
+            }
+        }
+
+        this->更新窗口();
+    };
+
+    奇怪函数();
+
+    auto 线程函数 = [this, 奇怪函数] () {
+        // 持续监听注册表
+        while (true)
+        {
+            // 打开注册表
+            if (!this->注册表句柄)
+            {
+                std::wstring path = L"Software\\Microsoft\\Windows\\CurrentVersion";
+                RegOpenKeyEx(HKEY_CURRENT_USER, path.c_str(), NULL, KEY_NOTIFY, &this->注册表句柄);
+                continue;
+            }
+
+            // 监听注册表
+            if (RegNotifyChangeKeyValue(this->注册表句柄, true, REG_NOTIFY_CHANGE_LAST_SET, NULL, false))
+            {
+                continue;
+            }
+
+            奇怪函数();
+        }
+    };
+
+    this->剩余宽度检测_线程 = new std::thread(线程函数);
+}
+
+
 LRESULT CALLBACK 任务栏窗口类::窗口过程(
     HWND    hwnd,
     UINT    message,
@@ -186,7 +253,6 @@ LRESULT CALLBACK 任务栏窗口类::窗口过程(
     switch (message) {
         case WM_PAINT:          _this->OnPaint();           break;
         case WM_ERASEBKGND:     _this->OnEraseBkgnd();      break;
-        case WM_SETTINGCHANGE:  _this->OnSettingChange();   break;
         case WM_CLOSE:          _this->OnClose();           break;
         case WM_DESTROY:        _this->OnDestroy();         break;
         default: return DefWindowProc(hwnd, message, wParam, lParam);
@@ -214,7 +280,7 @@ void 任务栏窗口类::OnPaint()
 
 
     Graphics graphics(memDC);
-    graphics.SetTextRenderingHint(TextRenderingHintAntiAlias);
+    graphics.SetTextRenderingHint(TextRenderingHintAntiAliasGridFit);
 
 
     #ifdef _DEBUG
@@ -247,13 +313,12 @@ void 任务栏窗口类::OnPaint()
     {
         Font font(&fontFamily, 工具类::DPI(16), FontStyleRegular, UnitPixel);
 
-        RectF 基本歌词_矩形(工具类::DPI(3), 工具类::DPI(3), rect.right - 工具类::DPI(6), rect.bottom / 2 - 工具类::DPI(3));
-        RectF 扩展歌词_矩形(工具类::DPI(3), rect.bottom / 2, rect.right - 工具类::DPI(6), rect.bottom / 2 - 工具类::DPI(3));
-
         stringFormat.SetAlignment(this->对齐方式_基本歌词);
-        stringFormat.SetAlignment(this->对齐方式_扩展歌词);
-
+        RectF 基本歌词_矩形(工具类::DPI(3), 工具类::DPI(3), rect.right - 工具类::DPI(6), rect.bottom / 2 - 工具类::DPI(3));
         graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, 基本歌词_矩形, &stringFormat, &画笔_基本歌词);
+
+        stringFormat.SetAlignment(this->对齐方式_扩展歌词);
+        RectF 扩展歌词_矩形(工具类::DPI(3), rect.bottom / 2, rect.right - 工具类::DPI(6), rect.bottom / 2 - 工具类::DPI(3));
         graphics.DrawString(this->扩展歌词.c_str(), this->扩展歌词.size(), &font, 扩展歌词_矩形, &stringFormat, &画笔_扩展歌词);
 
         #ifdef _DEBUG
@@ -274,45 +339,6 @@ void 任务栏窗口类::OnPaint()
 void 任务栏窗口类::OnEraseBkgnd()
 {
     return;
-}
-
-
-void 任务栏窗口类::OnSettingChange()
-{
-    [this]() {
-        DWORD value;
-        std::wstring path = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
-        std::wstring key = L"SystemUsesLightTheme";
-        if (!工具类::读取注册表(path, key, value))
-        {
-            this->深浅模式 = (bool) value;
-        }
-    } ();
-
-    [this] () {
-        DWORD value;
-        std::wstring path = L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced";
-        std::wstring key = L"TaskbarAl";
-        if (!工具类::读取注册表(path, key, value))
-        {
-            if (!this->强制使用设置位置选项)
-            {
-                this->居中对齐 = (bool) value;
-            }
-        }
-    } ();
-
-    [this] () {
-        DWORD value;
-        std::wstring path = L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced";
-        std::wstring key = L"TaskbarDa";
-        if (!工具类::读取注册表(path, key, value))
-        {
-            this->组件按钮 = (bool) value;
-        }
-    } ();
-
-    this->更新窗口();
 }
 
 

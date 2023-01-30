@@ -1,7 +1,8 @@
 {
     "manifest_version": 1,
-    "name": "Taskbar Lyrics",
-    "description": "在任务栏上嵌入歌词，目前仅支持Windows 11 22H2",
+    "name": "任务栏歌词",
+    "slug": "Taskbar-Lyrics",
+    "description": "在任务栏上“嵌入”歌词，目前仅测试过Windows 11部分版本：22H2，21H2",
     "preview": "preview.png",
     "version": "1.1.0",
     "author": "沫烬染",

@@ -25,7 +25,8 @@ class 网络服务器类
 	void 位置(const httplib::Request&, httplib::Response&);
 	void 对齐(const httplib::Request&, httplib::Response&);
 	void 屏幕(const httplib::Request&, httplib::Response&);
-	void 关闭(const httplib::Request&, httplib::Response&);
+	void 开始(const httplib::Request&, httplib::Response&);
+	void 停止(const httplib::Request&, httplib::Response&);
 };
 
 
