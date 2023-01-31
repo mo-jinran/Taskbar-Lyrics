@@ -6,8 +6,6 @@
 #include <thread>
 #include <vector>
 
-#define _DEBUG
-
 
 using namespace Gdiplus;
 

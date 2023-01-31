@@ -63,10 +63,10 @@ void 任务栏窗口类::注册窗口()
 void 任务栏窗口类::创建窗口()
 {
     this->hwnd = CreateWindowEx(
-        WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE,
+        WS_EX_TOOLWINDOW,
         this->窗口类名.c_str(),
         this->窗口名字.c_str(),
-        WS_POPUP,
+        WS_POPUP | WS_CLIPSIBLINGS,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         NULL,

@@ -5,8 +5,6 @@
 #include <sstream>
 #include <iostream>
 
-#define _DEBUG
-
 
 class 任务栏歌词类
 {
