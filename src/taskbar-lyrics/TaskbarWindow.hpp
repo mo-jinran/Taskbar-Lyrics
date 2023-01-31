@@ -63,7 +63,6 @@ class 任务栏窗口类
     public:
     void 注册窗口();
     void 创建窗口();
-    void 显示窗口();
     void 窗口消息();
     void 更新窗口();
 

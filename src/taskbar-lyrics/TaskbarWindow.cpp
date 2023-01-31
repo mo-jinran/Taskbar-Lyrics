@@ -24,11 +24,6 @@
     this->活动区域_句柄 = FindWindowEx(this->活动区域_句柄, NULL, L"MSTaskSwWClass", NULL);
     this->通知区域_句柄 = FindWindowEx(this->任务栏_句柄, NULL, L"TrayNotifyWnd", NULL);
 
-    GetWindowRect(this->任务栏_句柄, &this->任务栏_矩形);
-    GetWindowRect(this->开始按钮_句柄, &this->开始按钮_矩形);
-    GetWindowRect(this->活动区域_句柄, &this->活动区域_矩形);
-    GetWindowRect(this->通知区域_句柄, &this->通知区域_矩形);
-
     this->剩余宽度检测();
     this->监听注册表();
 }
@@ -78,14 +73,8 @@ void 任务栏窗口类::创建窗口()
     );
 
     SetParent(this->hwnd, this->任务栏_句柄);
-}
-
-
-void 任务栏窗口类::显示窗口()
-{
-    this->更新窗口();
     ShowWindow(this->hwnd, this->nCmdShow);
-    UpdateWindow(this->hwnd);
+    this->更新窗口();
 }
 
 
@@ -125,8 +114,9 @@ void 任务栏窗口类::更新窗口()
         高 = this->任务栏_矩形.bottom - this->任务栏_矩形.top;
     }
 
-    MoveWindow(this->hwnd, 左, 上, 宽, 高, true);
+    SetWindowPos(this->hwnd, HWND_TOP, 左, 上, 宽, 高, SWP_NOACTIVATE);
     InvalidateRect(this->hwnd, nullptr, true);
+    UpdateWindow(this->hwnd);
 }
 
 
@@ -147,6 +137,7 @@ void 任务栏窗口类::剩余宽度检测()
             GetWindowRect(this->活动区域_句柄, &活动区域_矩形);
             GetWindowRect(this->通知区域_句柄, &通知区域_矩形);
 
+            // 只有不一样才会刷新
             if (std::memcmp(&this->任务栏_矩形, &任务栏_矩形, sizeof(RECT)))
             {
                 this->任务栏_矩形 = 任务栏_矩形;
@@ -292,7 +283,6 @@ void 任务栏窗口类::OnPaint()
 
     FontFamily fontFamily(this->字体名称.c_str());
     StringFormat stringFormat;
-    stringFormat.SetLineAlignment(StringAlignmentFar);
     stringFormat.SetFormatFlags(StringFormatFlagsNoWrap);
 
     SolidBrush 画笔_基本歌词(this->深浅模式 ? this->字体颜色_浅色_基本歌词 : this->字体颜色_深色_基本歌词);
@@ -302,6 +292,7 @@ void 任务栏窗口类::OnPaint()
     {
         Font font(&fontFamily, 工具类::DPI(20), FontStyleRegular, UnitPixel);
         RectF 基本歌词_矩形(工具类::DPI(10), 工具类::DPI(10), rect.right - 工具类::DPI(20), rect.bottom - 工具类::DPI(20));
+        stringFormat.SetLineAlignment(StringAlignmentCenter);
         stringFormat.SetAlignment(this->对齐方式_基本歌词);
         graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, 基本歌词_矩形, &stringFormat, &画笔_基本歌词);
 
@@ -313,10 +304,12 @@ void 任务栏窗口类::OnPaint()
     {
         Font font(&fontFamily, 工具类::DPI(16), FontStyleRegular, UnitPixel);
 
+        stringFormat.SetLineAlignment(StringAlignmentNear);
         stringFormat.SetAlignment(this->对齐方式_基本歌词);
         RectF 基本歌词_矩形(工具类::DPI(3), 工具类::DPI(3), rect.right - 工具类::DPI(6), rect.bottom / 2 - 工具类::DPI(3));
         graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, 基本歌词_矩形, &stringFormat, &画笔_基本歌词);
 
+        stringFormat.SetLineAlignment(StringAlignmentFar);
         stringFormat.SetAlignment(this->对齐方式_扩展歌词);
         RectF 扩展歌词_矩形(工具类::DPI(3), rect.bottom / 2, rect.right - 工具类::DPI(6), rect.bottom / 2 - 工具类::DPI(3));
         graphics.DrawString(this->扩展歌词.c_str(), this->扩展歌词.size(), &font, 扩展歌词_矩形, &stringFormat, &画笔_扩展歌词);
