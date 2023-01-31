@@ -5,7 +5,7 @@ Release
 Debug
 
 dist_debug
-dist_debug\taskbar-lyrics.pdb
+dist\taskbar-lyrics.pdb
 
 betterncm-plugin.vcxproj.user
 taskbar-lyrics.vcxproj.user
