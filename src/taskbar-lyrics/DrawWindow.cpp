@@ -87,7 +87,7 @@ void 绘制窗口类::绘制歌词(
     GetClientRect(*this->窗口句柄, &rect);
 
     Graphics graphics(hdc);
-    graphics.Clear(Color(0, 0, 0, 0));
+
     graphics.SetTextRenderingHint(TextRenderingHintAntiAliasGridFit);
 
     #ifdef _DEBUG
@@ -124,7 +124,7 @@ void 绘制窗口类::绘制歌词(
         RectF 基本歌词_矩形(this->DPI(3), this->DPI(3), rect.right - this->DPI(6), rect.bottom / 2 - this->DPI(3));
         graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, 基本歌词_矩形, &stringFormat, &画笔_基本歌词);
 
-        stringFormat.SetLineAlignment(StringAlignmentFar);
+        stringFormat.SetLineAlignment(StringAlignmentCenter);
         stringFormat.SetAlignment(this->对齐方式_扩展歌词);
         RectF 扩展歌词_矩形(this->DPI(3), rect.bottom / 2, rect.right - this->DPI(6), rect.bottom / 2 - this->DPI(3));
         graphics.DrawString(this->扩展歌词.c_str(), this->扩展歌词.size(), &font, 扩展歌词_矩形, &stringFormat, &画笔_扩展歌词);
