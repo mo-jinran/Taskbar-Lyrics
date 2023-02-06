@@ -4,7 +4,7 @@
 #include <vector>
 #include <thread>
 #include <string>
-
+#include <codecvt>
 
 class 网络服务器类
 {
@@ -12,6 +12,11 @@ class 网络服务器类
 	httplib::Server 网络服务器;
 	class 任务栏窗口类* 任务栏窗口;
 	std::thread* 网络服务器_线程 = nullptr;
+
+
+	private:
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> 字符转换;
+
 
 	public:
 	网络服务器类(class 任务栏窗口类*, unsigned short);

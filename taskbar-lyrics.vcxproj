@@ -11,14 +11,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <CIInclude Include="src\taskbar-lyrics\TaskbarLyrics.hpp" />
-    <CIInclude Include="src\taskbar-lyrics\NetworkServer.hpp" />
-    <CIInclude Include="src\taskbar-lyrics\TaskbarWindow.hpp" />
-    <CIInclude Include="src\taskbar-lyrics\Utilities.hpp" />
+    <ClInclude Include="src\taskbar-lyrics\TaskbarLyrics.hpp" />
+    <ClInclude Include="src\taskbar-lyrics\NetworkServer.hpp" />
+    <ClInclude Include="src\taskbar-lyrics\CreateWindow.hpp" />
+    <ClInclude Include="src\taskbar-lyrics\DrawWindow.hpp" />
     <ClCompile Include="src\taskbar-lyrics\TaskbarLyrics.cpp" />
     <ClCompile Include="src\taskbar-lyrics\NetworkServer.cpp" />
-    <ClCompile Include="src\taskbar-lyrics\TaskbarWindow.cpp" />
-    <ClCompile Include="src\taskbar-lyrics\Utilities.cpp" />
+    <ClCompile Include="src\taskbar-lyrics\CreateWindow.cpp" />
+    <ClCompile Include="src\taskbar-lyrics\DrawWindow.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
