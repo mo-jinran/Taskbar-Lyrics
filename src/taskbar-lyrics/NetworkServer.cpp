@@ -129,6 +129,18 @@ void 网络服务器类::位置(
     httplib::Response& res
 ) {
     auto position = req.get_param_value("position");
+    auto lock = req.get_param_value("lock");
+
+    if (lock == std::string("true"))
+    {
+        this->任务栏窗口->绘制窗口->锁定对齐 = true;
+    }
+
+    if (lock == std::string("false"))
+    {
+        this->任务栏窗口->绘制窗口->锁定对齐 = false;
+    }
+
 
     if (position == std::string("left"))
     {

@@ -35,6 +35,7 @@ class 绘制窗口类
     bool 深浅模式;
     bool 组件按钮;
     bool 居中对齐;
+    bool 锁定对齐;
 
     std::wstring 基本歌词 = L"桌面歌词启动成功";
     std::wstring 扩展歌词 = L"等待插件端连接";

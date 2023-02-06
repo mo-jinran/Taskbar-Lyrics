@@ -5,7 +5,6 @@
 #include <gdiplus.h>
 #include <string>
 #include <thread>
-#include <vector>
 
 
 class 任务栏窗口类
@@ -51,12 +50,4 @@ class 任务栏窗口类
 
     private:
     static LRESULT CALLBACK 窗口过程(HWND, UINT, WPARAM, LPARAM);
-};
-
-
-struct Registry
-{
-    std::wstring 路径;
-    std::wstring 键;
-    bool &值;
 };

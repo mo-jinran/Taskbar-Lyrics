@@ -150,40 +150,46 @@ void 任务栏窗口类::监听注册表()
             return false;
     };
 
-    auto 奇怪函数 = [this, 读取注册表] () {
-        std::vector<Registry> 注册表列表 = {
-            {
-                L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
-                L"SystemUsesLightTheme",
-                this->绘制窗口->深浅模式
-            },
-            {
-                L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-                L"TaskbarAl",
-                this->绘制窗口->居中对齐
-            },
-            {
-                L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-                L"TaskbarDa",
-                this->绘制窗口->组件按钮
-            }
-        };
-
-        for (const auto& 注册表 : 注册表列表)
+    auto 获取注册表值 = [this, 读取注册表] () {
         {
-            DWORD value;
-            if (!读取注册表(注册表.路径, 注册表.键, value))
+            DWORD 值;
+            std::wstring 路径 = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
+            std::wstring 键 = L"SystemUsesLightTheme";
+            if (!读取注册表(路径, 键, 值))
             {
-                注册表.值 = static_cast<bool>(value);
+                this->绘制窗口->深浅模式 = static_cast<bool>(值);
+            }
+        }
+
+        {
+            DWORD 值;
+            std::wstring 路径 = L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced";
+            std::wstring 键 = L"TaskbarAl";
+            if (!读取注册表(路径, 键, 值))
+            {
+                if (!this->绘制窗口->锁定对齐)
+                {
+                    this->绘制窗口->居中对齐 = static_cast<bool>(值);
+                }
+            }
+        }
+
+        {
+            DWORD 值;
+            std::wstring 路径 = L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced";
+            std::wstring 键 = L"TaskbarDa";
+            if (!读取注册表(路径, 键, 值))
+            {
+                this->绘制窗口->组件按钮 = static_cast<bool>(值);
             }
         }
 
         this->绘制窗口->更新窗口();
     };
 
-    奇怪函数();
+    获取注册表值();
 
-    auto 线程函数 = [this, 奇怪函数] () {
+    auto 线程函数 = [this, 获取注册表值] () {
         // 持续监听注册表
         while (true)
         {
@@ -201,7 +207,7 @@ void 任务栏窗口类::监听注册表()
                 continue;
             }
 
-            奇怪函数();
+            获取注册表值();
         }
     };
 

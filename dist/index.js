@@ -17,8 +17,8 @@ const TaskbarLyricsAPI = {
         const params = `light_basic=${light_basic}&light_extra=${light_extra}&dark_basic=${dark_basic}&dark_extra=${dark_extra}`;
         return fetch(`${TaskbarLyricsURL}/color?${new URLSearchParams(params)}`);
     },
-    async position(position) {
-        const params = `position=${position}`;
+    async position(position, lock) {
+        const params = `position=${position}&lock=${lock}`;
         return fetch(`${TaskbarLyricsURL}/position?${new URLSearchParams(params)}`);
     },
     async align(basic, extra) {
@@ -48,7 +48,8 @@ const defaultConfig = {
         "dark_extra": "FFFFFF"
     },
     position: {
-        "position": "left"
+        "position": "left",
+        "lock": "false"
     },
     align: {
         "basic": "left",
@@ -134,15 +135,16 @@ async function defaultFontColor() {
 // 修改位置
 async function setWindowPosition(event) {
     const config = {
-        "position": event.target.value
+        "position": event.target.value,
+        "lock": "true"
     };
     plugin.setConfig("position", config);
-    TaskbarLyricsAPI.position(config.position);
+    TaskbarLyricsAPI.position(config.position, config.lock);
 }
 
 async function defaultWindowPosition() {
     plugin.setConfig("position", undefined);
-    TaskbarLyricsAPI.position(defaultConfig.position.position);
+    TaskbarLyricsAPI.position(defaultConfig.position.position, defaultConfig.position.lock);
 }
 
 
@@ -186,7 +188,7 @@ plugin.onConfig(tools => {
 
     return dom("div", {},
         // 更换字体
-        dom("section", { style: { margin: "20px 0" } },
+        dom("section", {},
             dom("h1", { style: { fontSize: "initial" } },
                 dom("strong", { innerText: "更换字体：", style: { fontWeight: "bold" } }),
                 tools.makeBtn("立即应用", setFontFamily, true),
@@ -198,8 +200,10 @@ plugin.onConfig(tools => {
             )
         ),
 
+        dom("br", {}),
+
         // 字体颜色
-        dom("section", { style: { margin: "20px 0" } },
+        dom("section", {},
             dom("h1", { style: { fontSize: "initial" } },
                 dom("strong", { innerText: "字体颜色：", style: { fontWeight: "bold" } }),
                 tools.makeBtn("立即应用", setFontColor, true),
@@ -223,8 +227,10 @@ plugin.onConfig(tools => {
             )
         ),
 
+        dom("br", {}),
+
         // 修改位置
-        dom("section", { style: { margin: "20px 0" } },
+        dom("section", {},
             dom("h1", { style: { fontSize: "initial" } },
                 dom("strong", { innerText: "修改位置：", style: { fontWeight: "bold" } }),
                 tools.makeBtn("恢复默认", defaultWindowPosition, true)
@@ -236,8 +242,10 @@ plugin.onConfig(tools => {
             )
         ),
 
+        dom("br", {}),
+
         // 对齐方式
-        dom("section", { style: { margin: "20px 0" } },
+        dom("section", {},
             dom("h1", { style: { fontSize: "initial" } },
                 dom("strong", { innerText: "对齐方式：", style: { fontWeight: "bold" } }),
                 tools.makeBtn("恢复默认", defaultTextAlign, true)
@@ -256,8 +264,10 @@ plugin.onConfig(tools => {
             )
         ),
 
+        dom("br", {}),
+
         // 切换屏幕
-        dom("section", { style: { margin: "20px 0" } },
+        dom("section", {},
             dom("h1", { style: { fontSize: "initial" } },
                 dom("strong", { innerText: "切换屏幕：（实验功能，可能会移除）", style: { fontWeight: "bold" } }),
                 tools.makeBtn("恢复默认", defaultParentTaskbar, true)
@@ -303,7 +313,8 @@ plugin.onLoad(async () => {
 
     if (getConfig("position", false)) {
         TaskbarLyricsAPI.position(
-            getConfig("position", true)["position"]
+            getConfig("position", true)["position"],
+            getConfig("position", true)["lock"]
         );
     }
 
