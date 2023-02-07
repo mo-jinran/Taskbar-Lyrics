@@ -36,9 +36,12 @@
 
 网络服务器类::~网络服务器类()
 {
+    this->网络服务器.stop();
+
     this->网络服务器_线程->detach();
     delete this->网络服务器_线程;
     this->网络服务器_线程 = nullptr;
+
     this->任务栏窗口 = nullptr;
 }
 
@@ -235,6 +238,7 @@ void 网络服务器类::停止(
     this->任务栏窗口->绘制窗口->基本歌词 = L"检测到网易云音乐重载页面";
     this->任务栏窗口->绘制窗口->扩展歌词 = L"正在尝试关闭任务栏歌词...";
 
+    this->网络服务器.stop();
     this->任务栏窗口->绘制窗口->更新窗口();
     SendMessage(任务栏窗口->窗口句柄, WM_CLOSE, NULL, NULL);
     res.status = 200;
