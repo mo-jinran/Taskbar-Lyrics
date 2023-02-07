@@ -1,9 +1,8 @@
 "use strict";
 
-
+const TaskbarLyricsPath = `"${loadedPlugins["Taskbar-Lyrics"].pluginPath}\\taskbar-lyrics.exe"`;
 const TaskbarLyricsPort = BETTERNCM_API_PORT + 2;
 const TaskbarLyricsURL = `http://127.0.0.1:${TaskbarLyricsPort}/taskbar`;
-
 const TaskbarLyricsAPI = {
     async lyrics(basic, extra) {
         const params = `basic=${basic}&extra=${extra}`;
@@ -30,12 +29,14 @@ const TaskbarLyricsAPI = {
         return fetch(`${TaskbarLyricsURL}/screen?${new URLSearchParams(params)}`);
     },
     async start() {
+        await betterncm.app.exec(`${TaskbarLyricsPath} ${TaskbarLyricsPort}`, false, true);
         return fetch(`${TaskbarLyricsURL}/start`);
     },
     async stop() {
         return fetch(`${TaskbarLyricsURL}/stop`);
     }
 };
+
 
 const defaultConfig = {
     font: {
@@ -59,29 +60,6 @@ const defaultConfig = {
         "parent_taskbar": "Shell_TrayWnd"
     }
 };
-
-
-// 监视软件内歌词变动
-async function watchLyricsChange() {
-    const mLyric = await betterncm.utils.waitForElement("#x-g-mn .m-lyric");
-    new MutationObserver(mutations => {
-        for (const mutation of mutations) {
-            let basic = "";
-            let extra = "";
-
-            if (mutation.addedNodes[2]) {
-                basic = mutation.addedNodes[0].firstChild.textContent;
-                if (mutation.addedNodes[2].firstChild) {
-                    extra = mutation.addedNodes[2].firstChild.textContent;
-                }
-            } else {
-                basic = mutation.addedNodes[0].textContent;
-            }
-
-            TaskbarLyricsAPI.lyrics(basic, extra);
-        }
-    }).observe(mLyric, { childList: true, subtree: true });
-}
 
 
 // 更换字体
@@ -180,154 +158,209 @@ async function defaultParentTaskbar() {
 
 
 plugin.onConfig(tools => {
-    // 自己的创建输入框
+    // 输入框
     const createInput = (key, value) => tools.makeInput(
         plugin.getConfig(key, defaultConfig[key])[value],
         { id: value }
     );
 
-    return dom("div", {},
+    return dom("div", { id: "taskbar-lyrics-dom" },
+        // 歌词设置
+        dom("section", {},
+            dom("h1", {},
+                dom("strong", { innerText: "歌词设置：" })
+            ),
+            dom("div", {},
+                dom("span", { innerText: "歌词开关：" }),
+                tools.makeBtn("开启", TaskbarLyricsAPI.start, true),
+                tools.makeBtn("关闭", TaskbarLyricsAPI.stop, true),
+                dom("p", { innerText: "不要点太快，玩坏了请自己寻找解决方法" }),
+            ),
+            dom("div", {},
+                dom("span", { innerText: "歌词修改：" }),
+                dom("p", { innerText: "目前插件从 [软件内词栏] 获取歌词传递给 [任务栏歌词] 程序" }),
+                dom("p", { innerText: "不过启用或者关闭 [软件内词栏] 选项对插件都没有任何影响的" }),
+                dom("p", { innerText: "只需要修改 [设置-歌词-启用] 中的 [最后两个选项] 即可修改" }),
+                dom("p", { innerText: "未来修改歌词获取方式从 [软件内词栏] 换为同类型插件的方式" })
+            ),
+        ),
+
+        dom("hr", {}),
+
         // 更换字体
         dom("section", {},
-            dom("h1", { style: { fontSize: "initial" } },
-                dom("strong", { innerText: "更换字体：", style: { fontWeight: "bold" } }),
+            dom("h1", {},
+                dom("strong", { innerText: "更换字体：" }),
                 tools.makeBtn("立即应用", setFontFamily, true),
                 tools.makeBtn("恢复默认", defaultFontFamily, true)
             ),
-            dom("div", { style: { margin: "5px 0" } },
+            dom("div", {},
                 dom("span", { innerText: "字体名称：" }),
-                createInput("font", "font_family"),
+                createInput("font", "font_family")
             )
         ),
 
-        dom("br", {}),
+        dom("hr", {}),
 
         // 字体颜色
         dom("section", {},
-            dom("h1", { style: { fontSize: "initial" } },
-                dom("strong", { innerText: "字体颜色：", style: { fontWeight: "bold" } }),
+            dom("h1", {},
+                dom("strong", { innerText: "字体颜色：" }),
                 tools.makeBtn("立即应用", setFontColor, true),
                 tools.makeBtn("恢复默认", defaultFontColor, true)
             ),
-            dom("div", { style: { margin: "5px 0" } },
+            dom("div", {},
                 dom("span", { innerText: "浅色模式-基本歌词：" }),
-                createInput("color", "light_basic"),
+                createInput("color", "light_basic")
             ),
-            dom("div", { style: { margin: "5px 0" } },
+            dom("div", {},
                 dom("span", { innerText: "浅色模式-扩展歌词：" }),
-                createInput("color", "light_extra"),
+                createInput("color", "light_extra")
             ),
-            dom("div", { style: { margin: "5px 0" } },
+            dom("div", {},
                 dom("span", { innerText: "深色模式-基本歌词：" }),
-                createInput("color", "dark_basic"),
+                createInput("color", "dark_basic")
             ),
-            dom("div", { style: { margin: "5px 0" } },
+            dom("div", {},
                 dom("span", { innerText: "深色模式-扩展歌词：" }),
-                createInput("color", "dark_extra"),
+                createInput("color", "dark_extra")
             )
         ),
 
-        dom("br", {}),
+        dom("hr", {}),
 
         // 修改位置
         dom("section", {},
-            dom("h1", { style: { fontSize: "initial" } },
-                dom("strong", { innerText: "修改位置：", style: { fontWeight: "bold" } }),
+            dom("h1", {},
+                dom("strong", { innerText: "修改位置：" }),
                 tools.makeBtn("恢复默认", defaultWindowPosition, true)
             ),
-            dom("div", { style: { margin: "5px 0" } },
+            dom("div", {},
                 dom("span", { innerText: "窗口位置：" }),
                 tools.makeBtn("左", setWindowPosition, true, { value: "left" }),
-                tools.makeBtn("右", setWindowPosition, true, { value: "right" }),
+                tools.makeBtn("右", setWindowPosition, true, { value: "right" })
             )
         ),
 
-        dom("br", {}),
+        dom("hr", {}),
 
         // 对齐方式
         dom("section", {},
-            dom("h1", { style: { fontSize: "initial" } },
-                dom("strong", { innerText: "对齐方式：", style: { fontWeight: "bold" } }),
+            dom("h1", {},
+                dom("strong", { innerText: "对齐方式：" }),
                 tools.makeBtn("恢复默认", defaultTextAlign, true)
             ),
-            dom("div", { style: { margin: "5px 0" } },
+            dom("div", {},
                 dom("span", { innerText: "基本歌词：" }),
                 tools.makeBtn("左", setTextAlign, true, { value: ["basic", "left"] }),
                 tools.makeBtn("中", setTextAlign, true, { value: ["basic", "center"] }),
                 tools.makeBtn("右", setTextAlign, true, { value: ["basic", "right"] })
             ),
-            dom("div", { style: { margin: "5px 0" } },
+            dom("div", {},
                 dom("span", { innerText: "扩展歌词：" }),
                 tools.makeBtn("左", setTextAlign, true, { value: ["extra", "left"] }),
                 tools.makeBtn("中", setTextAlign, true, { value: ["extra", "center"] }),
-                tools.makeBtn("右", setTextAlign, true, { value: ["extra", "right"] }),
+                tools.makeBtn("右", setTextAlign, true, { value: ["extra", "right"] })
             )
         ),
 
-        dom("br", {}),
+        dom("hr", {}),
 
         // 切换屏幕
         dom("section", {},
-            dom("h1", { style: { fontSize: "initial" } },
-                dom("strong", { innerText: "切换屏幕：（实验功能，可能会移除）", style: { fontWeight: "bold" } }),
+            dom("h1", {},
+                dom("strong", { innerText: "切换屏幕：（实验功能，可能会移除）" }),
                 tools.makeBtn("恢复默认", defaultParentTaskbar, true)
             ),
-            dom("div", { style: { margin: "5px 0" } },
+            dom("div", {},
                 dom("span", { innerText: "父任务栏：" }),
                 tools.makeBtn("主屏幕", setParentTaskbar, true, { value: "Shell_TrayWnd" }),
-                tools.makeBtn("副屏幕", setParentTaskbar, true, { value: "Shell_SecondaryTrayWnd" }),
+                tools.makeBtn("副屏幕", setParentTaskbar, true, { value: "Shell_SecondaryTrayWnd" })
             )
         )
     )
 });
 
 
-plugin.onLoad(async () => {
-    // 启动程序
-    const exePath = `"${loadedPlugins["Taskbar-Lyrics"].pluginPath}\\taskbar-lyrics.exe"`;
-    await betterncm.app.exec(`${exePath} ${TaskbarLyricsPort}`, false, true);
+// 监视软件内歌词变动
+async function watchLyricsChange() {
+    const mLyric = await betterncm.utils.waitForElement("#x-g-mn .m-lyric");
+    new MutationObserver(mutations => {
+        for (const mutation of mutations) {
+            let basic = "";
+            let extra = "";
 
+            if (mutation.addedNodes[2]) {
+                basic = mutation.addedNodes[0].firstChild.textContent;
+                extra = mutation.addedNodes[2].firstChild ? mutation.addedNodes[2].firstChild.textContent : "";
+            } else {
+                basic = mutation.addedNodes[0].textContent;
+            }
+
+            TaskbarLyricsAPI.lyrics(basic, extra);
+        }
+    }).observe(mLyric, { childList: true, subtree: true });
+}
+
+
+async function styleLoader() {
+    const cssText = `
+    #taskbar-lyrics-dom h1 {
+        font-size: 1.25rem;
+    }
+
+    #taskbar-lyrics-dom h1 * {
+        font-weight: bold;
+    }
+
+    #taskbar-lyrics-dom hr {
+        margin: 20px 0;
+        border: none;
+        height: 1px;
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    #taskbar-lyrics-dom div {
+        margin: 10px 0;
+    }
+
+    #taskbar-lyrics-dom p {
+        margin: 5px 0;
+    }`;
+    const style = document.createElement("style");
+    style.innerHTML = cssText;
+    document.head.appendChild(style);
+}
+
+
+plugin.onLoad(async () => {
     TaskbarLyricsAPI.start();
     addEventListener("beforeunload", TaskbarLyricsAPI.stop);
     watchLyricsChange();
+    styleLoader();
 
-    const getConfig = (key, none) => plugin.getConfig(
-        key,
-        none ? defaultConfig[key] : false
+    plugin.getConfig("font", false) && TaskbarLyricsAPI.font(
+        plugin.getConfig("font", defaultConfig.font)["font_family"]
     );
 
-    if (getConfig("font", false)) {
-        TaskbarLyricsAPI.font(
-            getConfig("font", true)["font_family"]
-        );
-    }
+    plugin.getConfig("color", false) && TaskbarLyricsAPI.color(
+        plugin.getConfig("color", defaultConfig.color)["light_basic"],
+        plugin.getConfig("color", defaultConfig.color)["light_extra"],
+        plugin.getConfig("color", defaultConfig.color)["dark_basic"],
+        plugin.getConfig("color", defaultConfig.color)["dark_extra"]
+    );
 
-    if (getConfig("color", false)) {
-        TaskbarLyricsAPI.color(
-            getConfig("color", true)["light_basic"],
-            getConfig("color", true)["light_extra"],
-            getConfig("color", true)["dark_basic"],
-            getConfig("color", true)["dark_extra"]
-        );
-    }
+    plugin.getConfig("position", false) && TaskbarLyricsAPI.position(
+        plugin.getConfig("position", defaultConfig.position)["position"],
+        plugin.getConfig("position", defaultConfig.position)["lock"]
+    );
 
-    if (getConfig("position", false)) {
-        TaskbarLyricsAPI.position(
-            getConfig("position", true)["position"],
-            getConfig("position", true)["lock"]
-        );
-    }
+    plugin.getConfig("align", false) && TaskbarLyricsAPI.align(
+        plugin.getConfig("align", defaultConfig.align)["basic"],
+        plugin.getConfig("align", defaultConfig.align)["extra"]
+    );
 
-    if (getConfig("align", false)) {
-        TaskbarLyricsAPI.align(
-            getConfig("align", true)["basic"],
-            getConfig("align", true)["extra"]
-        );
-    }
-
-    if (getConfig("screen", false)) {
-        TaskbarLyricsAPI.screen(
-            getConfig("screen", true)["parent_taskbar"]
-        );
-    }
+    plugin.getConfig("screen", false) && TaskbarLyricsAPI.screen(
+        plugin.getConfig("screen", defaultConfig.screen)["parent_taskbar"]
+    );
 });
