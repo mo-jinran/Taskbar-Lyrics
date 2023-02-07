@@ -1,6 +1,6 @@
 "use strict";
 
-const TaskbarLyricsPath = `"${loadedPlugins["Taskbar-Lyrics"].pluginPath}\\taskbar-lyrics.exe"`;
+
 const TaskbarLyricsPort = BETTERNCM_API_PORT + 2;
 const TaskbarLyricsURL = `http://127.0.0.1:${TaskbarLyricsPort}/taskbar`;
 const TaskbarLyricsAPI = {
@@ -29,7 +29,6 @@ const TaskbarLyricsAPI = {
         return fetch(`${TaskbarLyricsURL}/screen?${new URLSearchParams(params)}`);
     },
     async start() {
-        await betterncm.app.exec(`${TaskbarLyricsPath} ${TaskbarLyricsPort}`, false, true);
         return fetch(`${TaskbarLyricsURL}/start`);
     },
     async stop() {
@@ -60,6 +59,14 @@ const defaultConfig = {
         "parent_taskbar": "Shell_TrayWnd"
     }
 };
+
+
+// 启动歌词
+async function startTaskbarLyrics() {
+    const path = `"${loadedPlugins["Taskbar-Lyrics"].pluginPath}\\taskbar-lyrics.exe"`;
+    await betterncm.app.exec(`${path} ${TaskbarLyricsPort}`, false, true);
+    TaskbarLyricsAPI.start();
+}
 
 
 // 更换字体
@@ -172,15 +179,15 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { innerText: "歌词开关：" }),
-                tools.makeBtn("开启", TaskbarLyricsAPI.start, true),
+                tools.makeBtn("开启", startTaskbarLyrics, true),
                 tools.makeBtn("关闭", TaskbarLyricsAPI.stop, true),
                 dom("p", { innerText: "不要点太快，玩坏了请自己寻找解决方法" }),
             ),
             dom("div", {},
                 dom("span", { innerText: "歌词修改：" }),
                 dom("p", { innerText: "目前插件从 [软件内词栏] 获取歌词传递给 [任务栏歌词] 程序" }),
-                dom("p", { innerText: "不过启用或者关闭 [软件内词栏] 选项对插件都没有任何影响的" }),
                 dom("p", { innerText: "只需要修改 [设置-歌词-启用] 中的 [最后两个选项] 即可修改" }),
+                dom("p", { innerText: "不过启用或者关闭 [软件内词栏] 选项对插件是没有任何影响的" }),
                 dom("p", { innerText: "未来修改歌词获取方式从 [软件内词栏] 换为同类型插件的方式" })
             ),
         ),
@@ -334,8 +341,8 @@ async function styleLoader() {
 
 
 plugin.onLoad(async () => {
-    TaskbarLyricsAPI.start();
     addEventListener("beforeunload", TaskbarLyricsAPI.stop);
+    startTaskbarLyrics()
     watchLyricsChange();
     styleLoader();
 
