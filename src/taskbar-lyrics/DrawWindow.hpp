@@ -42,6 +42,9 @@ class 绘制窗口类
 
     std::wstring 字体名称 = L"Microsoft YaHei";
 
+    FontStyle 字体样式_基本歌词 = FontStyleRegular;
+    FontStyle 字体样式_扩展歌词 = FontStyleRegular;
+
     Color 字体颜色_浅色_基本歌词 = Color(0, 0, 0);
     Color 字体颜色_浅色_扩展歌词 = Color(0, 0, 0);
     Color 字体颜色_深色_基本歌词 = Color(255, 255, 255);

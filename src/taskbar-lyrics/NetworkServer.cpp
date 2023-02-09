@@ -13,6 +13,7 @@
     std::vector<Route> routes = {
         {"/taskbar/lyrics", std::bind(&网络服务器类::歌词, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/font", std::bind(&网络服务器类::字体, this, std::placeholders::_1, std::placeholders::_2)},
+        {"/taskbar/style", std::bind(&网络服务器类::样式, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/color", std::bind(&网络服务器类::颜色, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/position", std::bind(&网络服务器类::位置, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/align", std::bind(&网络服务器类::对齐, this, std::placeholders::_1, std::placeholders::_2)},
@@ -98,6 +99,70 @@ void 网络服务器类::字体(
 }
 
 
+void 网络服务器类::样式(
+    const httplib::Request& req,
+    httplib::Response& res
+) {
+    auto basic = req.get_param_value("basic");
+    auto extra = req.get_param_value("extra");
+
+    // 基本歌词
+    if (basic == std::string("Regular"))
+    {
+        this->任务栏窗口->绘制窗口->字体样式_基本歌词 = Gdiplus::FontStyleRegular;
+    }
+    else if (basic == std::string("Bold"))
+    {
+        this->任务栏窗口->绘制窗口->字体样式_基本歌词 = Gdiplus::FontStyleBold;
+    }
+    else if (basic == std::string("Italic"))
+    {
+        this->任务栏窗口->绘制窗口->字体样式_基本歌词 = Gdiplus::FontStyleItalic;
+    }
+    else if (basic == std::string("BoldItalic"))
+    {
+        this->任务栏窗口->绘制窗口->字体样式_基本歌词 = Gdiplus::FontStyleBoldItalic;
+    }
+    else if (basic == std::string("Underline"))
+    {
+        this->任务栏窗口->绘制窗口->字体样式_基本歌词 = Gdiplus::FontStyleUnderline;
+    }
+    else if (basic == std::string("Strikeout"))
+    {
+        this->任务栏窗口->绘制窗口->字体样式_基本歌词 = Gdiplus::FontStyleStrikeout;
+    }
+
+    // 扩展歌词
+    if (extra == std::string("Regular"))
+    {
+        this->任务栏窗口->绘制窗口->字体样式_扩展歌词 = Gdiplus::FontStyleRegular;
+    }
+    else if (extra == std::string("Bold"))
+    {
+        this->任务栏窗口->绘制窗口->字体样式_扩展歌词 = Gdiplus::FontStyleBold;
+    }
+    else if (extra == std::string("Italic"))
+    {
+        this->任务栏窗口->绘制窗口->字体样式_扩展歌词 = Gdiplus::FontStyleItalic;
+    }
+    else if (extra == std::string("BoldItalic"))
+    {
+        this->任务栏窗口->绘制窗口->字体样式_扩展歌词 = Gdiplus::FontStyleBoldItalic;
+    }
+    else if (extra == std::string("Underline"))
+    {
+        this->任务栏窗口->绘制窗口->字体样式_扩展歌词 = Gdiplus::FontStyleUnderline;
+    }
+    else if (extra == std::string("Strikeout"))
+    {
+        this->任务栏窗口->绘制窗口->字体样式_扩展歌词 = Gdiplus::FontStyleStrikeout;
+    }
+
+    res.status = 200;
+    this->任务栏窗口->绘制窗口->更新窗口();
+}
+
+
 void 网络服务器类::颜色(
     const httplib::Request& req,
     httplib::Response& res
@@ -138,19 +203,16 @@ void 网络服务器类::位置(
     {
         this->任务栏窗口->绘制窗口->锁定对齐 = true;
     }
-
-    if (lock == std::string("false"))
+    else if (lock == std::string("false"))
     {
         this->任务栏窗口->绘制窗口->锁定对齐 = false;
     }
-
 
     if (position == std::string("left"))
     {
         this->任务栏窗口->绘制窗口->居中对齐 = true;
     }
-
-    if (position == std::string("right"))
+    else if (position == std::string("right"))
     {
         this->任务栏窗口->绘制窗口->居中对齐 = false;
     }

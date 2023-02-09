@@ -12,6 +12,10 @@ const TaskbarLyricsAPI = {
         const params = `font_family=${font_family}`;
         return fetch(`${TaskbarLyricsURL}/font?${new URLSearchParams(params)}`);
     },
+    async style(basic, extra) {
+        const params = `basic=${basic}&extra=${extra}`;
+        return fetch(`${TaskbarLyricsURL}/style?${new URLSearchParams(params)}`);
+    },
     async color(light_basic, light_extra, dark_basic, dark_extra) {
         const params = `light_basic=${light_basic}&light_extra=${light_extra}&dark_basic=${dark_basic}&dark_extra=${dark_extra}`;
         return fetch(`${TaskbarLyricsURL}/color?${new URLSearchParams(params)}`);
@@ -40,6 +44,10 @@ const TaskbarLyricsAPI = {
 const defaultConfig = {
     font: {
         "font_family": "Microsoft YaHei"
+    },
+    style: {
+        "basic": "Regular",
+        "extra": "Regular"
     },
     color: {
         "light_basic": "000000",
@@ -83,6 +91,22 @@ async function defaultFontFamily() {
     plugin.setConfig("font", undefined);
     TaskbarLyricsAPI.font(defaultConfig.font.font_family);
     document.querySelector("#font_family").value = defaultConfig.font.font_family;
+}
+
+
+// 字体样式
+async function setFontStyle(event) {
+    const config = {
+        "basic": event.target.value[0] == "basic" ? event.target.value[1] : plugin.getConfig("style", defaultConfig.style)["basic"],
+        "extra": event.target.value[0] == "extra" ? event.target.value[1] : plugin.getConfig("style", defaultConfig.style)["extra"]
+    };
+    plugin.setConfig("style", config);
+    TaskbarLyricsAPI.style(config.basic, config.extra);
+}
+
+async function defaultFontStyle() {
+    plugin.setConfig("style", undefined);
+    TaskbarLyricsAPI.style(defaultConfig.style.basic, defaultConfig.style.extra);
 }
 
 
@@ -164,9 +188,15 @@ async function defaultParentTaskbar() {
     TaskbarLyricsAPI.screen(defaultConfig.screen.parent_taskbar);
 }
 
+
 async function setConfigs() {
     plugin.getConfig("font", false) && TaskbarLyricsAPI.font(
         plugin.getConfig("font", defaultConfig.font)["font_family"]
+    );
+
+    plugin.getConfig("style", false) && TaskbarLyricsAPI.style(
+        plugin.getConfig("style", defaultConfig.style)["basic"],
+        plugin.getConfig("style", defaultConfig.style)["extra"]
     );
 
     plugin.getConfig("color", false) && TaskbarLyricsAPI.color(
@@ -225,13 +255,41 @@ plugin.onConfig(tools => {
         // 更换字体
         dom("section", {},
             dom("h1", {},
-                dom("strong", { innerText: "更换字体：" }),
+                dom("strong", { innerText: "字体更换：" }),
                 tools.makeBtn("立即应用", setFontFamily, true),
                 tools.makeBtn("恢复默认", defaultFontFamily, true)
             ),
             dom("div", {},
                 dom("span", { innerText: "字体名称：" }),
                 createInput("font", "font_family")
+            )
+        ),
+
+        dom("hr", {}),
+
+        // 字体样式
+        dom("section", {},
+            dom("h1", {},
+                dom("strong", { innerText: "字体样式：" }),
+                tools.makeBtn("恢复默认", defaultFontStyle, true)
+            ),
+            dom("div", {},
+                dom("span", { innerText: "基本歌词：" }),
+                tools.makeBtn("正常", setFontStyle, true, { value: ["basic", "Regular"] }),
+                tools.makeBtn("粗", setFontStyle, true, { value: ["basic", "Bold"] }),
+                tools.makeBtn("斜", setFontStyle, true, { value: ["basic", "Italic"] }),
+                tools.makeBtn("既粗又斜", setFontStyle, true, { value: ["basic", "BoldItalic"] }),
+                tools.makeBtn("下划线", setFontStyle, true, { value: ["basic", "Underline"] }),
+                tools.makeBtn("删除线", setFontStyle, true, { value: ["basic", "Strikeout"] })
+            ),
+            dom("div", {},
+                dom("span", { innerText: "扩展歌词：" }),
+                tools.makeBtn("正常", setFontStyle, true, { value: ["extra", "Regular"] }),
+                tools.makeBtn("粗", setFontStyle, true, { value: ["extra", "Bold"] }),
+                tools.makeBtn("斜", setFontStyle, true, { value: ["extra", "Italic"] }),
+                tools.makeBtn("既粗又斜", setFontStyle, true, { value: ["extra", "BoldItalic"] }),
+                tools.makeBtn("下划线", setFontStyle, true, { value: ["extra", "Underline"] }),
+                tools.makeBtn("删除线", setFontStyle, true, { value: ["extra", "Strikeout"] })
             )
         ),
 
@@ -344,7 +402,7 @@ async function styleLoader() {
         font-size: 1.25rem;
     }
 
-    #taskbar-lyrics-dom h1 * {
+    #taskbar-lyrics-dom h1 strong {
         font-weight: bold;
     }
 
@@ -356,7 +414,7 @@ async function styleLoader() {
     }
 
     #taskbar-lyrics-dom div {
-        margin: 10px 0;
+        margin: 5px 0;
     }
 
     #taskbar-lyrics-dom p {

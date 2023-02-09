@@ -96,20 +96,20 @@ void 绘制窗口类::绘制歌词(
     graphics.DrawRectangle(&myPen, myRect);
     #endif
 
-    FontFamily fontFamily(this->字体名称.c_str());
-    StringFormat stringFormat;
-    stringFormat.SetFormatFlags(StringFormatFlagsNoWrap);
+    FontFamily 字体系列(this->字体名称.c_str());
+    StringFormat 字符串格式;
+    字符串格式.SetFormatFlags(StringFormatFlagsNoWrap);
 
     SolidBrush 画笔_基本歌词(this->深浅模式 ? this->字体颜色_浅色_基本歌词 : this->字体颜色_深色_基本歌词);
     SolidBrush 画笔_扩展歌词(this->深浅模式 ? this->字体颜色_浅色_扩展歌词 : this->字体颜色_深色_扩展歌词);
 
     if (this->扩展歌词.empty())
     {
-        Font font(&fontFamily, this->DPI(20), FontStyleRegular, UnitPixel);
+        Font font(&字体系列, this->DPI(20), this->字体样式_基本歌词, UnitPixel);
         RectF 基本歌词_矩形(this->DPI(10), this->DPI(10), rect.right - this->DPI(20), rect.bottom - this->DPI(20));
-        stringFormat.SetLineAlignment(StringAlignmentCenter);
-        stringFormat.SetAlignment(this->对齐方式_基本歌词);
-        graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, 基本歌词_矩形, &stringFormat, &画笔_基本歌词);
+        字符串格式.SetLineAlignment(StringAlignmentCenter);
+        字符串格式.SetAlignment(this->对齐方式_基本歌词);
+        graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, 基本歌词_矩形, &字符串格式, &画笔_基本歌词);
 
         #ifdef _DEBUG
         graphics.DrawRectangle(&myPen, 基本歌词_矩形);
@@ -117,17 +117,17 @@ void 绘制窗口类::绘制歌词(
     }
     else
     {
-        Font font(&fontFamily, this->DPI(16), FontStyleRegular, UnitPixel);
-
-        stringFormat.SetLineAlignment(StringAlignmentNear);
-        stringFormat.SetAlignment(this->对齐方式_基本歌词);
+        Font 基本歌词_字体(&字体系列, this->DPI(16), this->字体样式_基本歌词, UnitPixel);
+        字符串格式.SetLineAlignment(StringAlignmentNear);
+        字符串格式.SetAlignment(this->对齐方式_基本歌词);
         RectF 基本歌词_矩形(this->DPI(3), this->DPI(3), rect.right - this->DPI(6), rect.bottom / 2 - this->DPI(3));
-        graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &font, 基本歌词_矩形, &stringFormat, &画笔_基本歌词);
+        graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &基本歌词_字体, 基本歌词_矩形, &字符串格式, &画笔_基本歌词);
 
-        stringFormat.SetLineAlignment(StringAlignmentCenter);
-        stringFormat.SetAlignment(this->对齐方式_扩展歌词);
+        Font 扩展歌词_字体(&字体系列, this->DPI(16), this->字体样式_扩展歌词, UnitPixel);
+        字符串格式.SetLineAlignment(StringAlignmentCenter);
+        字符串格式.SetAlignment(this->对齐方式_扩展歌词);
         RectF 扩展歌词_矩形(this->DPI(3), rect.bottom / 2, rect.right - this->DPI(6), rect.bottom / 2 - this->DPI(3));
-        graphics.DrawString(this->扩展歌词.c_str(), this->扩展歌词.size(), &font, 扩展歌词_矩形, &stringFormat, &画笔_扩展歌词);
+        graphics.DrawString(this->扩展歌词.c_str(), this->扩展歌词.size(), &扩展歌词_字体, 扩展歌词_矩形, &字符串格式, &画笔_扩展歌词);
 
         #ifdef _DEBUG
         graphics.DrawRectangle(&myPen, 基本歌词_矩形);
