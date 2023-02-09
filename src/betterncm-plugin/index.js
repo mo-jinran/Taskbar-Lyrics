@@ -66,6 +66,7 @@ async function startTaskbarLyrics() {
     const path = `"${loadedPlugins["Taskbar-Lyrics"].pluginPath}\\taskbar-lyrics.exe"`;
     await betterncm.app.exec(`${path} ${TaskbarLyricsPort}`, false, true);
     TaskbarLyricsAPI.start();
+    setConfigs();
 }
 
 
@@ -161,6 +162,33 @@ async function setParentTaskbar(event) {
 async function defaultParentTaskbar() {
     plugin.setConfig("screen", undefined);
     TaskbarLyricsAPI.screen(defaultConfig.screen.parent_taskbar);
+}
+
+async function setConfigs() {
+    plugin.getConfig("font", false) && TaskbarLyricsAPI.font(
+        plugin.getConfig("font", defaultConfig.font)["font_family"]
+    );
+
+    plugin.getConfig("color", false) && TaskbarLyricsAPI.color(
+        plugin.getConfig("color", defaultConfig.color)["light_basic"],
+        plugin.getConfig("color", defaultConfig.color)["light_extra"],
+        plugin.getConfig("color", defaultConfig.color)["dark_basic"],
+        plugin.getConfig("color", defaultConfig.color)["dark_extra"]
+    );
+
+    plugin.getConfig("position", false) && TaskbarLyricsAPI.position(
+        plugin.getConfig("position", defaultConfig.position)["position"],
+        plugin.getConfig("position", defaultConfig.position)["lock"]
+    );
+
+    plugin.getConfig("align", false) && TaskbarLyricsAPI.align(
+        plugin.getConfig("align", defaultConfig.align)["basic"],
+        plugin.getConfig("align", defaultConfig.align)["extra"]
+    );
+
+    plugin.getConfig("screen", false) && TaskbarLyricsAPI.screen(
+        plugin.getConfig("screen", defaultConfig.screen)["parent_taskbar"]
+    );
 }
 
 
@@ -345,29 +373,4 @@ plugin.onLoad(async () => {
     startTaskbarLyrics()
     watchLyricsChange();
     styleLoader();
-
-    plugin.getConfig("font", false) && TaskbarLyricsAPI.font(
-        plugin.getConfig("font", defaultConfig.font)["font_family"]
-    );
-
-    plugin.getConfig("color", false) && TaskbarLyricsAPI.color(
-        plugin.getConfig("color", defaultConfig.color)["light_basic"],
-        plugin.getConfig("color", defaultConfig.color)["light_extra"],
-        plugin.getConfig("color", defaultConfig.color)["dark_basic"],
-        plugin.getConfig("color", defaultConfig.color)["dark_extra"]
-    );
-
-    plugin.getConfig("position", false) && TaskbarLyricsAPI.position(
-        plugin.getConfig("position", defaultConfig.position)["position"],
-        plugin.getConfig("position", defaultConfig.position)["lock"]
-    );
-
-    plugin.getConfig("align", false) && TaskbarLyricsAPI.align(
-        plugin.getConfig("align", defaultConfig.align)["basic"],
-        plugin.getConfig("align", defaultConfig.align)["extra"]
-    );
-
-    plugin.getConfig("screen", false) && TaskbarLyricsAPI.screen(
-        plugin.getConfig("screen", defaultConfig.screen)["parent_taskbar"]
-    );
 });
