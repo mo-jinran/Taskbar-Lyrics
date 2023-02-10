@@ -27,16 +27,16 @@ void 绘制窗口类::更新窗口()
 
     if (this->居中对齐)
     {
-        左 = static_cast<UINT>(this->组件按钮 ? this->DPI(160) : 0);
+        左 = static_cast<UINT>(this->组件按钮 ? this->DPI(160) : 0) + this->左边距;
         上 = 0;
-        宽 = this->开始按钮_矩形.left - static_cast<UINT>(this->组件按钮 ? this->DPI(160) : 0);
+        宽 = this->开始按钮_矩形.left - static_cast<UINT>(this->组件按钮 ? this->DPI(160) : 0) - this->左边距 - this->右边距;
         高 = this->任务栏_矩形.bottom - this->任务栏_矩形.top;
     }
     else
     {
-        左 = this->活动区域_矩形.right;
+        左 = this->活动区域_矩形.right + this->左边距;
         上 = 0;
-        宽 = this->通知区域_矩形.left - this->活动区域_矩形.right;
+        宽 = this->通知区域_矩形.left - this->活动区域_矩形.right - this->左边距 - this->右边距;
         高 = this->任务栏_矩形.bottom - this->任务栏_矩形.top;
     }
 

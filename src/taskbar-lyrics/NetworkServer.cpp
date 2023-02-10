@@ -16,6 +16,7 @@
         {"/taskbar/style", std::bind(&网络服务器类::样式, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/color", std::bind(&网络服务器类::颜色, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/position", std::bind(&网络服务器类::位置, this, std::placeholders::_1, std::placeholders::_2)},
+        {"/taskbar/margin", std::bind(&网络服务器类::边距, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/align", std::bind(&网络服务器类::对齐, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/screen", std::bind(&网络服务器类::屏幕, this, std::placeholders::_1, std::placeholders::_2)},
         {"/taskbar/start", std::bind(&网络服务器类::开始, this, std::placeholders::_1, std::placeholders::_2)},
@@ -215,6 +216,53 @@ void 网络服务器类::位置(
     else if (position == std::string("right"))
     {
         this->任务栏窗口->绘制窗口->居中对齐 = false;
+    }
+
+    this->任务栏窗口->绘制窗口->更新窗口();
+    res.status = 200;
+}
+
+
+void 网络服务器类::边距(
+    const httplib::Request& req,
+    httplib::Response& res
+) {
+    auto left = req.get_param_value("left");
+    auto right = req.get_param_value("right");
+
+    int 左;
+    int 右;
+
+    std::stringstream 字符转换流;
+
+    if (left.at(0) == '-')
+    {
+        字符转换流 << left.substr(1, left.size());
+        字符转换流 >> 左;
+        字符转换流.clear();
+        this->任务栏窗口->绘制窗口->左边距 = (0 - 左);
+    }
+    else
+    {
+        字符转换流 << left;
+        字符转换流 >> 左;
+        字符转换流.clear();
+        this->任务栏窗口->绘制窗口->左边距 = 左;
+    }
+
+    if (right.at(0) == '-')
+    {
+        字符转换流 << right.substr(1, right.size());
+        字符转换流 >> 右;
+        字符转换流.clear();
+        this->任务栏窗口->绘制窗口->右边距 = (0 - 右);
+    }
+    else
+    {
+        字符转换流 << right;
+        字符转换流 >> 右;
+        字符转换流.clear();
+        this->任务栏窗口->绘制窗口->右边距 = 右;
     }
 
     this->任务栏窗口->绘制窗口->更新窗口();

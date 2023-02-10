@@ -24,6 +24,10 @@ const TaskbarLyricsAPI = {
         const params = `position=${position}&lock=${lock}`;
         return fetch(`${TaskbarLyricsURL}/position?${new URLSearchParams(params)}`);
     },
+    async margin(left, right) {
+        const params = `left=${left}&right=${right}`;
+        return fetch(`${TaskbarLyricsURL}/margin?${new URLSearchParams(params)}`);
+    },
     async align(basic, extra) {
         const params = `basic=${basic}&extra=${extra}`;
         return fetch(`${TaskbarLyricsURL}/align?${new URLSearchParams(params)}`);
@@ -58,6 +62,10 @@ const defaultConfig = {
     position: {
         "position": "left",
         "lock": "false"
+    },
+    margin: {
+        "left": "0",
+        "right": "0"
     },
     align: {
         "basic": "left",
@@ -143,7 +151,7 @@ async function defaultFontColor() {
 
 
 // 修改位置
-async function setWindowPosition(event) {
+async function setPosition(event) {
     const config = {
         "position": event.target.value,
         "lock": "true"
@@ -152,9 +160,27 @@ async function setWindowPosition(event) {
     TaskbarLyricsAPI.position(config.position, config.lock);
 }
 
-async function defaultWindowPosition() {
+async function defaultPosition() {
     plugin.setConfig("position", undefined);
     TaskbarLyricsAPI.position(defaultConfig.position.position, defaultConfig.position.lock);
+}
+
+
+// 修改边距
+async function setMargin() {
+    const config = {
+        "left": document.querySelector("#left").value,
+        "right": document.querySelector("#right").value
+    };
+    plugin.setConfig("margin", config);
+    TaskbarLyricsAPI.margin(config.left, config.right);
+}
+
+async function defaultMargin() {
+    plugin.setConfig("margin", undefined);
+    TaskbarLyricsAPI.margin(defaultConfig.margin.left, defaultConfig.margin.right);
+    document.querySelector("#left").value = defaultConfig.margin.left;
+    document.querySelector("#right").value = defaultConfig.margin.right;
 }
 
 
@@ -209,6 +235,11 @@ async function setConfigs() {
     plugin.getConfig("position", false) && TaskbarLyricsAPI.position(
         plugin.getConfig("position", defaultConfig.position)["position"],
         plugin.getConfig("position", defaultConfig.position)["lock"]
+    );
+
+    plugin.getConfig("margin", false) && TaskbarLyricsAPI.margin(
+        plugin.getConfig("margin", defaultConfig.margin)["left"],
+        plugin.getConfig("margin", defaultConfig.margin)["right"]
     );
 
     plugin.getConfig("align", false) && TaskbarLyricsAPI.align(
@@ -326,12 +357,31 @@ plugin.onConfig(tools => {
         dom("section", {},
             dom("h1", {},
                 dom("strong", { innerText: "修改位置：" }),
-                tools.makeBtn("恢复默认", defaultWindowPosition, true)
+                tools.makeBtn("恢复默认", defaultPosition, true)
             ),
             dom("div", {},
                 dom("span", { innerText: "窗口位置：" }),
-                tools.makeBtn("左", setWindowPosition, true, { value: "left" }),
-                tools.makeBtn("右", setWindowPosition, true, { value: "right" })
+                tools.makeBtn("左", setPosition, true, { value: "left" }),
+                tools.makeBtn("右", setPosition, true, { value: "right" })
+            )
+        ),
+
+        dom("hr", {}),
+
+        // 修改边距
+        dom("section", {},
+            dom("h1", {},
+                dom("strong", { innerText: "修改边距：" }),
+                tools.makeBtn("立即应用", setMargin, true),
+                tools.makeBtn("恢复默认", defaultMargin, true)
+            ),
+            dom("div", {},
+                dom("span", { innerText: "左边距：" }),
+                createInput("margin", "left")
+            ),
+            dom("div", {},
+                dom("span", { innerText: "右边距：" }),
+                createInput("margin", "right")
             )
         ),
 
@@ -428,7 +478,7 @@ async function styleLoader() {
 
 plugin.onLoad(async () => {
     addEventListener("beforeunload", TaskbarLyricsAPI.stop);
-    startTaskbarLyrics()
+    startTaskbarLyrics();
     watchLyricsChange();
     styleLoader();
 });
