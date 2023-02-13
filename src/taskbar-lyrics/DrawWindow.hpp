@@ -50,6 +50,8 @@ class 绘制窗口类
     Color 字体颜色_深色_基本歌词 = Color(255, 255, 255);
     Color 字体颜色_深色_扩展歌词 = Color(255, 255, 255);
 
+    std::string 窗口位置 = "left";
+
     int 左边距 = 0;
     int 右边距 = 0;
 

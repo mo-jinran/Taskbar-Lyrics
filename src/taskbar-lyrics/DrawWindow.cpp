@@ -23,21 +23,45 @@ void 绘制窗口类::更新窗口()
     GetWindowRect(this->开始按钮_句柄, &this->开始按钮_矩形);
     GetWindowRect(this->活动区域_句柄, &this->活动区域_矩形);
 
-    UINT 左, 上, 宽, 高;
+    UINT 左;
+    UINT 上 = 0;
+    UINT 宽;
+    UINT 高 = this->任务栏_矩形.bottom - this->任务栏_矩形.top;
 
-    if (this->居中对齐)
+    if (this->窗口位置 == "left")
     {
-        左 = static_cast<UINT>(this->组件按钮 ? this->DPI(160) : 0) + this->左边距;
-        上 = 0;
-        宽 = this->开始按钮_矩形.left - static_cast<UINT>(this->组件按钮 ? this->DPI(160) : 0) - this->左边距 - this->右边距;
-        高 = this->任务栏_矩形.bottom - this->任务栏_矩形.top;
+        if (this->居中对齐)
+        {
+            左 = static_cast<UINT>(this->组件按钮 ? this->DPI(160) : 0) + this->左边距;
+            宽 = this->开始按钮_矩形.left - static_cast<UINT>(this->组件按钮 ? this->DPI(160) : 0) - this->左边距 - this->右边距;
+        }
+        else
+        {
+            左 = 0 + this->左边距;
+            宽 = this->通知区域_矩形.left - 0 - this->左边距 - this->右边距;
+        }
     }
-    else
+    else if (this->窗口位置 == "center")
     {
-        左 = this->活动区域_矩形.right + this->左边距;
-        上 = 0;
+        UINT center = (this->任务栏_矩形.right - this->任务栏_矩形.left) / 2;
+        UINT lw = this->活动区域_矩形.right - this->开始按钮_矩形.left;
+        UINT rw = this->通知区域_矩形.right - this->通知区域_矩形.left;
+
+        if (lw > rw)
+        {
+            左 = lw + this->左边距;
+            宽 = (center - lw) * 2 - this->左边距 - this->右边距;
+        }
+        else
+        {
+            左 = center - (center - rw) + this->左边距;
+            宽 = (center - rw) * 2 - this->左边距 - this->右边距;
+        }
+    }
+    else if (this->窗口位置 == "right")
+    {
+        左 = this->活动区域_矩形.right + this->左边距;;
         宽 = this->通知区域_矩形.left - this->活动区域_矩形.right - this->左边距 - this->右边距;
-        高 = this->任务栏_矩形.bottom - this->任务栏_矩形.top;
     }
 
     MoveWindow(*this->窗口句柄, 左, 上, 宽, 高, false);

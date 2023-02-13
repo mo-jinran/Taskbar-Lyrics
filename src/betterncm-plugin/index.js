@@ -362,6 +362,7 @@ plugin.onConfig(tools => {
             dom("div", {},
                 dom("span", { innerText: "窗口位置：" }),
                 tools.makeBtn("左", setPosition, true, { value: "left" }),
+                tools.makeBtn("中", setPosition, true, { value: "center" }),
                 tools.makeBtn("右", setPosition, true, { value: "right" })
             )
         ),

@@ -209,14 +209,7 @@ void 网络服务器类::位置(
         this->任务栏窗口->绘制窗口->锁定对齐 = false;
     }
 
-    if (position == std::string("left"))
-    {
-        this->任务栏窗口->绘制窗口->居中对齐 = true;
-    }
-    else if (position == std::string("right"))
-    {
-        this->任务栏窗口->绘制窗口->居中对齐 = false;
-    }
+    this->任务栏窗口->绘制窗口->窗口位置 = position;
 
     this->任务栏窗口->绘制窗口->更新窗口();
     res.status = 200;
