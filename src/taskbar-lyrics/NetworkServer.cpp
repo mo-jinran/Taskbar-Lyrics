@@ -1,5 +1,6 @@
 ﻿#include "NetworkServer.hpp"
 #include "CreateWindow.hpp"
+#include "nlohmann/json.hpp"
 
 
 网络服务器类::网络服务器类(
@@ -25,7 +26,7 @@
 
     for (const auto& route : routes)
     {
-        this->网络服务器.Get(route.path, route.callback);
+        this->网络服务器.Post(route.path, route.callback);
     }
 
     auto 线程函数 = [端口, this] () {
@@ -52,8 +53,9 @@ void 网络服务器类::歌词(
     const httplib::Request& req,
     httplib::Response& res
 ) {
-    auto basic = req.get_param_value("basic");
-    auto extra = req.get_param_value("extra");
+    auto json = nlohmann::json::parse(req.body);
+    auto basic = json["basic"].get<std::string>();
+    auto extra = json["extra"].get<std::string>();
 
     this->任务栏窗口->绘制窗口->基本歌词 = this->字符转换.from_bytes(basic);
     this->任务栏窗口->绘制窗口->扩展歌词 = this->字符转换.from_bytes(extra);
@@ -70,7 +72,8 @@ void 网络服务器类::字体(
     const httplib::Request& req,
     httplib::Response& res
 ) {
-    auto font_family = req.get_param_value("font_family");
+    auto json = nlohmann::json::parse(req.body);
+    auto font_family = json["font_family"].get<std::string>();
 
     HFONT font = CreateFont(
         NULL,
@@ -104,57 +107,58 @@ void 网络服务器类::样式(
     const httplib::Request& req,
     httplib::Response& res
 ) {
-    auto basic = req.get_param_value("basic");
-    auto extra = req.get_param_value("extra");
+    auto json = nlohmann::json::parse(req.body);
+    auto basic = json["basic"].get<std::string>();
+    auto extra = json["extra"].get<std::string>();
 
     // 基本歌词
-    if (basic == std::string("Regular"))
+    if (basic == "Regular")
     {
         this->任务栏窗口->绘制窗口->字体样式_基本歌词 = Gdiplus::FontStyleRegular;
     }
-    else if (basic == std::string("Bold"))
+    else if (basic == "Bold")
     {
         this->任务栏窗口->绘制窗口->字体样式_基本歌词 = Gdiplus::FontStyleBold;
     }
-    else if (basic == std::string("Italic"))
+    else if (basic == "Italic")
     {
         this->任务栏窗口->绘制窗口->字体样式_基本歌词 = Gdiplus::FontStyleItalic;
     }
-    else if (basic == std::string("BoldItalic"))
+    else if (basic == "BoldItalic")
     {
         this->任务栏窗口->绘制窗口->字体样式_基本歌词 = Gdiplus::FontStyleBoldItalic;
     }
-    else if (basic == std::string("Underline"))
+    else if (basic == "Underline")
     {
         this->任务栏窗口->绘制窗口->字体样式_基本歌词 = Gdiplus::FontStyleUnderline;
     }
-    else if (basic == std::string("Strikeout"))
+    else if (basic == "Strikeout")
     {
         this->任务栏窗口->绘制窗口->字体样式_基本歌词 = Gdiplus::FontStyleStrikeout;
     }
 
     // 扩展歌词
-    if (extra == std::string("Regular"))
+    if (extra == "Regular")
     {
         this->任务栏窗口->绘制窗口->字体样式_扩展歌词 = Gdiplus::FontStyleRegular;
     }
-    else if (extra == std::string("Bold"))
+    else if (extra == "Bold")
     {
         this->任务栏窗口->绘制窗口->字体样式_扩展歌词 = Gdiplus::FontStyleBold;
     }
-    else if (extra == std::string("Italic"))
+    else if (extra == "Italic")
     {
         this->任务栏窗口->绘制窗口->字体样式_扩展歌词 = Gdiplus::FontStyleItalic;
     }
-    else if (extra == std::string("BoldItalic"))
+    else if (extra == "BoldItalic")
     {
         this->任务栏窗口->绘制窗口->字体样式_扩展歌词 = Gdiplus::FontStyleBoldItalic;
     }
-    else if (extra == std::string("Underline"))
+    else if (extra =="Underline")
     {
         this->任务栏窗口->绘制窗口->字体样式_扩展歌词 = Gdiplus::FontStyleUnderline;
     }
-    else if (extra == std::string("Strikeout"))
+    else if (extra == "Strikeout")
     {
         this->任务栏窗口->绘制窗口->字体样式_扩展歌词 = Gdiplus::FontStyleStrikeout;
     }
@@ -168,10 +172,11 @@ void 网络服务器类::颜色(
     const httplib::Request& req,
     httplib::Response& res
 ) {
-    auto light_basic = req.get_param_value("light_basic");
-    auto light_extra = req.get_param_value("light_extra");
-    auto dark_basic = req.get_param_value("dark_basic");
-    auto dark_extra = req.get_param_value("dark_extra");
+    auto json = nlohmann::json::parse(req.body);
+    auto light_basic = json["light_basic"].get<std::string>();
+    auto light_extra = json["light_extra"].get<std::string>();
+    auto dark_basic = json["dark_basic"].get<std::string>();
+    auto dark_extra = json["dark_extra"].get<std::string>();
 
     auto 设置颜色 = [&](const std::string& color_str, Gdiplus::Color& color_obj) {
         if (color_str.size() == 6) {
@@ -197,19 +202,20 @@ void 网络服务器类::位置(
     const httplib::Request& req,
     httplib::Response& res
 ) {
-    auto position = req.get_param_value("position");
-    auto lock = req.get_param_value("lock");
+    auto json = nlohmann::json::parse(req.body);
+    auto position = json["position"].get<std::string>();
+    auto lock = json["lock"].get<std::string>();
 
-    if (lock == std::string("true"))
+    this->任务栏窗口->绘制窗口->窗口位置 = position;
+
+    if (lock == "true")
     {
         this->任务栏窗口->绘制窗口->锁定对齐 = true;
     }
-    else if (lock == std::string("false"))
+    else if (lock == "false")
     {
         this->任务栏窗口->绘制窗口->锁定对齐 = false;
     }
-
-    this->任务栏窗口->绘制窗口->窗口位置 = position;
 
     this->任务栏窗口->绘制窗口->更新窗口();
     res.status = 200;
@@ -220,8 +226,9 @@ void 网络服务器类::边距(
     const httplib::Request& req,
     httplib::Response& res
 ) {
-    auto left = req.get_param_value("left");
-    auto right = req.get_param_value("right");
+    auto json = nlohmann::json::parse(req.body);
+    auto left = json["left"].get<std::string>();
+    auto right = json["right"].get<std::string>();
 
     int 左;
     int 右;
@@ -267,33 +274,34 @@ void 网络服务器类::对齐(
     const httplib::Request& req,
     httplib::Response& res
 ) {
-    auto basic = req.get_param_value("basic");
-    auto extra = req.get_param_value("extra");
+    auto json = nlohmann::json::parse(req.body);
+    auto basic = json["basic"].get<std::string>();
+    auto extra = json["extra"].get<std::string>();
 
     // 基本歌词
-    if (basic == std::string("left"))
+    if (basic == "left")
     {
         this->任务栏窗口->绘制窗口->对齐方式_基本歌词 = Gdiplus::StringAlignmentNear;
     }
-    else if (basic == std::string("center"))
+    else if (basic == "center")
     {
         this->任务栏窗口->绘制窗口->对齐方式_基本歌词 = Gdiplus::StringAlignmentCenter;
     }
-    else if (basic == std::string("right"))
+    else if (basic == "right")
     {
         this->任务栏窗口->绘制窗口->对齐方式_基本歌词 = Gdiplus::StringAlignmentFar;
     }
 
     // 扩展歌词
-    if (extra == std::string("left"))
+    if (extra == "left")
     {
         this->任务栏窗口->绘制窗口->对齐方式_扩展歌词 = Gdiplus::StringAlignmentNear;
     }
-    else if (extra == std::string("center"))
+    else if (extra == "center")
     {
         this->任务栏窗口->绘制窗口->对齐方式_扩展歌词 = Gdiplus::StringAlignmentCenter;
     }
-    else if (extra == std::string("right"))
+    else if (extra == "right")
     {
         this->任务栏窗口->绘制窗口->对齐方式_扩展歌词 = Gdiplus::StringAlignmentFar;
     }
@@ -307,7 +315,8 @@ void 网络服务器类::屏幕(
     const httplib::Request& req,
     httplib::Response& res
 ) {
-    auto parent_taskbar = req.get_param_value("parent_taskbar");
+    auto json = nlohmann::json::parse(req.body);
+    auto parent_taskbar = json["parent_taskbar"].get<std::string>();
 
     this->任务栏窗口->绘制窗口->任务栏_句柄 = FindWindow(this->字符转换.from_bytes(parent_taskbar).c_str(), NULL);
     this->任务栏窗口->绘制窗口->开始按钮_句柄 = FindWindowEx(this->任务栏窗口->绘制窗口->任务栏_句柄, NULL, L"Start", NULL);

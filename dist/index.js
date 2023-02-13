@@ -4,44 +4,68 @@
 const TaskbarLyricsPort = BETTERNCM_API_PORT + 2;
 const TaskbarLyricsURL = `http://127.0.0.1:${TaskbarLyricsPort}/taskbar`;
 const TaskbarLyricsAPI = {
-    async lyrics(basic, extra) {
-        const params = `basic=${basic}&extra=${extra}`;
-        return fetch(`${TaskbarLyricsURL}/lyrics?${new URLSearchParams(params)}`);
-    },
-    async font(font_family) {
-        const params = `font_family=${font_family}`;
-        return fetch(`${TaskbarLyricsURL}/font?${new URLSearchParams(params)}`);
-    },
-    async style(basic, extra) {
-        const params = `basic=${basic}&extra=${extra}`;
-        return fetch(`${TaskbarLyricsURL}/style?${new URLSearchParams(params)}`);
-    },
-    async color(light_basic, light_extra, dark_basic, dark_extra) {
-        const params = `light_basic=${light_basic}&light_extra=${light_extra}&dark_basic=${dark_basic}&dark_extra=${dark_extra}`;
-        return fetch(`${TaskbarLyricsURL}/color?${new URLSearchParams(params)}`);
-    },
-    async position(position, lock) {
-        const params = `position=${position}&lock=${lock}`;
-        return fetch(`${TaskbarLyricsURL}/position?${new URLSearchParams(params)}`);
-    },
-    async margin(left, right) {
-        const params = `left=${left}&right=${right}`;
-        return fetch(`${TaskbarLyricsURL}/margin?${new URLSearchParams(params)}`);
-    },
-    async align(basic, extra) {
-        const params = `basic=${basic}&extra=${extra}`;
-        return fetch(`${TaskbarLyricsURL}/align?${new URLSearchParams(params)}`);
-    },
-    async screen(parent_taskbar) {
-        const params = `parent_taskbar=${parent_taskbar}`;
-        return fetch(`${TaskbarLyricsURL}/screen?${new URLSearchParams(params)}`);
-    },
-    async start() {
-        return fetch(`${TaskbarLyricsURL}/start`);
-    },
-    async stop() {
-        return fetch(`${TaskbarLyricsURL}/stop`);
-    }
+    lyrics: params => fetch(`${TaskbarLyricsURL}/lyrics`, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }),
+    font: params => fetch(`${TaskbarLyricsURL}/font`, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }),
+    style: params => fetch(`${TaskbarLyricsURL}/style`, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }),
+    color: params => fetch(`${TaskbarLyricsURL}/color`, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }),
+    position: params => fetch(`${TaskbarLyricsURL}/position`, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }),
+    margin: params => fetch(`${TaskbarLyricsURL}/margin`, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }),
+    align: params => fetch(`${TaskbarLyricsURL}/align`, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }),
+    screen: params => fetch(`${TaskbarLyricsURL}/screen`, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }),
+    start: () => fetch(`${TaskbarLyricsURL}/start`, {
+        method: "POST"
+    }),
+    stop: () => fetch(`${TaskbarLyricsURL}/stop`, {
+        method: "POST"
+    })
 };
 
 
@@ -92,12 +116,12 @@ async function setFontFamily() {
         "font_family": document.querySelector("#font_family").value
     };
     plugin.setConfig("font", config);
-    TaskbarLyricsAPI.font(config.font_family);
+    TaskbarLyricsAPI.font(config);
 }
 
 async function defaultFontFamily() {
     plugin.setConfig("font", undefined);
-    TaskbarLyricsAPI.font(defaultConfig.font.font_family);
+    TaskbarLyricsAPI.font(defaultConfig.font);
     document.querySelector("#font_family").value = defaultConfig.font.font_family;
 }
 
@@ -109,12 +133,12 @@ async function setFontStyle(event) {
         "extra": event.target.value[0] == "extra" ? event.target.value[1] : plugin.getConfig("style", defaultConfig.style)["extra"]
     };
     plugin.setConfig("style", config);
-    TaskbarLyricsAPI.style(config.basic, config.extra);
+    TaskbarLyricsAPI.style(config);
 }
 
 async function defaultFontStyle() {
     plugin.setConfig("style", undefined);
-    TaskbarLyricsAPI.style(defaultConfig.style.basic, defaultConfig.style.extra);
+    TaskbarLyricsAPI.style(defaultConfig.style);
 }
 
 
@@ -127,22 +151,12 @@ async function setFontColor() {
         "dark_extra": document.querySelector("#dark_extra").value
     };
     plugin.setConfig("color", config);
-    TaskbarLyricsAPI.color(
-        config.light_basic,
-        config.light_extra,
-        config.dark_basic,
-        config.dark_extra
-    );
+    TaskbarLyricsAPI.color(config);
 }
 
 async function defaultFontColor() {
     plugin.setConfig("color", undefined);
-    TaskbarLyricsAPI.color(
-        defaultConfig.color.light_basic,
-        defaultConfig.color.light_extra,
-        defaultConfig.color.dark_basic,
-        defaultConfig.color.dark_extra
-    );
+    TaskbarLyricsAPI.color(defaultConfig.color);
     document.querySelector("#light_basic").value = defaultConfig.color.light_basic;
     document.querySelector("#light_extra").value = defaultConfig.color.light_extra;
     document.querySelector("#dark_basic").value = defaultConfig.color.dark_basic;
@@ -157,12 +171,12 @@ async function setPosition(event) {
         "lock": "true"
     };
     plugin.setConfig("position", config);
-    TaskbarLyricsAPI.position(config.position, config.lock);
+    TaskbarLyricsAPI.position(config);
 }
 
 async function defaultPosition() {
     plugin.setConfig("position", undefined);
-    TaskbarLyricsAPI.position(defaultConfig.position.position, defaultConfig.position.lock);
+    TaskbarLyricsAPI.position(defaultConfig.position);
 }
 
 
@@ -173,12 +187,12 @@ async function setMargin() {
         "right": document.querySelector("#right").value
     };
     plugin.setConfig("margin", config);
-    TaskbarLyricsAPI.margin(config.left, config.right);
+    TaskbarLyricsAPI.margin(config);
 }
 
 async function defaultMargin() {
     plugin.setConfig("margin", undefined);
-    TaskbarLyricsAPI.margin(defaultConfig.margin.left, defaultConfig.margin.right);
+    TaskbarLyricsAPI.margin(defaultConfig.margin);
     document.querySelector("#left").value = defaultConfig.margin.left;
     document.querySelector("#right").value = defaultConfig.margin.right;
 }
@@ -191,12 +205,12 @@ async function setTextAlign(event) {
         "extra": event.target.value[0] == "extra" ? event.target.value[1] : plugin.getConfig("align", defaultConfig.align)["extra"],
     };
     plugin.setConfig("align", config);
-    TaskbarLyricsAPI.align(config.basic, config.extra);
+    TaskbarLyricsAPI.align(config);
 }
 
 async function defaultTextAlign() {
     plugin.setConfig("align", undefined);
-    TaskbarLyricsAPI.align(defaultConfig.align.basic, defaultConfig.align.extra);
+    TaskbarLyricsAPI.align(defaultConfig.align);
 }
 
 
@@ -206,49 +220,42 @@ async function setParentTaskbar(event) {
         "parent_taskbar": event.target.value
     };
     plugin.setConfig("screen", config);
-    TaskbarLyricsAPI.screen(config.parent_taskbar);
+    TaskbarLyricsAPI.screen(config);
 }
 
 async function defaultParentTaskbar() {
     plugin.setConfig("screen", undefined);
-    TaskbarLyricsAPI.screen(defaultConfig.screen.parent_taskbar);
+    TaskbarLyricsAPI.screen(defaultConfig.screen);
 }
 
 
 async function setConfigs() {
     plugin.getConfig("font", false) && TaskbarLyricsAPI.font(
-        plugin.getConfig("font", defaultConfig.font)["font_family"]
+        plugin.getConfig("font", defaultConfig.font)
     );
 
     plugin.getConfig("style", false) && TaskbarLyricsAPI.style(
-        plugin.getConfig("style", defaultConfig.style)["basic"],
-        plugin.getConfig("style", defaultConfig.style)["extra"]
+        plugin.getConfig("style", defaultConfig.style)
     );
 
     plugin.getConfig("color", false) && TaskbarLyricsAPI.color(
-        plugin.getConfig("color", defaultConfig.color)["light_basic"],
-        plugin.getConfig("color", defaultConfig.color)["light_extra"],
-        plugin.getConfig("color", defaultConfig.color)["dark_basic"],
-        plugin.getConfig("color", defaultConfig.color)["dark_extra"]
+        plugin.getConfig("color", defaultConfig.color)
     );
 
     plugin.getConfig("position", false) && TaskbarLyricsAPI.position(
-        plugin.getConfig("position", defaultConfig.position)["position"],
-        plugin.getConfig("position", defaultConfig.position)["lock"]
+        plugin.getConfig("position", defaultConfig.position)
     );
 
     plugin.getConfig("margin", false) && TaskbarLyricsAPI.margin(
-        plugin.getConfig("margin", defaultConfig.margin)["left"],
-        plugin.getConfig("margin", defaultConfig.margin)["right"]
+        plugin.getConfig("margin", defaultConfig.margin)
     );
 
     plugin.getConfig("align", false) && TaskbarLyricsAPI.align(
-        plugin.getConfig("align", defaultConfig.align)["basic"],
-        plugin.getConfig("align", defaultConfig.align)["extra"]
+        plugin.getConfig("align", defaultConfig.align)
     );
 
     plugin.getConfig("screen", false) && TaskbarLyricsAPI.screen(
-        plugin.getConfig("screen", defaultConfig.screen)["parent_taskbar"]
+        plugin.getConfig("screen", defaultConfig.screen)
     );
 }
 
@@ -431,17 +438,19 @@ async function watchLyricsChange() {
     const mLyric = await betterncm.utils.waitForElement("#x-g-mn .m-lyric");
     new MutationObserver(mutations => {
         for (const mutation of mutations) {
-            let basic = "";
-            let extra = "";
+            let lyrics = {
+                basic: "",
+                extra: ""
+            };
 
             if (mutation.addedNodes[2]) {
-                basic = mutation.addedNodes[0].firstChild.textContent;
-                extra = mutation.addedNodes[2].firstChild ? mutation.addedNodes[2].firstChild.textContent : "";
+                lyrics.basic = mutation.addedNodes[0].firstChild.textContent;
+                lyrics.extra = mutation.addedNodes[2].firstChild ? mutation.addedNodes[2].firstChild.textContent : "";
             } else {
-                basic = mutation.addedNodes[0].textContent;
+                lyrics.basic = mutation.addedNodes[0].textContent;
             }
 
-            TaskbarLyricsAPI.lyrics(basic, extra);
+            TaskbarLyricsAPI.lyrics(lyrics);
         }
     }).observe(mLyric, { childList: true, subtree: true });
 }

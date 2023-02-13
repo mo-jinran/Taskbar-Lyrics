@@ -6,11 +6,12 @@
 #include <string>
 #include <codecvt>
 
+
 class 网络服务器类
 {
 	private:
 	httplib::Server 网络服务器;
-	class 任务栏窗口类* 任务栏窗口;
+	class 任务栏窗口类* 任务栏窗口 = nullptr;
 	std::thread* 网络服务器_线程 = nullptr;
 
 
