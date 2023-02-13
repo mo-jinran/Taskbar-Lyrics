@@ -263,12 +263,8 @@ async function setConfigs() {
 plugin.onConfig(tools => {
     // 输入框
     const createInput = (key, value, type) => tools.makeInput(
-        null,
-        {
-            id: value,
-            type: type,
-            value: plugin.getConfig(key, defaultConfig[key])[value]
-        }
+        plugin.getConfig(key, defaultConfig[key])[value],
+        { id: value, type: type }
     );
 
     return dom("div", { id: "taskbar-lyrics-dom" },
