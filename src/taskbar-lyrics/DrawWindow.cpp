@@ -23,9 +23,9 @@ void 绘制窗口类::更新窗口()
     GetWindowRect(this->开始按钮_句柄, &this->开始按钮_矩形);
     GetWindowRect(this->活动区域_句柄, &this->活动区域_矩形);
 
-    UINT 左;
+    UINT 左 = 0;
     UINT 上 = 0;
-    UINT 宽;
+    UINT 宽 = 0;
     UINT 高 = this->任务栏_矩形.bottom - this->任务栏_矩形.top;
 
     if (this->窗口位置 == "left")
@@ -141,16 +141,16 @@ void 绘制窗口类::绘制歌词(
     }
     else
     {
-        Font 基本歌词_字体(&字体系列, this->DPI(16), this->字体样式_基本歌词, UnitPixel);
+        Font 基本歌词_字体(&字体系列, this->DPI(15), this->字体样式_基本歌词, UnitPixel);
         字符串格式.SetLineAlignment(StringAlignmentNear);
         字符串格式.SetAlignment(this->对齐方式_基本歌词);
-        RectF 基本歌词_矩形(this->DPI(3), this->DPI(3), rect.right - this->DPI(6), rect.bottom / 2 - this->DPI(3));
+        RectF 基本歌词_矩形(this->DPI(4), this->DPI(4), rect.right - this->DPI(8), rect.bottom / 2 - this->DPI(4));
         graphics.DrawString(this->基本歌词.c_str(), this->基本歌词.size(), &基本歌词_字体, 基本歌词_矩形, &字符串格式, &画笔_基本歌词);
 
-        Font 扩展歌词_字体(&字体系列, this->DPI(16), this->字体样式_扩展歌词, UnitPixel);
+        Font 扩展歌词_字体(&字体系列, this->DPI(15), this->字体样式_扩展歌词, UnitPixel);
         字符串格式.SetLineAlignment(StringAlignmentCenter);
         字符串格式.SetAlignment(this->对齐方式_扩展歌词);
-        RectF 扩展歌词_矩形(this->DPI(3), rect.bottom / 2, rect.right - this->DPI(6), rect.bottom / 2 - this->DPI(3));
+        RectF 扩展歌词_矩形(this->DPI(4), rect.bottom / 2, rect.right - this->DPI(8), rect.bottom / 2 - this->DPI(4));
         graphics.DrawString(this->扩展歌词.c_str(), this->扩展歌词.size(), &扩展歌词_字体, 扩展歌词_矩形, &字符串格式, &画笔_扩展歌词);
 
         #ifdef _DEBUG
