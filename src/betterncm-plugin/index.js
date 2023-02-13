@@ -70,32 +70,32 @@ const TaskbarLyricsAPI = {
 
 
 const defaultConfig = {
-    font: {
+    "font": {
         "font_family": "Microsoft YaHei"
     },
-    style: {
+    "style": {
         "basic": "Regular",
         "extra": "Regular"
     },
-    color: {
-        "light_basic": "000000",
-        "light_extra": "000000",
-        "dark_basic": "FFFFFF",
-        "dark_extra": "FFFFFF"
+    "color": {
+        "light_basic": "#000000",
+        "light_extra": "#000000",
+        "dark_basic": "#FFFFFF",
+        "dark_extra": "#FFFFFF"
     },
-    position: {
+    "position": {
         "position": "left",
-        "lock": "false"
+        "lock": false
     },
-    margin: {
-        "left": "0",
-        "right": "0"
+    "margin": {
+        "left": 0,
+        "right": 0
     },
-    align: {
+    "align": {
         "basic": "left",
         "extra": "left"
     },
-    screen: {
+    "screen": {
         "parent_taskbar": "Shell_TrayWnd"
     }
 };
@@ -168,7 +168,7 @@ async function defaultFontColor() {
 async function setPosition(event) {
     const config = {
         "position": event.target.value,
-        "lock": "true"
+        "lock": true
     };
     plugin.setConfig("position", config);
     TaskbarLyricsAPI.position(config);
@@ -183,8 +183,8 @@ async function defaultPosition() {
 // 修改边距
 async function setMargin() {
     const config = {
-        "left": document.querySelector("#left").value,
-        "right": document.querySelector("#right").value
+        "left": Number(document.querySelector("#left").value),
+        "right": Number(document.querySelector("#right").value)
     };
     plugin.setConfig("margin", config);
     TaskbarLyricsAPI.margin(config);
@@ -262,9 +262,9 @@ async function setConfigs() {
 
 plugin.onConfig(tools => {
     // 输入框
-    const createInput = (key, value) => tools.makeInput(
+    const createInput = (key, value, type) => tools.makeInput(
         plugin.getConfig(key, defaultConfig[key])[value],
-        { id: value }
+        { id: value, type: type }
     );
 
     return dom("div", { id: "taskbar-lyrics-dom" },
@@ -299,7 +299,7 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { innerText: "字体名称：" }),
-                createInput("font", "font_family")
+                createInput("font", "font_family", "text")
             )
         ),
 
@@ -342,19 +342,19 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { innerText: "浅色模式-基本歌词：" }),
-                createInput("color", "light_basic")
+                createInput("color", "light_basic", "color")
             ),
             dom("div", {},
                 dom("span", { innerText: "浅色模式-扩展歌词：" }),
-                createInput("color", "light_extra")
+                createInput("color", "light_extra", "color")
             ),
             dom("div", {},
                 dom("span", { innerText: "深色模式-基本歌词：" }),
-                createInput("color", "dark_basic")
+                createInput("color", "dark_basic", "color")
             ),
             dom("div", {},
                 dom("span", { innerText: "深色模式-扩展歌词：" }),
-                createInput("color", "dark_extra")
+                createInput("color", "dark_extra", "color")
             )
         ),
 
@@ -385,11 +385,11 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { innerText: "左边距：" }),
-                createInput("margin", "left")
+                createInput("margin", "left", "number")
             ),
             dom("div", {},
                 dom("span", { innerText: "右边距：" }),
-                createInput("margin", "right")
+                createInput("margin", "right", "number")
             )
         ),
 
@@ -477,8 +477,12 @@ async function styleLoader() {
         margin: 5px 0;
     }
 
-    #taskbar-lyrics-dom p {
+    #taskbar-lyrics-dom div p {
         margin: 5px 0;
+    }
+
+    #taskbar-lyrics-dom div input[type="color"] {
+        padding: unset;
     }`;
     const style = document.createElement("style");
     style.innerHTML = cssText;

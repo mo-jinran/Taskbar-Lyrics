@@ -179,8 +179,8 @@ void 网络服务器类::颜色(
     auto dark_extra = json["dark_extra"].get<std::string>();
 
     auto 设置颜色 = [&](const std::string& color_str, Gdiplus::Color& color_obj) {
-        if (color_str.size() == 6) {
-            int color_hex = std::stoul(color_str, nullptr, 16);
+        if (color_str.at(0) == '#' && color_str.size() == 7) {
+            int color_hex = std::stoul(color_str.substr(1, 7), nullptr, 16);
             int r = (color_hex & 0xFF0000) >> 16;
             int g = (color_hex & 0x00FF00) >> 8;
             int b = (color_hex & 0x0000FF);
@@ -204,18 +204,10 @@ void 网络服务器类::位置(
 ) {
     auto json = nlohmann::json::parse(req.body);
     auto position = json["position"].get<std::string>();
-    auto lock = json["lock"].get<std::string>();
+    auto lock = json["lock"].get<bool>();
 
     this->任务栏窗口->绘制窗口->窗口位置 = position;
-
-    if (lock == "true")
-    {
-        this->任务栏窗口->绘制窗口->锁定对齐 = true;
-    }
-    else if (lock == "false")
-    {
-        this->任务栏窗口->绘制窗口->锁定对齐 = false;
-    }
+    this->任务栏窗口->绘制窗口->锁定对齐 = lock;
 
     this->任务栏窗口->绘制窗口->更新窗口();
     res.status = 200;
@@ -227,43 +219,11 @@ void 网络服务器类::边距(
     httplib::Response& res
 ) {
     auto json = nlohmann::json::parse(req.body);
-    auto left = json["left"].get<std::string>();
-    auto right = json["right"].get<std::string>();
+    auto left = json["left"].get<int>();
+    auto right = json["right"].get<int>();
 
-    int 左;
-    int 右;
-
-    std::stringstream 字符转换流;
-
-    if (left.at(0) == '-')
-    {
-        字符转换流 << left.substr(1, left.size());
-        字符转换流 >> 左;
-        字符转换流.clear();
-        this->任务栏窗口->绘制窗口->左边距 = (0 - 左);
-    }
-    else
-    {
-        字符转换流 << left;
-        字符转换流 >> 左;
-        字符转换流.clear();
-        this->任务栏窗口->绘制窗口->左边距 = 左;
-    }
-
-    if (right.at(0) == '-')
-    {
-        字符转换流 << right.substr(1, right.size());
-        字符转换流 >> 右;
-        字符转换流.clear();
-        this->任务栏窗口->绘制窗口->右边距 = (0 - 右);
-    }
-    else
-    {
-        字符转换流 << right;
-        字符转换流 >> 右;
-        字符转换流.clear();
-        this->任务栏窗口->绘制窗口->右边距 = 右;
-    }
+    this->任务栏窗口->绘制窗口->左边距 = left;
+    this->任务栏窗口->绘制窗口->右边距 = right;
 
     this->任务栏窗口->绘制窗口->更新窗口();
     res.status = 200;
