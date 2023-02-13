@@ -22,6 +22,7 @@ jobs:
       - name: Install VCPKG Packages
         run: |
           vcpkg install cpp-httplib:x86-windows
+          vcpkg install nlohmann-json:x86-windows
           vcpkg integrate install
 
       - name: Build
