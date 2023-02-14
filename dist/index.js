@@ -67,8 +67,8 @@ const defaultConfig = {
         "lock": false
     },
     "margin": {
-        "left": Number(0),
-        "right": Number(0)
+        "left": 0,
+        "right": 0
     },
     "align": {
         "basic": StringAlignment.StringAlignmentNear,
@@ -355,9 +355,9 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { innerText: "窗口位置：" }),
-                tools.makeBtn("左", setPosition, true, { value: Number(WindowAlignment.WindowAlignmentLeft) }),
-                tools.makeBtn("中", setPosition, true, { value: Number(WindowAlignment.WindowAlignmentCenter) }),
-                tools.makeBtn("右", setPosition, true, { value: Number(WindowAlignment.WindowAlignmentRight) })
+                tools.makeBtn("左", setPosition, true, { value: WindowAlignment.WindowAlignmentLeft }),
+                tools.makeBtn("中", setPosition, true, { value: WindowAlignment.WindowAlignmentCenter }),
+                tools.makeBtn("右", setPosition, true, { value: WindowAlignment.WindowAlignmentRight })
             )
         ),
 
