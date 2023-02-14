@@ -20,7 +20,7 @@
         <ClInclude Include="src\taskbar-lyrics\CreateWindow.hpp">
             <Filter>头文件</Filter>
         </ClInclude>
-        <ClInclude Include="src\taskbar-lyrics\DrawWindow.hpp">
+        <ClInclude Include="src\taskbar-lyrics\RenderWindow.hpp">
             <Filter>头文件</Filter>
         </ClInclude>
         <ClCompile Include="src\taskbar-lyrics\TaskbarLyrics.cpp">
@@ -32,7 +32,7 @@
         <ClCompile Include="src\taskbar-lyrics\CreateWindow.cpp">
             <Filter>源文件</Filter>
         </ClCompile>
-        <ClCompile Include="src\taskbar-lyrics\DrawWindow.cpp">
+        <ClCompile Include="src\taskbar-lyrics\RenderWindow.cpp">
             <Filter>源文件</Filter>
         </ClCompile>
     </ItemGroup>

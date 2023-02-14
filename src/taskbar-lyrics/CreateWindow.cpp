@@ -8,7 +8,7 @@
 ) {
     Gdiplus::GdiplusStartup(&this->gdiplusToken, &this->gdiplusStartupInput, NULL);
 
-    this->绘制窗口 = new 绘制窗口类(&this->窗口句柄);
+    this->呈现窗口 = new 呈现窗口类(&this->窗口句柄);
 
     this->注册窗口(实例句柄);
     this->创建窗口(实例句柄, 显示方法);
@@ -22,8 +22,8 @@
 {
     Gdiplus::GdiplusShutdown(this->gdiplusToken);
 
-    delete this->绘制窗口;
-    this->绘制窗口 = nullptr;
+    delete this->呈现窗口;
+    this->呈现窗口 = nullptr;
 
     this->剩余宽度检测_线程->detach();
     delete this->剩余宽度检测_线程;
@@ -41,7 +41,7 @@ void 任务栏窗口类::注册窗口(
     WNDCLASSEX wcex = {};
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.hInstance = hInstance;
-    wcex.lpfnWndProc = 任务栏窗口类::窗口过程;
+    wcex.lpfnWndProc = this->窗口过程;
     wcex.lpszClassName = this->窗口类名.c_str();
     wcex.style = CS_HREDRAW | CS_VREDRAW;
     wcex.hbrBackground = HBRUSH(GetStockObject(NULL_BRUSH));
@@ -64,10 +64,10 @@ void 任务栏窗口类::创建窗口(
         this->窗口类名.c_str(),
         this->窗口名字.c_str(),
         WS_POPUP | WS_CLIPSIBLINGS,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        0,
+        0,
         NULL,
         NULL,
         实例句柄,
@@ -78,7 +78,7 @@ void 任务栏窗口类::创建窗口(
 
     SetParent(this->窗口句柄, 任务栏_句柄);
     ShowWindow(this->窗口句柄, 显示方法);
-    this->绘制窗口->更新窗口();
+    this->呈现窗口->更新窗口();
 }
 
 
@@ -95,36 +95,36 @@ void 任务栏窗口类::剩余宽度检测()
             RECT 活动区域_矩形;
             RECT 通知区域_矩形;
 
-            GetWindowRect(this->绘制窗口->任务栏_句柄, &任务栏_矩形);
-            GetWindowRect(this->绘制窗口->开始按钮_句柄, &开始按钮_矩形);
-            GetWindowRect(this->绘制窗口->活动区域_句柄, &活动区域_矩形);
-            GetWindowRect(this->绘制窗口->通知区域_句柄, &通知区域_矩形);
+            GetWindowRect(this->呈现窗口->任务栏_句柄, &任务栏_矩形);
+            GetWindowRect(this->呈现窗口->开始按钮_句柄, &开始按钮_矩形);
+            GetWindowRect(this->呈现窗口->活动区域_句柄, &活动区域_矩形);
+            GetWindowRect(this->呈现窗口->通知区域_句柄, &通知区域_矩形);
 
             // 只有不一样才会刷新
-            if (std::memcmp(&this->绘制窗口->任务栏_矩形, &任务栏_矩形, sizeof(RECT)))
+            if (std::memcmp(&this->呈现窗口->任务栏_矩形, &任务栏_矩形, sizeof(RECT)))
             {
-                this->绘制窗口->任务栏_矩形 = 任务栏_矩形;
-                this->绘制窗口->更新窗口();
+                this->呈现窗口->任务栏_矩形 = 任务栏_矩形;
+                this->呈现窗口->更新窗口();
             }
 
-            if (this->绘制窗口->居中对齐)
+            if (this->呈现窗口->居中对齐)
             {
-                if (std::memcmp(&this->绘制窗口->开始按钮_矩形, &开始按钮_矩形, sizeof(RECT)))
+                if (std::memcmp(&this->呈现窗口->开始按钮_矩形, &开始按钮_矩形, sizeof(RECT)))
                 {
-                    this->绘制窗口->开始按钮_矩形 = 开始按钮_矩形;
-                    this->绘制窗口->更新窗口();
+                    this->呈现窗口->开始按钮_矩形 = 开始按钮_矩形;
+                    this->呈现窗口->更新窗口();
                 }
             }
             else
             {
-                if (std::memcmp(&this->绘制窗口->活动区域_矩形, &活动区域_矩形, sizeof(RECT)))
+                if (std::memcmp(&this->呈现窗口->活动区域_矩形, &活动区域_矩形, sizeof(RECT)))
                 {
-                    this->绘制窗口->活动区域_矩形 = 活动区域_矩形;
-                    this->绘制窗口->更新窗口();
+                    this->呈现窗口->活动区域_矩形 = 活动区域_矩形;
+                    this->呈现窗口->更新窗口();
                 }
-                if (std::memcmp(&this->绘制窗口->通知区域_矩形, &通知区域_矩形, sizeof(RECT))) {
-                    this->绘制窗口->通知区域_矩形 = 通知区域_矩形;
-                    this->绘制窗口->更新窗口();
+                if (std::memcmp(&this->呈现窗口->通知区域_矩形, &通知区域_矩形, sizeof(RECT))) {
+                    this->呈现窗口->通知区域_矩形 = 通知区域_矩形;
+                    this->呈现窗口->更新窗口();
                 }
             }
 
@@ -157,7 +157,7 @@ void 任务栏窗口类::监听注册表()
             std::wstring 键 = L"SystemUsesLightTheme";
             if (!读取注册表(路径, 键, 值))
             {
-                this->绘制窗口->深浅模式 = static_cast<bool>(值);
+                this->呈现窗口->深浅模式 = static_cast<bool>(值);
             }
         }
 
@@ -167,9 +167,9 @@ void 任务栏窗口类::监听注册表()
             std::wstring 键 = L"TaskbarAl";
             if (!读取注册表(路径, 键, 值))
             {
-                if (!this->绘制窗口->锁定对齐)
+                if (!this->呈现窗口->锁定对齐)
                 {
-                    this->绘制窗口->居中对齐 = static_cast<bool>(值);
+                    this->呈现窗口->居中对齐 = static_cast<bool>(值);
                 }
             }
         }
@@ -180,11 +180,11 @@ void 任务栏窗口类::监听注册表()
             std::wstring 键 = L"TaskbarDa";
             if (!读取注册表(路径, 键, 值))
             {
-                this->绘制窗口->组件按钮 = static_cast<bool>(值);
+                this->呈现窗口->组件按钮 = static_cast<bool>(值);
             }
         }
 
-        this->绘制窗口->更新窗口();
+        this->呈现窗口->更新窗口();
     };
 
     获取注册表值();

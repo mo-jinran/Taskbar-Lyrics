@@ -14,11 +14,11 @@
     <ClInclude Include="src\taskbar-lyrics\TaskbarLyrics.hpp" />
     <ClInclude Include="src\taskbar-lyrics\NetworkServer.hpp" />
     <ClInclude Include="src\taskbar-lyrics\CreateWindow.hpp" />
-    <ClInclude Include="src\taskbar-lyrics\DrawWindow.hpp" />
+    <ClInclude Include="src\taskbar-lyrics\RenderWindow.hpp" />
     <ClCompile Include="src\taskbar-lyrics\TaskbarLyrics.cpp" />
     <ClCompile Include="src\taskbar-lyrics\NetworkServer.cpp" />
     <ClCompile Include="src\taskbar-lyrics\CreateWindow.cpp" />
-    <ClCompile Include="src\taskbar-lyrics\DrawWindow.cpp" />
+    <ClCompile Include="src\taskbar-lyrics\RenderWindow.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

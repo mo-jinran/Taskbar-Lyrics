@@ -2,70 +2,49 @@
 
 
 const TaskbarLyricsPort = BETTERNCM_API_PORT + 2;
-const TaskbarLyricsURL = `http://127.0.0.1:${TaskbarLyricsPort}/taskbar`;
+const TaskbarLyricsFetch = (path, params) => fetch(
+    `http://127.0.0.1:${TaskbarLyricsPort}/taskbar${path}`,
+    {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }
+);
 const TaskbarLyricsAPI = {
-    lyrics: params => fetch(`${TaskbarLyricsURL}/lyrics`, {
-        method: "POST",
-        body: JSON.stringify(params),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }),
-    font: params => fetch(`${TaskbarLyricsURL}/font`, {
-        method: "POST",
-        body: JSON.stringify(params),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }),
-    style: params => fetch(`${TaskbarLyricsURL}/style`, {
-        method: "POST",
-        body: JSON.stringify(params),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }),
-    color: params => fetch(`${TaskbarLyricsURL}/color`, {
-        method: "POST",
-        body: JSON.stringify(params),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }),
-    position: params => fetch(`${TaskbarLyricsURL}/position`, {
-        method: "POST",
-        body: JSON.stringify(params),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }),
-    margin: params => fetch(`${TaskbarLyricsURL}/margin`, {
-        method: "POST",
-        body: JSON.stringify(params),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }),
-    align: params => fetch(`${TaskbarLyricsURL}/align`, {
-        method: "POST",
-        body: JSON.stringify(params),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }),
-    screen: params => fetch(`${TaskbarLyricsURL}/screen`, {
-        method: "POST",
-        body: JSON.stringify(params),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }),
-    start: () => fetch(`${TaskbarLyricsURL}/start`, {
-        method: "POST"
-    }),
-    stop: () => fetch(`${TaskbarLyricsURL}/stop`, {
-        method: "POST"
-    })
+    lyrics: params => TaskbarLyricsFetch("/lyrics", params),
+    font: params => TaskbarLyricsFetch("/font", params),
+    style: params => TaskbarLyricsFetch("/style", params),
+    color: params => TaskbarLyricsFetch("/color", params),
+    position: params => TaskbarLyricsFetch("/position", params),
+    margin: params => TaskbarLyricsFetch("/margin", params),
+    align: params => TaskbarLyricsFetch("/align", params),
+    screen: params => TaskbarLyricsFetch("/screen", params),
+    start: () => TaskbarLyricsFetch("/start", {}),
+    stop: () => TaskbarLyricsFetch("/stop", {})
+};
+
+
+const FontStyle = {
+    FontStyleRegular: 0,
+    FontStyleBold: 1,
+    FontStyleItalic: 2,
+    FontStyleBoldItalic: 3,
+    FontStyleUnderline: 4,
+    FontStyleStrikeout: 8
+};
+
+const WindowAlignment = {
+    WindowAlignmentLeft: 0,
+    WindowAlignmentCenter: 1,
+    WindowAlignmentRight: 2
+};
+
+const StringAlignment = {
+    StringAlignmentNear: 0,
+    StringAlignmentCenter: 1,
+    StringAlignmentFar: 2
 };
 
 
@@ -74,8 +53,8 @@ const defaultConfig = {
         "font_family": "Microsoft YaHei"
     },
     "style": {
-        "basic": "Regular",
-        "extra": "Regular"
+        "basic": FontStyle.FontStyleRegular,
+        "extra": FontStyle.FontStyleRegular
     },
     "color": {
         "light_basic": "#000000",
@@ -84,16 +63,16 @@ const defaultConfig = {
         "dark_extra": "#FFFFFF"
     },
     "position": {
-        "position": "left",
+        "position": WindowAlignment.WindowAlignmentLeft,
         "lock": false
     },
     "margin": {
-        "left": 0,
-        "right": 0
+        "left": Number(0),
+        "right": Number(0)
     },
     "align": {
-        "basic": "left",
-        "extra": "left"
+        "basic": StringAlignment.StringAlignmentNear,
+        "extra": StringAlignment.StringAlignmentNear
     },
     "screen": {
         "parent_taskbar": "Shell_TrayWnd"
@@ -129,8 +108,12 @@ async function defaultFontFamily() {
 // 字体样式
 async function setFontStyle(event) {
     const config = {
-        "basic": event.target.value[0] == "basic" ? event.target.value[1] : plugin.getConfig("style", defaultConfig.style)["basic"],
-        "extra": event.target.value[0] == "extra" ? event.target.value[1] : plugin.getConfig("style", defaultConfig.style)["extra"]
+        "basic": event.target.value[0] == "basic"
+            ? Number(event.target.value[1])
+            : plugin.getConfig("style", defaultConfig.style)["basic"],
+        "extra": event.target.value[0] == "extra"
+            ? Number(event.target.value[1])
+            : plugin.getConfig("style", defaultConfig.style)["extra"]
     };
     plugin.setConfig("style", config);
     TaskbarLyricsAPI.style(config);
@@ -167,7 +150,7 @@ async function defaultFontColor() {
 // 修改位置
 async function setPosition(event) {
     const config = {
-        "position": event.target.value,
+        "position": Number(event.target.value),
         "lock": true
     };
     plugin.setConfig("position", config);
@@ -201,8 +184,12 @@ async function defaultMargin() {
 // 对齐方式
 async function setTextAlign(event) {
     const config = {
-        "basic": event.target.value[0] == "basic" ? event.target.value[1] : plugin.getConfig("align", defaultConfig.align)["basic"],
-        "extra": event.target.value[0] == "extra" ? event.target.value[1] : plugin.getConfig("align", defaultConfig.align)["extra"],
+        "basic": event.target.value[0] == "basic"
+            ? Number(event.target.value[1])
+            : plugin.getConfig("align", defaultConfig.align)["basic"],
+        "extra": event.target.value[0] == "extra"
+            ? Number(event.target.value[1])
+            : plugin.getConfig("align", defaultConfig.align)["extra"],
     };
     plugin.setConfig("align", config);
     TaskbarLyricsAPI.align(config);
@@ -312,22 +299,22 @@ plugin.onConfig(tools => {
                 tools.makeBtn("恢复默认", defaultFontStyle, true)
             ),
             dom("div", {},
-                dom("span", { innerText: "基本歌词：" }),
-                tools.makeBtn("正常", setFontStyle, true, { value: ["basic", "Regular"] }),
-                tools.makeBtn("粗", setFontStyle, true, { value: ["basic", "Bold"] }),
-                tools.makeBtn("斜", setFontStyle, true, { value: ["basic", "Italic"] }),
-                tools.makeBtn("既粗又斜", setFontStyle, true, { value: ["basic", "BoldItalic"] }),
-                tools.makeBtn("下划线", setFontStyle, true, { value: ["basic", "Underline"] }),
-                tools.makeBtn("删除线", setFontStyle, true, { value: ["basic", "Strikeout"] })
+                dom("span", { innerText: "主歌词：" }),
+                tools.makeBtn("正常", setFontStyle, true, { value: ["basic", FontStyle.FontStyleRegular] }),
+                tools.makeBtn("粗", setFontStyle, true, { value: ["basic", FontStyle.FontStyleBold] }),
+                tools.makeBtn("斜", setFontStyle, true, { value: ["basic", FontStyle.FontStyleItalic] }),
+                tools.makeBtn("既粗又斜", setFontStyle, true, { value: ["basic", FontStyle.FontStyleBoldItalic] }),
+                tools.makeBtn("下划线", setFontStyle, true, { value: ["basic", FontStyle.FontStyleUnderline] }),
+                tools.makeBtn("删除线", setFontStyle, true, { value: ["basic", FontStyle.FontStyleStrikeout] })
             ),
             dom("div", {},
-                dom("span", { innerText: "扩展歌词：" }),
-                tools.makeBtn("正常", setFontStyle, true, { value: ["extra", "Regular"] }),
-                tools.makeBtn("粗", setFontStyle, true, { value: ["extra", "Bold"] }),
-                tools.makeBtn("斜", setFontStyle, true, { value: ["extra", "Italic"] }),
-                tools.makeBtn("既粗又斜", setFontStyle, true, { value: ["extra", "BoldItalic"] }),
-                tools.makeBtn("下划线", setFontStyle, true, { value: ["extra", "Underline"] }),
-                tools.makeBtn("删除线", setFontStyle, true, { value: ["extra", "Strikeout"] })
+                dom("span", { innerText: "副歌词：" }),
+                tools.makeBtn("正常", setFontStyle, true, { value: ["extra", FontStyle.FontStyleRegular] }),
+                tools.makeBtn("粗", setFontStyle, true, { value: ["extra", FontStyle.FontStyleBold] }),
+                tools.makeBtn("斜", setFontStyle, true, { value: ["extra", FontStyle.FontStyleItalic] }),
+                tools.makeBtn("既粗又斜", setFontStyle, true, { value: ["extra", FontStyle.FontStyleBoldItalic] }),
+                tools.makeBtn("下划线", setFontStyle, true, { value: ["extra", FontStyle.FontStyleUnderline] }),
+                tools.makeBtn("删除线", setFontStyle, true, { value: ["extra", FontStyle.FontStyleStrikeout] })
             )
         ),
 
@@ -341,19 +328,19 @@ plugin.onConfig(tools => {
                 tools.makeBtn("恢复默认", defaultFontColor, true)
             ),
             dom("div", {},
-                dom("span", { innerText: "浅色模式-基本歌词：" }),
+                dom("span", { innerText: "浅色模式-主歌词：" }),
                 createInput("color", "light_basic", "color")
             ),
             dom("div", {},
-                dom("span", { innerText: "浅色模式-扩展歌词：" }),
+                dom("span", { innerText: "浅色模式-副歌词：" }),
                 createInput("color", "light_extra", "color")
             ),
             dom("div", {},
-                dom("span", { innerText: "深色模式-基本歌词：" }),
+                dom("span", { innerText: "深色模式-主歌词：" }),
                 createInput("color", "dark_basic", "color")
             ),
             dom("div", {},
-                dom("span", { innerText: "深色模式-扩展歌词：" }),
+                dom("span", { innerText: "深色模式-副歌词：" }),
                 createInput("color", "dark_extra", "color")
             )
         ),
@@ -368,9 +355,9 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { innerText: "窗口位置：" }),
-                tools.makeBtn("左", setPosition, true, { value: "left" }),
-                tools.makeBtn("中", setPosition, true, { value: "center" }),
-                tools.makeBtn("右", setPosition, true, { value: "right" })
+                tools.makeBtn("左", setPosition, true, { value: Number(WindowAlignment.WindowAlignmentLeft) }),
+                tools.makeBtn("中", setPosition, true, { value: Number(WindowAlignment.WindowAlignmentCenter) }),
+                tools.makeBtn("右", setPosition, true, { value: Number(WindowAlignment.WindowAlignmentRight) })
             )
         ),
 
@@ -402,16 +389,16 @@ plugin.onConfig(tools => {
                 tools.makeBtn("恢复默认", defaultTextAlign, true)
             ),
             dom("div", {},
-                dom("span", { innerText: "基本歌词：" }),
-                tools.makeBtn("左", setTextAlign, true, { value: ["basic", "left"] }),
-                tools.makeBtn("中", setTextAlign, true, { value: ["basic", "center"] }),
-                tools.makeBtn("右", setTextAlign, true, { value: ["basic", "right"] })
+                dom("span", { innerText: "主歌词：" }),
+                tools.makeBtn("左", setTextAlign, true, { value: ["basic", StringAlignment.StringAlignmentNear] }),
+                tools.makeBtn("中", setTextAlign, true, { value: ["basic", StringAlignment.StringAlignmentCenter] }),
+                tools.makeBtn("右", setTextAlign, true, { value: ["basic", StringAlignment.StringAlignmentFar] })
             ),
             dom("div", {},
-                dom("span", { innerText: "扩展歌词：" }),
-                tools.makeBtn("左", setTextAlign, true, { value: ["extra", "left"] }),
-                tools.makeBtn("中", setTextAlign, true, { value: ["extra", "center"] }),
-                tools.makeBtn("右", setTextAlign, true, { value: ["extra", "right"] })
+                dom("span", { innerText: "副歌词：" }),
+                tools.makeBtn("左", setTextAlign, true, { value: ["extra", StringAlignment.StringAlignmentNear] }),
+                tools.makeBtn("中", setTextAlign, true, { value: ["extra", StringAlignment.StringAlignmentCenter] }),
+                tools.makeBtn("右", setTextAlign, true, { value: ["extra", StringAlignment.StringAlignmentFar] })
             )
         ),
 

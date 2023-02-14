@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "httplib.h"
-#include <vector>
 #include <thread>
 #include <string>
 #include <codecvt>
@@ -35,10 +34,4 @@ class 网络服务器类
 	void 屏幕(const httplib::Request&, httplib::Response&);
 	void 开始(const httplib::Request&, httplib::Response&);
 	void 停止(const httplib::Request&, httplib::Response&);
-};
-
-
-struct Route {
-	std::string path;
-	std::function<void(const httplib::Request&, httplib::Response&)> callback;
 };

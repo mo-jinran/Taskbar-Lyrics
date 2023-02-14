@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "DrawWindow.hpp"
+#include "RenderWindow.hpp"
 #include <Windows.h>
 #include <gdiplus.h>
 #include <string>
@@ -10,7 +10,7 @@
 class 任务栏窗口类
 {
     public:
-    绘制窗口类* 绘制窗口;
+    呈现窗口类* 呈现窗口;
 
 
     public:
