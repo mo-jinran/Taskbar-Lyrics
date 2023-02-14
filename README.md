@@ -4,7 +4,7 @@ BetterNCM插件，在任务栏上嵌入歌词，理论上支持Windows 11所有�
 
 编译需安装以下库：
 
-`pp-httplib:x86-windows`
+`cpp-httplib:x86-windows`
 
 `lohmann-json:x86-windows`
 
