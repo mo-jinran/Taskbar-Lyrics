@@ -150,7 +150,7 @@ async function defaultFontColor() {
 // 修改位置
 async function setPosition(event) {
     const config = {
-        "position": Number(event.target.value),
+        "position": Number(event.target.value) || 0,
         "lock": true
     };
     plugin.setConfig("position", config);
