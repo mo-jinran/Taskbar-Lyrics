@@ -14,6 +14,12 @@
         "Main": [
             {
                 "file": "index.js"
+            },
+            {
+                "file": "func.js"
+            },
+            {
+                "file": "view.js"
             }
         ]
     }

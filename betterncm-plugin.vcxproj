@@ -98,9 +98,7 @@ copy src\betterncm-plugin\preview.png dist_debug</Command>
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>copy src\betterncm-plugin\index.js dist
-copy src\betterncm-plugin\manifest.json dist
-copy src\betterncm-plugin\preview.png dist</Command>
+      <Command>copy src\betterncm-plugin\* dist</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
