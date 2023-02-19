@@ -15,7 +15,6 @@ const TaskbarLyricsFetch = (path, params) => fetch(
 const TaskbarLyricsAPI = {
     lyrics: params => TaskbarLyricsFetch("/lyrics", params),
     font: params => TaskbarLyricsFetch("/font", params),
-    style: params => TaskbarLyricsFetch("/style", params),
     color: params => TaskbarLyricsFetch("/color", params),
     position: params => TaskbarLyricsFetch("/position", params),
     margin: params => TaskbarLyricsFetch("/margin", params),
@@ -26,25 +25,18 @@ const TaskbarLyricsAPI = {
 };
 
 
-const FontStyle = {
-    FontStyleRegular: 0,
-    FontStyleBold: 1,
-    FontStyleItalic: 2,
-    FontStyleBoldItalic: 3,
-    FontStyleUnderline: 4,
-    FontStyleStrikeout: 8
-};
-
+// 对应Windows的枚举
 const WindowAlignment = {
     WindowAlignmentLeft: 0,
     WindowAlignmentCenter: 1,
     WindowAlignmentRight: 2
 };
 
-const StringAlignment = {
-    StringAlignmentNear: 0,
-    StringAlignmentCenter: 1,
-    StringAlignmentFar: 2
+const DWRITE_TEXT_ALIGNMENT = {
+    DWRITE_TEXT_ALIGNMENT_LEADING: 0,
+    DWRITE_TEXT_ALIGNMENT_TRAILING: 1,
+    DWRITE_TEXT_ALIGNMENT_CENTER: 2,
+    DWRITE_TEXT_ALIGNMENT_JUSTIFIED: 3
 };
 
 
@@ -52,15 +44,27 @@ const defaultConfig = {
     "font": {
         "font_family": "Microsoft YaHei"
     },
-    "style": {
-        "basic": FontStyle.FontStyleRegular,
-        "extra": FontStyle.FontStyleRegular
-    },
     "color": {
-        "light_basic": "#000000",
-        "light_extra": "#000000",
-        "dark_basic": "#FFFFFF",
-        "dark_extra": "#FFFFFF"
+        "basic": {
+            "light": {
+                "hex_color": 0x000000,
+                "opacity": 1.0
+            },
+            "dark": {
+                "hex_color": 0xFFFFFF,
+                "opacity": 1.0
+            }
+        },
+        "extra": {
+            "light": {
+                "hex_color": 0x000000,
+                "opacity": 1.0
+            },
+            "dark": {
+                "hex_color": 0xFFFFFF,
+                "opacity": 1.0
+            }
+        }
     },
     "position": {
         "position": WindowAlignment.WindowAlignmentLeft,
@@ -71,8 +75,8 @@ const defaultConfig = {
         "right": 0
     },
     "align": {
-        "basic": StringAlignment.StringAlignmentNear,
-        "extra": StringAlignment.StringAlignmentNear
+        "basic": DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING,
+        "extra": DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING
     },
     "screen": {
         "parent_taskbar": "Shell_TrayWnd"
@@ -105,45 +109,50 @@ async function defaultFontFamily() {
 }
 
 
-// 字体样式
-async function setFontStyle(event) {
-    const config = {
-        "basic": event.target.value[0] == "basic"
-            ? Number(event.target.value[1])
-            : plugin.getConfig("style", defaultConfig.style)["basic"],
-        "extra": event.target.value[0] == "extra"
-            ? Number(event.target.value[1])
-            : plugin.getConfig("style", defaultConfig.style)["extra"]
-    };
-    plugin.setConfig("style", config);
-    TaskbarLyricsAPI.style(config);
-}
-
-async function defaultFontStyle() {
-    plugin.setConfig("style", undefined);
-    TaskbarLyricsAPI.style(defaultConfig.style);
-}
-
-
 // 字体颜色
 async function setFontColor() {
+    const basic_light_color = document.querySelector("#basic_light_color");
+    const basic_dark_color = document.querySelector("#basic_dark_color");
+    const extra_light_color = document.querySelector("#extra_light_color");
+    const extra_dark_color = document.querySelector("#extra_dark_color");
+
     const config = {
-        "light_basic": document.querySelector("#light_basic").value,
-        "light_extra": document.querySelector("#light_extra").value,
-        "dark_basic": document.querySelector("#dark_basic").value,
-        "dark_extra": document.querySelector("#dark_extra").value
+        "basic": {
+            "light": {
+                "hex_color": parseInt(basic_light_color.value.slice(1), 16),
+                "opacity": 1.0
+            },
+            "dark": {
+                "hex_color": parseInt(basic_dark_color.value.slice(1), 16),
+                "opacity": 1.0
+            }
+        },
+        "extra": {
+            "light": {
+                "hex_color": parseInt(extra_light_color.value.slice(1), 16),
+                "opacity": 1.0
+            },
+            "dark": {
+                "hex_color": parseInt(extra_dark_color.value.slice(1), 16),
+                "opacity": 1.0
+            }
+        }
     };
     plugin.setConfig("color", config);
     TaskbarLyricsAPI.color(config);
 }
 
 async function defaultFontColor() {
+    const basic_light_color = document.querySelector("#basic_light_color");
+    const basic_dark_color = document.querySelector("#basic_dark_color");
+    const extra_light_color = document.querySelector("#extra_light_color");
+    const extra_dark_color = document.querySelector("#extra_dark_color");
+    basic_light_color.value = `#${defaultConfig.color.basic.light.hex_color.toString(16)}`;
+    basic_dark_color.value = `#${defaultConfig.color.basic.dark.hex_color.toString(16)}`;
+    extra_light_color.value = `#${defaultConfig.color.extra.light.hex_color.toString(16)}`;
+    extra_dark_color.value = `#${defaultConfig.color.extra.dark.hex_color.toString(16)}`;
     plugin.setConfig("color", undefined);
     TaskbarLyricsAPI.color(defaultConfig.color);
-    document.querySelector("#light_basic").value = defaultConfig.color.light_basic;
-    document.querySelector("#light_extra").value = defaultConfig.color.light_extra;
-    document.querySelector("#dark_basic").value = defaultConfig.color.dark_basic;
-    document.querySelector("#dark_extra").value = defaultConfig.color.dark_extra;
 }
 
 
@@ -221,10 +230,6 @@ async function setConfigs() {
         plugin.getConfig("font", defaultConfig.font)
     );
 
-    plugin.getConfig("style", false) && TaskbarLyricsAPI.style(
-        plugin.getConfig("style", defaultConfig.style)
-    );
-
     plugin.getConfig("color", false) && TaskbarLyricsAPI.color(
         plugin.getConfig("color", defaultConfig.color)
     );
@@ -292,34 +297,6 @@ plugin.onConfig(tools => {
 
         dom("hr", {}),
 
-        // 字体样式
-        dom("section", {},
-            dom("h1", {},
-                dom("strong", { innerText: "字体样式：" }),
-                tools.makeBtn("恢复默认", defaultFontStyle, true)
-            ),
-            dom("div", {},
-                dom("span", { innerText: "主歌词：" }),
-                tools.makeBtn("正常", setFontStyle, true, { value: ["basic", FontStyle.FontStyleRegular] }),
-                tools.makeBtn("粗", setFontStyle, true, { value: ["basic", FontStyle.FontStyleBold] }),
-                tools.makeBtn("斜", setFontStyle, true, { value: ["basic", FontStyle.FontStyleItalic] }),
-                tools.makeBtn("既粗又斜", setFontStyle, true, { value: ["basic", FontStyle.FontStyleBoldItalic] }),
-                tools.makeBtn("下划线", setFontStyle, true, { value: ["basic", FontStyle.FontStyleUnderline] }),
-                tools.makeBtn("删除线", setFontStyle, true, { value: ["basic", FontStyle.FontStyleStrikeout] })
-            ),
-            dom("div", {},
-                dom("span", { innerText: "副歌词：" }),
-                tools.makeBtn("正常", setFontStyle, true, { value: ["extra", FontStyle.FontStyleRegular] }),
-                tools.makeBtn("粗", setFontStyle, true, { value: ["extra", FontStyle.FontStyleBold] }),
-                tools.makeBtn("斜", setFontStyle, true, { value: ["extra", FontStyle.FontStyleItalic] }),
-                tools.makeBtn("既粗又斜", setFontStyle, true, { value: ["extra", FontStyle.FontStyleBoldItalic] }),
-                tools.makeBtn("下划线", setFontStyle, true, { value: ["extra", FontStyle.FontStyleUnderline] }),
-                tools.makeBtn("删除线", setFontStyle, true, { value: ["extra", FontStyle.FontStyleStrikeout] })
-            )
-        ),
-
-        dom("hr", {}),
-
         // 字体颜色
         dom("section", {},
             dom("h1", {},
@@ -328,20 +305,20 @@ plugin.onConfig(tools => {
                 tools.makeBtn("恢复默认", defaultFontColor, true)
             ),
             dom("div", {},
-                dom("span", { innerText: "浅色模式-主歌词：" }),
-                createInput("color", "light_basic", "color")
+                dom("span", { innerText: "主歌词-浅色模式：" }),
+                createInput("color", "basic_light_color", "color")
             ),
             dom("div", {},
-                dom("span", { innerText: "浅色模式-副歌词：" }),
-                createInput("color", "light_extra", "color")
+                dom("span", { innerText: "主歌词-深色模式" }),
+                createInput("color", "basic_dark_color", "color")
             ),
             dom("div", {},
-                dom("span", { innerText: "深色模式-主歌词：" }),
-                createInput("color", "dark_basic", "color")
+                dom("span", { innerText: "副歌词-浅色模式：" }),
+                createInput("color", "extra_light_color", "color")
             ),
             dom("div", {},
-                dom("span", { innerText: "深色模式-副歌词：" }),
-                createInput("color", "dark_extra", "color")
+                dom("span", { innerText: "副歌词-深色模式：" }),
+                createInput("color", "extra_dark_color", "color")
             )
         ),
 
@@ -390,15 +367,15 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { innerText: "主歌词：" }),
-                tools.makeBtn("左", setTextAlign, true, { value: ["basic", StringAlignment.StringAlignmentNear] }),
-                tools.makeBtn("中", setTextAlign, true, { value: ["basic", StringAlignment.StringAlignmentCenter] }),
-                tools.makeBtn("右", setTextAlign, true, { value: ["basic", StringAlignment.StringAlignmentFar] })
+                tools.makeBtn("左", setTextAlign, true, { value: ["basic", DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING] }),
+                tools.makeBtn("中", setTextAlign, true, { value: ["basic", DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_CENTER] }),
+                tools.makeBtn("右", setTextAlign, true, { value: ["basic", DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_TRAILING] })
             ),
             dom("div", {},
                 dom("span", { innerText: "副歌词：" }),
-                tools.makeBtn("左", setTextAlign, true, { value: ["extra", StringAlignment.StringAlignmentNear] }),
-                tools.makeBtn("中", setTextAlign, true, { value: ["extra", StringAlignment.StringAlignmentCenter] }),
-                tools.makeBtn("右", setTextAlign, true, { value: ["extra", StringAlignment.StringAlignmentFar] })
+                tools.makeBtn("左", setTextAlign, true, { value: ["extra", DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING] }),
+                tools.makeBtn("中", setTextAlign, true, { value: ["extra", DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_CENTER] }),
+                tools.makeBtn("右", setTextAlign, true, { value: ["extra", DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_TRAILING] })
             )
         ),
 

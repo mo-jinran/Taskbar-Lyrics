@@ -1,6 +1,7 @@
 ﻿#include "RenderWindow.hpp"
 
-#pragma comment (lib, "Gdiplus.lib")
+#pragma comment (lib, "d2d1.lib")
+#pragma comment (lib, "dwrite.lib")
 
 
 呈现窗口类::呈现窗口类(
@@ -13,6 +14,53 @@
     this->开始按钮_句柄 = FindWindowEx(this->任务栏_句柄, NULL, L"Start", NULL);
     HWND 最小化区域_句柄 = FindWindowEx(this->任务栏_句柄, NULL, L"ReBarWindow32", NULL);
     this->活动区域_句柄 = FindWindowEx(最小化区域_句柄, NULL, L"MSTaskSwWClass", NULL);
+
+    // 创建D2D工厂
+    D2D1CreateFactory(
+        D2D1_FACTORY_TYPE_SINGLE_THREADED,
+        &this->D2D工厂
+    );
+
+    D2D1_RENDER_TARGET_PROPERTIES renderTargetProperties = D2D1::RenderTargetProperties();
+    renderTargetProperties.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    renderTargetProperties.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
+
+    // 创建DC渲染目标
+    this->D2D工厂->CreateDCRenderTarget(
+        &renderTargetProperties,
+        &this->D2D呈现目标
+    );
+
+    // 主歌词笔刷
+    this->D2D呈现目标->CreateSolidColorBrush(
+        D2D1::ColorF(0x000000, 1),
+        &this->D2D纯色笔刷
+    );
+
+    // 创建DWrite工厂
+    DWriteCreateFactory(
+        DWRITE_FACTORY_TYPE_SHARED,
+        __uuidof(IDWriteFactory),
+        reinterpret_cast<IUnknown**>(&this->DWrite工厂)
+    );
+}
+
+
+呈现窗口类::~呈现窗口类()
+{
+    this->D2D工厂->Release();
+    this->D2D工厂 = nullptr;
+
+    this->D2D呈现目标->Release();
+    this->D2D呈现目标 = nullptr;
+
+    this->D2D纯色笔刷->Release();
+    this->D2D纯色笔刷 = nullptr;
+
+    this->DWrite工厂->Release();
+    this->DWrite工厂 = nullptr;
+
+    this->窗口句柄 = nullptr;
 }
 
 
@@ -82,20 +130,23 @@ void 呈现窗口类::绘制窗口(
     long 上,
     long 宽,
     long 高
-)
-{
+) {
+    RECT rect = {};
+    GetClientRect(*this->窗口句柄, &rect);
+
     HDC hdc = GetDC(*this->窗口句柄);
     HDC memDC = CreateCompatibleDC(hdc);
     HBITMAP memBitmap = CreateCompatibleBitmap(hdc, 宽, 高);
     HBITMAP oldBitmap = HBITMAP(SelectObject(memDC, memBitmap));
 
-    this->绘制歌词(memDC);
+    this->绘制歌词(memDC, rect);
 
-    BLENDFUNCTION blend;
-    blend.SourceConstantAlpha = 255;
-    blend.AlphaFormat = AC_SRC_ALPHA;
-    blend.BlendOp = AC_SRC_OVER;
-    blend.BlendFlags = 0;
+    BLENDFUNCTION blend = {
+        AC_SRC_OVER,
+        0,
+        255,
+        AC_SRC_ALPHA
+    };
 
     POINT 目标位置 = { 左, 上 };
     SIZE 大小 = { 宽, 高 };
@@ -111,90 +162,149 @@ void 呈现窗口类::绘制窗口(
 
 
 void 呈现窗口类::绘制歌词(
-    HDC &hdc
+    HDC& hdc,
+    RECT& rect
 ) {
-    RECT rect;
-    GetClientRect(*this->窗口句柄, &rect);
-
-    Gdiplus::Graphics 图形(hdc);
-    Gdiplus::FontFamily 字体家族(this->字体名称.c_str());
-    Gdiplus::StringFormat 字符串格式(Gdiplus::StringFormatFlagsNoWrap);
-    Gdiplus::SolidBrush 画笔_主歌词(this->深浅模式 ? this->字体颜色_浅色_主歌词 : this->字体颜色_深色_主歌词);
-    Gdiplus::SolidBrush 画笔_副歌词(this->深浅模式 ? this->字体颜色_浅色_副歌词 : this->字体颜色_深色_副歌词);
-
-    图形.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAliasGridFit);
+    this->D2D呈现目标->BindDC(hdc, &rect);
+    this->D2D呈现目标->BeginDraw();
 
     if (this->副歌词.empty())
     {
-        Gdiplus::Font 主歌词_字体(&字体家族, this->DPI(20), this->字体样式_主歌词, Gdiplus::UnitPixel);
-        字符串格式.SetLineAlignment(Gdiplus::StringAlignmentCenter);
-        字符串格式.SetAlignment(this->对齐方式_主歌词);
-        // 矩形大小
-        Gdiplus::RectF 主歌词_矩形(
-            this->DPI(10),
-            this->DPI(10),
-            rect.right - this->DPI(20),
-            rect.bottom - this->DPI(20)
+        // 设置主歌词文本颜色
+        this->D2D纯色笔刷->SetColor(this->深浅模式 ? this->字体颜色_浅色_主歌词 : this->字体颜色_深色_主歌词);
+
+        // 创建文字格式
+        this->DWrite工厂->CreateTextFormat(
+            this->字体名称.c_str(),
+            nullptr,
+            DWRITE_FONT_WEIGHT_NORMAL,
+            DWRITE_FONT_STYLE_NORMAL,
+            DWRITE_FONT_STRETCH_NORMAL,
+            this->DPI(20),
+            L"zh-CN",
+            &this->DWrite主歌词文本格式
         );
-        // 绘制文字
-        图形.DrawString(
+
+        this->DWrite主歌词文本格式->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        this->DWrite主歌词文本格式->SetTextAlignment(this->对齐方式_主歌词);
+
+        // 创建文字布局
+        this->DWrite工厂->CreateTextLayout(
             this->主歌词.c_str(),
             this->主歌词.size(),
-            &主歌词_字体,
-            主歌词_矩形,
-            &字符串格式,
-            &画笔_主歌词
+            this->DWrite主歌词文本格式,
+            (float) (rect.right - rect.left),
+            (float) (rect.bottom - rect.top),
+            &this->DWrite主歌词文本布局
         );
+
+        //绘制文字显示
+        this->D2D呈现目标->DrawTextLayout(
+            D2D1::Point2F(this->DPI(10), this->DPI(10)),
+            this->DWrite主歌词文本布局,
+            this->D2D纯色笔刷,
+            D2D1_DRAW_TEXT_OPTIONS_NO_SNAP
+        );
+
+        this->DWrite主歌词文本格式->Release();
+        this->DWrite主歌词文本格式 = nullptr;
+        this->DWrite主歌词文本布局->Release();
+        this->DWrite主歌词文本布局 = nullptr;
     }
     else
     {
-        Gdiplus::Font 主歌词_字体(&字体家族, this->DPI(15), this->字体样式_主歌词, Gdiplus::UnitPixel);
-        字符串格式.SetLineAlignment(Gdiplus::StringAlignmentNear);
-        字符串格式.SetAlignment(this->对齐方式_主歌词);
-        // 矩形大小
-        Gdiplus::RectF 主歌词_矩形(
-            this->DPI(4),
-            this->DPI(4),
-            static_cast<Gdiplus::REAL>(rect.right - this->DPI(8)),
-            static_cast<Gdiplus::REAL>(rect.bottom / 2 - this->DPI(4))
-        );
-        // 绘制文字
-        图形.DrawString(
-            this->主歌词.c_str(),
-            this->主歌词.size(),
-            &主歌词_字体,
-            主歌词_矩形,
-            &字符串格式,
-            &画笔_主歌词
+        // 设置主歌词文本颜色
+        this->D2D纯色笔刷->SetColor(this->深浅模式 ? this->字体颜色_浅色_主歌词 : this->字体颜色_深色_主歌词);
+
+        // 创建文字格式
+        this->DWrite工厂->CreateTextFormat(
+            this->字体名称.c_str(),
+            nullptr,
+            DWRITE_FONT_WEIGHT_NORMAL,
+            DWRITE_FONT_STYLE_NORMAL,
+            DWRITE_FONT_STRETCH_NORMAL,
+            this->DPI(15),
+            L"zh-CN",
+            &this->DWrite主歌词文本格式
         );
 
-        Gdiplus::Font 副歌词_字体(&字体家族, this->DPI(15), this->字体样式_副歌词, Gdiplus::UnitPixel);
-        字符串格式.SetLineAlignment(Gdiplus::StringAlignmentCenter);
-        字符串格式.SetAlignment(this->对齐方式_副歌词);
-        // 矩形大小
-        Gdiplus::RectF 副歌词_矩形(
-            this->DPI(4),
-            static_cast<Gdiplus::REAL>(rect.bottom / 2),
-            static_cast<Gdiplus::REAL>(rect.right - this->DPI(8)),
-            static_cast<Gdiplus::REAL>(rect.bottom / 2 - this->DPI(4))
+        this->DWrite主歌词文本格式->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        this->DWrite主歌词文本格式->SetTextAlignment(this->对齐方式_主歌词);
+
+        // 创建文字布局
+        this->DWrite工厂->CreateTextLayout(
+            this->主歌词.c_str(),
+            this->主歌词.size(),
+            this->DWrite主歌词文本格式,
+            (float) (rect.right - rect.left),
+            (float) (rect.bottom - rect.top),
+            &this->DWrite主歌词文本布局
         );
-        // 绘制文字
-        图形.DrawString(
+
+        //绘制文字显示
+        this->D2D呈现目标->DrawTextLayout(
+            D2D1::Point2F(this->DPI(5), this->DPI(5)),
+            this->DWrite主歌词文本布局,
+            this->D2D纯色笔刷,
+            D2D1_DRAW_TEXT_OPTIONS_NO_SNAP
+        );
+
+        /******************************************/
+
+        // 设置副歌词文本颜色
+        this->D2D纯色笔刷->SetColor(this->深浅模式 ? this->字体颜色_浅色_副歌词 : this->字体颜色_深色_副歌词);
+
+        // 创建文字格式
+        this->DWrite工厂->CreateTextFormat(
+            this->字体名称.c_str(),
+            nullptr,
+            DWRITE_FONT_WEIGHT_NORMAL,
+            DWRITE_FONT_STYLE_NORMAL,
+            DWRITE_FONT_STRETCH_NORMAL,
+            this->DPI(15),
+            L"zh-CN",
+            &this->DWrite副歌词文本格式
+        );
+
+        this->DWrite副歌词文本格式->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        this->DWrite副歌词文本格式->SetTextAlignment(this->对齐方式_副歌词);
+
+        // 创建文字布局
+        this->DWrite工厂->CreateTextLayout(
             this->副歌词.c_str(),
             this->副歌词.size(),
-            &副歌词_字体,
-            副歌词_矩形,
-            &字符串格式,
-            &画笔_副歌词
+            this->DWrite副歌词文本格式,
+            (float) (rect.right - rect.left),
+            (float) (rect.bottom - rect.top),
+            &this->DWrite副歌词文本布局
         );
+
+        //绘制文字显示
+        this->D2D呈现目标->DrawTextLayout(
+            D2D1::Point2F(this->DPI(5), (float) (rect.bottom - rect.top) / 2),
+            this->DWrite副歌词文本布局,
+            this->D2D纯色笔刷,
+            D2D1_DRAW_TEXT_OPTIONS_NO_SNAP
+        );
+
+        this->DWrite主歌词文本格式->Release();
+        this->DWrite主歌词文本格式 = nullptr;
+        this->DWrite主歌词文本布局->Release();
+        this->DWrite主歌词文本布局 = nullptr;
+        this->DWrite副歌词文本格式->Release();
+        this->DWrite副歌词文本格式 = nullptr;
+        this->DWrite副歌词文本布局->Release();
+        this->DWrite副歌词文本布局 = nullptr;
     }
+
+    this->D2D呈现目标->EndDraw();
 }
 
 
-Gdiplus::REAL 呈现窗口类::DPI(
+float 呈现窗口类::DPI(
     UINT 像素大小
 ) {
     auto 屏幕DPI = GetDpiForWindow(*this->窗口句柄);
-    auto 新像素大小 = static_cast<Gdiplus::REAL>(像素大小 * 屏幕DPI / 96);
+    auto 新像素大小 = static_cast<float>(像素大小 * 屏幕DPI / 96);
     return 新像素大小;
 }

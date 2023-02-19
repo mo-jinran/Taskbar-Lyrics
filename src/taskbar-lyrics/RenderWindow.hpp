@@ -1,7 +1,8 @@
 ﻿#pragma once
 
 #include <Windows.h>
-#include <gdiplus.h>
+#include <d2d1_3.h>
+#include <dwrite_3.h>
 #include <string>
 
 
@@ -16,7 +17,7 @@ enum WindowAlignment
 class 呈现窗口类
 {
     private:
-    HWND *窗口句柄;
+    HWND *窗口句柄 = nullptr;
 
 
     public:
@@ -33,34 +34,44 @@ class 呈现窗口类
 
     public:
     呈现窗口类(HWND*);
+    ~呈现窗口类();
+
+
+    private:
+    ID2D1Factory* D2D工厂 = nullptr;
+    ID2D1DCRenderTarget* D2D呈现目标 = nullptr;
+    ID2D1SolidColorBrush* D2D纯色笔刷 = nullptr;
+
+    IDWriteFactory* DWrite工厂 = nullptr;
+    IDWriteTextFormat* DWrite主歌词文本格式 = nullptr;
+    IDWriteTextLayout* DWrite主歌词文本布局 = nullptr;
+    IDWriteTextFormat* DWrite副歌词文本格式 = nullptr;
+    IDWriteTextLayout* DWrite副歌词文本布局 = nullptr;
 
 
     public:
-    bool 深浅模式 = true;
-    bool 组件按钮 = true;
+    bool 深浅模式 = false;
+    bool 组件按钮 = false;
     bool 居中对齐 = true;
     bool 锁定对齐 = false;
 
     std::wstring 主歌词 = L"桌面歌词启动成功";
-    std::wstring 副歌词 = L"等待插件端连接";
+    std::wstring 副歌词 = L"等待插件端连接...";
 
     std::wstring 字体名称 = L"Microsoft YaHei";
 
-    Gdiplus::FontStyle 字体样式_主歌词 = Gdiplus::FontStyleRegular;
-    Gdiplus::FontStyle 字体样式_副歌词 = Gdiplus::FontStyleRegular;
-
-    Gdiplus::Color 字体颜色_浅色_主歌词 = Gdiplus::Color(0, 0, 0);
-    Gdiplus::Color 字体颜色_浅色_副歌词 = Gdiplus::Color(0, 0, 0);
-    Gdiplus::Color 字体颜色_深色_主歌词 = Gdiplus::Color(255, 255, 255);
-    Gdiplus::Color 字体颜色_深色_副歌词 = Gdiplus::Color(255, 255, 255);
+    D2D1::ColorF 字体颜色_浅色_主歌词 = D2D1::ColorF(0x000000, 1);
+    D2D1::ColorF 字体颜色_浅色_副歌词 = D2D1::ColorF(0x000000, 1);
+    D2D1::ColorF 字体颜色_深色_主歌词 = D2D1::ColorF(0xFFFFFF, 1);
+    D2D1::ColorF 字体颜色_深色_副歌词 = D2D1::ColorF(0xFFFFFF, 1);
 
     WindowAlignment 窗口位置 = WindowAlignment::WindowAlignmentLeft;
 
     int 左边距 = 0;
     int 右边距 = 0;
 
-    Gdiplus::StringAlignment 对齐方式_主歌词 = Gdiplus::StringAlignmentNear;
-    Gdiplus::StringAlignment 对齐方式_副歌词 = Gdiplus::StringAlignmentNear;
+    DWRITE_TEXT_ALIGNMENT 对齐方式_主歌词 = DWRITE_TEXT_ALIGNMENT::DWRITE_TEXT_ALIGNMENT_LEADING;
+    DWRITE_TEXT_ALIGNMENT 对齐方式_副歌词 = DWRITE_TEXT_ALIGNMENT::DWRITE_TEXT_ALIGNMENT_LEADING;
 
 
 	public:
@@ -69,9 +80,9 @@ class 呈现窗口类
 
     private:
 	void 绘制窗口(long, long, long, long);
-    void 绘制歌词(HDC&);
+    void 绘制歌词(HDC&, RECT&);
 
 
     private:
-    Gdiplus::REAL DPI(UINT);
+    float DPI(UINT);
 };

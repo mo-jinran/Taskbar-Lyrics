@@ -1,13 +1,14 @@
 ﻿#include "CreateWindow.hpp"
-#include <iostream>
+
+
+任务栏窗口类* 任务栏窗口类::任务栏窗口 = nullptr;
 
 
 任务栏窗口类::任务栏窗口类(
     HINSTANCE   实例句柄,
     int         显示方法
 ) {
-    Gdiplus::GdiplusStartup(&this->gdiplusToken, &this->gdiplusStartupInput, NULL);
-
+    this->任务栏窗口 = this;
     this->呈现窗口 = new 呈现窗口类(&this->窗口句柄);
 
     this->注册窗口(实例句柄);
@@ -20,8 +21,6 @@
 
 任务栏窗口类::~任务栏窗口类()
 {
-    Gdiplus::GdiplusShutdown(this->gdiplusToken);
-
     delete this->呈现窗口;
     this->呈现窗口 = nullptr;
 
@@ -59,8 +58,9 @@ void 任务栏窗口类::创建窗口(
     HINSTANCE   实例句柄,
     int         显示方法
 ) {
+    HWND 任务栏_句柄 = FindWindow(L"Shell_TrayWnd", NULL);
     this->窗口句柄 = CreateWindowEx(
-        WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW,
+        WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_TOPMOST,
         this->窗口类名.c_str(),
         this->窗口名字.c_str(),
         WS_POPUP | WS_CLIPSIBLINGS,
@@ -68,17 +68,15 @@ void 任务栏窗口类::创建窗口(
         CW_USEDEFAULT,
         0,
         0,
-        NULL,
+        任务栏_句柄,
         NULL,
         实例句柄,
         NULL
     );
 
-    HWND 任务栏_句柄 = FindWindow(L"Shell_TrayWnd", NULL);
-
     SetParent(this->窗口句柄, 任务栏_句柄);
     ShowWindow(this->窗口句柄, 显示方法);
-    this->呈现窗口->更新窗口();
+    PostMessage(this->窗口句柄, WM_PAINT, NULL, NULL);
 }
 
 
@@ -104,7 +102,7 @@ void 任务栏窗口类::剩余宽度检测()
             if (std::memcmp(&this->呈现窗口->任务栏_矩形, &任务栏_矩形, sizeof(RECT)))
             {
                 this->呈现窗口->任务栏_矩形 = 任务栏_矩形;
-                this->呈现窗口->更新窗口();
+                PostMessage(this->窗口句柄, WM_PAINT, NULL, NULL);
             }
 
             if (this->呈现窗口->居中对齐)
@@ -112,7 +110,7 @@ void 任务栏窗口类::剩余宽度检测()
                 if (std::memcmp(&this->呈现窗口->开始按钮_矩形, &开始按钮_矩形, sizeof(RECT)))
                 {
                     this->呈现窗口->开始按钮_矩形 = 开始按钮_矩形;
-                    this->呈现窗口->更新窗口();
+                    PostMessage(this->窗口句柄, WM_PAINT, NULL, NULL);
                 }
             }
             else
@@ -120,11 +118,11 @@ void 任务栏窗口类::剩余宽度检测()
                 if (std::memcmp(&this->呈现窗口->活动区域_矩形, &活动区域_矩形, sizeof(RECT)))
                 {
                     this->呈现窗口->活动区域_矩形 = 活动区域_矩形;
-                    this->呈现窗口->更新窗口();
+                    PostMessage(this->窗口句柄, WM_PAINT, NULL, NULL);
                 }
                 if (std::memcmp(&this->呈现窗口->通知区域_矩形, &通知区域_矩形, sizeof(RECT))) {
                     this->呈现窗口->通知区域_矩形 = 通知区域_矩形;
-                    this->呈现窗口->更新窗口();
+                    PostMessage(this->窗口句柄, WM_PAINT, NULL, NULL);
                 }
             }
 
@@ -184,7 +182,7 @@ void 任务栏窗口类::监听注册表()
             }
         }
 
-        this->呈现窗口->更新窗口();
+        PostMessage(this->窗口句柄, WM_PAINT, NULL, NULL);
     };
 
     获取注册表值();
@@ -223,6 +221,12 @@ LRESULT CALLBACK 任务栏窗口类::窗口过程(
 ) {
     switch (消息)
     {
+        case WM_PAINT:
+        {
+            任务栏窗口类::任务栏窗口->呈现窗口->更新窗口();
+        };
+        break;
+
         case WM_ERASEBKGND:
         {
             return 0;

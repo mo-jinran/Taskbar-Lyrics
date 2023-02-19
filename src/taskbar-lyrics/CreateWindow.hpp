@@ -2,15 +2,18 @@
 
 #include "RenderWindow.hpp"
 #include <Windows.h>
-#include <gdiplus.h>
 #include <string>
 #include <thread>
 
 
 class 任务栏窗口类
 {
+    private:
+    static 任务栏窗口类* 任务栏窗口;
+
+
     public:
-    呈现窗口类* 呈现窗口;
+    呈现窗口类* 呈现窗口 = nullptr;
 
 
     public:
@@ -26,11 +29,6 @@ class 任务栏窗口类
     HKEY 注册表句柄;
     std::thread* 监听注册表_线程 = nullptr;
     void 监听注册表();
-
-
-    private:
-    ULONG_PTR gdiplusToken;
-    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 
 
     private:
