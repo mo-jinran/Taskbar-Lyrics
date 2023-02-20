@@ -112,7 +112,6 @@ void 网络服务器类::位置(
     auto json = nlohmann::json::parse(req.body);
 
     this->任务栏窗口->呈现窗口->窗口位置 = json["position"].get<WindowAlignment>();
-    this->任务栏窗口->呈现窗口->锁定对齐 = json["lock"].get<bool>();
 
     PostMessage(this->任务栏窗口->窗口句柄, WM_PAINT, NULL, NULL);
     res.status = 200;

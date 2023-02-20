@@ -85,10 +85,9 @@ plugin.onLoad(async () => {
 
     // 修改位置
     const position = {
-        set: () => {
+        set: event => {
             const config = {
-                "position": Number(event.target.value) || 0,
-                "lock": true
+                "position": Number(event.target.value) || 0
             };
             plugin.setConfig("position", config);
             TaskbarLyricsAPI.position(config);
@@ -121,7 +120,7 @@ plugin.onLoad(async () => {
 
     // 对齐方式
     const textAlign = {
-        set: () => {
+        set: event => {
             const config = {
                 "basic": event.target.value[0] == "basic"
                     ? Number(event.target.value[1])
@@ -142,7 +141,7 @@ plugin.onLoad(async () => {
 
     // 切换屏幕
     const parentTaskbar = {
-        set: () => {
+        set: event => {
             const config = {
                 "parent_taskbar": event.target.value
             };

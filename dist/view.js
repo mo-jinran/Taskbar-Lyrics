@@ -21,12 +21,8 @@ plugin.onConfig(tools => {
     ] = [...this.func];
 
 
-    // 输入框
-    const createInput = (key, value, type) => tools.makeInput(
-        plugin.getConfig(key, defaultConfig[key])[value],
-        { id: value, type: type }
-    );
-
+    // dom函数被文档标注为弃用
+    // 考虑以后换成其他方式
     return dom("div", { id: "taskbar-lyrics-dom" },
         // 歌词设置
         dom("section", {},
@@ -59,7 +55,10 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { innerText: "字体名称：" }),
-                createInput("font", "font_family", "text")
+                tools.makeInput(
+                    plugin.getConfig("font", defaultConfig["font"])["font_family"],
+                    { id: "font_family", type: "text" }
+                )
             )
         ),
 
@@ -74,19 +73,31 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { innerText: "主歌词-浅色模式：" }),
-                createInput("color", "basic_light_color", "color")
+                tools.makeInput(
+                    `#${plugin.getConfig("color", defaultConfig["color"])["basic"]["light"]["hex_color"].toString(16)}`,
+                    { id: "basic_light_color", type: "color" }
+                )
             ),
             dom("div", {},
                 dom("span", { innerText: "主歌词-深色模式" }),
-                createInput("color", "basic_dark_color", "color")
+                tools.makeInput(
+                    `#${plugin.getConfig("color", defaultConfig["color"])["basic"]["dark"]["hex_color"].toString(16)}`,
+                    { id: "basic_dark_color", type: "color" }
+                )
             ),
             dom("div", {},
                 dom("span", { innerText: "副歌词-浅色模式：" }),
-                createInput("color", "extra_light_color", "color")
+                tools.makeInput(
+                    `#${plugin.getConfig("color", defaultConfig["color"])["extra"]["light"]["hex_color"].toString(16)}`,
+                    { id: "extra_light_color", type: "color" }
+                )
             ),
             dom("div", {},
                 dom("span", { innerText: "副歌词-深色模式：" }),
-                createInput("color", "extra_dark_color", "color")
+                tools.makeInput(
+                    `#${plugin.getConfig("color", defaultConfig["color"])["extra"]["dark"]["hex_color"].toString(16)}`,
+                    { id: "extra_dark_color", type: "color" }
+                )
             )
         ),
 
@@ -117,11 +128,17 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { innerText: "左边距：" }),
-                createInput("margin", "left", "number")
+                tools.makeInput(
+                    `${plugin.getConfig("margin", defaultConfig["margin"])["left"]}`,
+                    { id: "left", type: "number" }
+                )
             ),
             dom("div", {},
                 dom("span", { innerText: "右边距：" }),
-                createInput("margin", "right", "number")
+                tools.makeInput(
+                    `${plugin.getConfig("margin", defaultConfig["margin"])["right"]}`,
+                    { id: "right", type: "number" }
+                )
             )
         ),
 

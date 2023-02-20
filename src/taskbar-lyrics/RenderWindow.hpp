@@ -53,7 +53,6 @@ class 呈现窗口类
     bool 深浅模式 = false;
     bool 组件按钮 = false;
     bool 居中对齐 = true;
-    bool 锁定对齐 = false;
 
     std::wstring 主歌词 = L"桌面歌词启动成功";
     std::wstring 副歌词 = L"等待插件端连接...";

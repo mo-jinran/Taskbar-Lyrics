@@ -165,10 +165,7 @@ void 任务栏窗口类::监听注册表()
             std::wstring 键 = L"TaskbarAl";
             if (!读取注册表(路径, 键, 值))
             {
-                if (!this->呈现窗口->锁定对齐)
-                {
-                    this->呈现窗口->居中对齐 = static_cast<bool>(值);
-                }
+                this->呈现窗口->居中对齐 = static_cast<bool>(值);
             }
         }
 
