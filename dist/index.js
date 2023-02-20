@@ -1,6 +1,7 @@
 "use strict";
 
 
+let observer = null;
 const TaskbarLyricsPort = BETTERNCM_API_PORT + 2;
 const TaskbarLyricsFetch = (path, params) => fetch(
     `http://127.0.0.1:${TaskbarLyricsPort}/taskbar${path}`,
@@ -114,13 +115,22 @@ async function startTaskbarLyrics() {
     plugin.getConfig("screen", false) && TaskbarLyricsAPI.screen(
         plugin.getConfig("screen", defaultConfig.screen)
     );
+
+    watchLyricsChange();
+}
+
+
+// 关闭歌词
+async function stopTaskbarLyrics() {
+    TaskbarLyricsAPI.stop();
+    stopWatchingLyrics();
 }
 
 
 // 监视软件内歌词变动
 async function watchLyricsChange() {
     const mLyric = await betterncm.utils.waitForElement("#x-g-mn .m-lyric");
-    new MutationObserver(mutations => {
+    observer = new MutationObserver(mutations => {
         for (const mutation of mutations) {
             let lyrics = {
                 basic: "",
@@ -136,7 +146,15 @@ async function watchLyricsChange() {
 
             TaskbarLyricsAPI.lyrics(lyrics);
         }
-    }).observe(mLyric, { childList: true, subtree: true });
+    });
+    observer.observe(mLyric, { childList: true, subtree: true });
+}
+
+async function stopWatchingLyrics() {
+    if (observer) {
+        observer.disconnect();
+        observer = null;
+    }
 }
 
 
@@ -145,10 +163,10 @@ plugin.onLoad(async () => {
         TaskbarLyricsAPI,
         WindowsEnum,
         defaultConfig,
-        startTaskbarLyrics
+        startTaskbarLyrics,
+        stopTaskbarLyrics
     ];
 
-    addEventListener("beforeunload", TaskbarLyricsAPI.stop);
+    addEventListener("beforeunload", stopTaskbarLyrics);
     startTaskbarLyrics();
-    watchLyricsChange();
 });

@@ -6,7 +6,8 @@ plugin.onConfig(tools => {
         TaskbarLyricsAPI,
         WindowsEnum,
         defaultConfig,
-        startTaskbarLyrics
+        startTaskbarLyrics,
+        stopTaskbarLyrics
     ] = [...this.index];
 
     const [

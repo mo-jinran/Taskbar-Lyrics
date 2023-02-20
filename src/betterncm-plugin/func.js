@@ -6,14 +6,15 @@ plugin.onLoad(async () => {
         TaskbarLyricsAPI,
         WindowsEnum,
         defaultConfig,
-        startTaskbarLyrics
+        startTaskbarLyrics,
+        stopTaskbarLyrics
     ] = [...this.index];
 
 
     // 歌词开关
     const mainSwitch = {
         on: startTaskbarLyrics,
-        off: TaskbarLyricsAPI.stop
+        off: stopTaskbarLyrics
     }
 
 
