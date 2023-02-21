@@ -11,11 +11,52 @@ plugin.onLoad(async () => {
     ] = [...this.index];
 
 
-    // 歌词开关
-    const mainSwitch = {
-        on: startTaskbarLyrics,
-        off: stopTaskbarLyrics
+    // 配置界面加载完成
+    const onload = () => {
+        console.log("Taskbar-Lyrics配置界面加载完成");
+
+        const basic_weight_select_value = document.querySelector("#basic_weight_select_value");
+        const basic_weight_select_box = document.querySelector("#basic_weight_select_box");
+        const extra_weight_select_value = document.querySelector("#extra_weight_select_value");
+        const extra_weight_select_box = document.querySelector("#extra_weight_select_box");
+
+        basic_weight_select_value.textContent = plugin.getConfig("style", defaultConfig["style"])["basic"]["weight"];
+        extra_weight_select_value.textContent = plugin.getConfig("style", defaultConfig["style"])["extra"]["weight"];
+
+        basic_weight_select_value.addEventListener("click", event => {
+            const open = event.target.parentElement.classList.contains("z-open");
+            if (open) {
+                event.target.parentElement.classList.remove("z-open");
+            } else {
+                event.target.parentElement.classList.add("z-open");
+            }
+        });
+        extra_weight_select_value.addEventListener("click", event => {
+            const open = event.target.parentElement.classList.contains("z-open");
+            if (open) {
+                event.target.parentElement.classList.remove("z-open");
+            } else {
+                event.target.parentElement.classList.add("z-open");
+            }
+        });
+
+        basic_weight_select_box.addEventListener("click", event => {
+            const name = event.target.parentElement.parentElement.parentElement.name;
+            const value = event.target.value;
+            fontStyle.setWeight(name, value);
+            basic_weight_select_value.textContent = event.target.value;
+        });
+        extra_weight_select_box.addEventListener("click", event => {
+            const name = event.target.parentElement.parentElement.parentElement.name;
+            const value = event.target.value;
+            fontStyle.setWeight(name, value);
+            extra_weight_select_value.textContent = event.target.value;
+        });
     }
+
+
+    // 歌词开关
+    const masterSwitch = event => event.target.checked ? startTaskbarLyrics() : stopTaskbarLyrics();
 
 
     // 更换字体
@@ -42,26 +83,30 @@ plugin.onLoad(async () => {
             const basic_dark_color = document.querySelector("#basic_dark_color");
             const extra_light_color = document.querySelector("#extra_light_color");
             const extra_dark_color = document.querySelector("#extra_dark_color");
+            const basic_light_opacity = document.querySelector("#basic_light_opacity");
+            const basic_dark_opacity = document.querySelector("#basic_dark_opacity");
+            const extra_light_opacity = document.querySelector("#extra_light_opacity");
+            const extra_dark_opacity = document.querySelector("#extra_dark_opacity");
 
             const config = {
                 "basic": {
                     "light": {
                         "hex_color": parseInt(basic_light_color.value.slice(1), 16),
-                        "opacity": 1.0
+                        "opacity": Number(basic_light_opacity.value)
                     },
                     "dark": {
                         "hex_color": parseInt(basic_dark_color.value.slice(1), 16),
-                        "opacity": 1.0
+                        "opacity": Number(basic_dark_opacity.value)
                     }
                 },
                 "extra": {
                     "light": {
                         "hex_color": parseInt(extra_light_color.value.slice(1), 16),
-                        "opacity": 1.0
+                        "opacity": Number(extra_light_opacity.value)
                     },
                     "dark": {
                         "hex_color": parseInt(extra_dark_color.value.slice(1), 16),
-                        "opacity": 1.0
+                        "opacity": Number(extra_dark_opacity.value)
                     }
                 }
             };
@@ -73,12 +118,75 @@ plugin.onLoad(async () => {
             const basic_dark_color = document.querySelector("#basic_dark_color");
             const extra_light_color = document.querySelector("#extra_light_color");
             const extra_dark_color = document.querySelector("#extra_dark_color");
+            const basic_light_opacity = document.querySelector("#basic_light_opacity");
+            const basic_dark_opacity = document.querySelector("#basic_dark_opacity");
+            const extra_light_opacity = document.querySelector("#extra_light_opacity");
+            const extra_dark_opacity = document.querySelector("#extra_dark_opacity");
             basic_light_color.value = `#${defaultConfig.color.basic.light.hex_color.toString(16)}`;
             basic_dark_color.value = `#${defaultConfig.color.basic.dark.hex_color.toString(16)}`;
             extra_light_color.value = `#${defaultConfig.color.extra.light.hex_color.toString(16)}`;
             extra_dark_color.value = `#${defaultConfig.color.extra.dark.hex_color.toString(16)}`;
+            basic_light_opacity.value = defaultConfig.color.basic.light.opacity;
+            basic_dark_opacity.value = defaultConfig.color.basic.dark.opacity;
+            extra_light_opacity.value = defaultConfig.color.extra.light.opacity;
+            extra_dark_opacity.value = defaultConfig.color.extra.dark.opacity;
             plugin.setConfig("color", undefined);
             TaskbarLyricsAPI.color(defaultConfig.color);
+        }
+    }
+
+
+    // 字体样式
+    const fontStyle = {
+        get config() {
+            return {
+                "basic": {
+                    "weight": plugin.getConfig("style", defaultConfig.style)["basic"]["weight"],
+                    "slope": plugin.getConfig("style", defaultConfig.style)["basic"]["slope"],
+                    "underline": plugin.getConfig("style", defaultConfig.style)["basic"]["underline"],
+                    "strikethrough": plugin.getConfig("style", defaultConfig.style)["basic"]["strikethrough"]
+                },
+                "extra": {
+                    "weight": plugin.getConfig("style", defaultConfig.style)["extra"]["weight"],
+                    "slope": plugin.getConfig("style", defaultConfig.style)["extra"]["slope"],
+                    "underline": plugin.getConfig("style", defaultConfig.style)["extra"]["underline"],
+                    "strikethrough": plugin.getConfig("style", defaultConfig.style)["extra"]["strikethrough"]
+                }
+            }
+        },
+        setWeight: (name, value) => {
+            const config = { ...fontStyle.config };
+            config[name].weight = Number(value);
+            plugin.setConfig("style", config);
+            TaskbarLyricsAPI.style(config);
+        },
+        setSlope: event => {
+            const config = { ...fontStyle.config };
+            config[event.target.name].slope = event.target.value || 0;
+            plugin.setConfig("style", config);
+            TaskbarLyricsAPI.style(config);
+        },
+        setUnderline: event => {
+            const config = { ...fontStyle.config };
+            config[event.target.name].underline = event.target.checked;
+            plugin.setConfig("style", config);
+            TaskbarLyricsAPI.style(config);
+        },
+        setStrikethrough: event => {
+            const config = { ...fontStyle.config };
+            config[event.target.name].strikethrough = event.target.checked;
+            plugin.setConfig("style", config);
+            TaskbarLyricsAPI.style(config);
+        },
+        default: () => {
+            plugin.setConfig("style", undefined);
+            TaskbarLyricsAPI.style(defaultConfig.style);
+            document.querySelector("#basic_weight_select_value").textContent = defaultConfig["style"]["basic"]["weight"];
+            document.querySelector("#basic_underline_checkbox").textContent = defaultConfig["style"]["basic"]["underline"];
+            document.querySelector("#basic_strikethrough_checkbox").checked = defaultConfig["style"]["basic"]["strikethrough"];
+            document.querySelector("#extra_weight_select_value").checked = defaultConfig["style"]["extra"]["weight"];
+            document.querySelector("#extra_underline_checkbox").checked = defaultConfig["style"]["extra"]["underline"];
+            document.querySelector("#extra_strikethrough_checkbox").checked = defaultConfig["style"]["extra"]["strikethrough"];
         }
     }
 
@@ -156,9 +264,11 @@ plugin.onLoad(async () => {
 
 
     this.func = [
-        mainSwitch,
+        onload,
+        masterSwitch,
         fontFamily,
         fontColor,
+        fontStyle,
         position,
         margin,
         textAlign,

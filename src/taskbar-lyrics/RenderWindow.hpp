@@ -64,6 +64,16 @@ class 呈现窗口类
     D2D1::ColorF 字体颜色_深色_主歌词 = D2D1::ColorF(0xFFFFFF, 1);
     D2D1::ColorF 字体颜色_深色_副歌词 = D2D1::ColorF(0xFFFFFF, 1);
 
+    DWRITE_FONT_WEIGHT 字体样式_主歌词_字重 = DWRITE_FONT_WEIGHT_NORMAL;
+    DWRITE_FONT_WEIGHT 字体样式_副歌词_字重 = DWRITE_FONT_WEIGHT_NORMAL;
+    DWRITE_FONT_STYLE 字体样式_主歌词_斜体 = DWRITE_FONT_STYLE_NORMAL;
+    DWRITE_FONT_STYLE 字体样式_副歌词_斜体 = DWRITE_FONT_STYLE_NORMAL;
+    bool 字体样式_主歌词_下划线 = false;
+    bool 字体样式_副歌词_下划线 = false;
+    bool 字体样式_主歌词_删除线 = false;
+    bool 字体样式_副歌词_删除线 = false;
+
+
     WindowAlignment 窗口位置 = WindowAlignment::WindowAlignmentLeft;
 
     int 左边距 = 0;

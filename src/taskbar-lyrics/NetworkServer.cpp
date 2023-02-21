@@ -19,6 +19,7 @@
         this->网络服务器.Post("/taskbar/lyrics", handler(&网络服务器类::歌词));
         this->网络服务器.Post("/taskbar/font", handler(&网络服务器类::字体));
         this->网络服务器.Post("/taskbar/color", handler(&网络服务器类::颜色));
+        this->网络服务器.Post("/taskbar/style", handler(&网络服务器类::样式));
         this->网络服务器.Post("/taskbar/position", handler(&网络服务器类::位置));
         this->网络服务器.Post("/taskbar/margin", handler(&网络服务器类::边距));
         this->网络服务器.Post("/taskbar/align", handler(&网络服务器类::对齐));
@@ -100,6 +101,26 @@ void 网络服务器类::颜色(
         json["extra"]["dark"]["opacity"].get<float>()
     );
 
+    PostMessage(this->任务栏窗口->窗口句柄, WM_PAINT, NULL, NULL);
+    res.status = 200;
+}
+
+
+void 网络服务器类::样式(
+    const httplib::Request& req,
+    httplib::Response& res
+) {
+    auto json = nlohmann::json::parse(req.body);
+
+    this->任务栏窗口->呈现窗口->字体样式_主歌词_字重 = json["basic"]["weight"].get<DWRITE_FONT_WEIGHT>();
+    this->任务栏窗口->呈现窗口->字体样式_主歌词_斜体 = json["basic"]["slope"].get<DWRITE_FONT_STYLE>();
+    this->任务栏窗口->呈现窗口->字体样式_主歌词_下划线 = json["basic"]["underline"].get<bool>();
+    this->任务栏窗口->呈现窗口->字体样式_主歌词_删除线 = json["basic"]["strikethrough"].get<bool>();
+    this->任务栏窗口->呈现窗口->字体样式_副歌词_字重 = json["extra"]["weight"].get<DWRITE_FONT_WEIGHT>();
+    this->任务栏窗口->呈现窗口->字体样式_副歌词_斜体 = json["extra"]["slope"].get<DWRITE_FONT_STYLE>();
+    this->任务栏窗口->呈现窗口->字体样式_副歌词_下划线 = json["extra"]["underline"].get<bool>();
+    this->任务栏窗口->呈现窗口->字体样式_副歌词_删除线 = json["extra"]["strikethrough"].get<bool>();
+    
     PostMessage(this->任务栏窗口->窗口句柄, WM_PAINT, NULL, NULL);
     res.status = 200;
 }

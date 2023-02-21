@@ -27,6 +27,7 @@ class 网络服务器类
 	void 歌词(const httplib::Request&, httplib::Response&);
 	void 字体(const httplib::Request&, httplib::Response&);
 	void 颜色(const httplib::Request&, httplib::Response&);
+	void 样式(const httplib::Request&, httplib::Response&);
 	void 位置(const httplib::Request&, httplib::Response&);
 	void 边距(const httplib::Request&, httplib::Response&);
 	void 对齐(const httplib::Request&, httplib::Response&);

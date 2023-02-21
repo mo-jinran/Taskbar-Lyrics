@@ -170,23 +170,17 @@ void 呈现窗口类::绘制歌词(
 
     if (this->副歌词.empty())
     {
-        // 设置主歌词文本颜色
-        this->D2D纯色笔刷->SetColor(this->深浅模式 ? this->字体颜色_浅色_主歌词 : this->字体颜色_深色_主歌词);
-
         // 创建文字格式
         this->DWrite工厂->CreateTextFormat(
             this->字体名称.c_str(),
             nullptr,
-            DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL,
+            this->字体样式_主歌词_字重,
+            this->字体样式_主歌词_斜体,
             DWRITE_FONT_STRETCH_NORMAL,
             this->DPI(20),
             L"zh-CN",
             &this->DWrite主歌词文本格式
         );
-
-        this->DWrite主歌词文本格式->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-        this->DWrite主歌词文本格式->SetTextAlignment(this->对齐方式_主歌词);
 
         // 创建文字布局
         this->DWrite工厂->CreateTextLayout(
@@ -197,6 +191,12 @@ void 呈现窗口类::绘制歌词(
             (float) (rect.bottom - rect.top),
             &this->DWrite主歌词文本布局
         );
+
+        this->DWrite主歌词文本布局->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        this->DWrite主歌词文本布局->SetTextAlignment(this->对齐方式_主歌词);
+        this->DWrite主歌词文本布局->SetUnderline(this->字体样式_主歌词_下划线, DWRITE_TEXT_RANGE{0, this->主歌词.size()});
+        this->DWrite主歌词文本布局->SetStrikethrough(this->字体样式_主歌词_删除线, DWRITE_TEXT_RANGE{0, this->主歌词.size()});
+        this->D2D纯色笔刷->SetColor(this->深浅模式 ? this->字体颜色_浅色_主歌词 : this->字体颜色_深色_主歌词);
 
         //绘制文字显示
         this->D2D呈现目标->DrawTextLayout(
@@ -213,23 +213,17 @@ void 呈现窗口类::绘制歌词(
     }
     else
     {
-        // 设置主歌词文本颜色
-        this->D2D纯色笔刷->SetColor(this->深浅模式 ? this->字体颜色_浅色_主歌词 : this->字体颜色_深色_主歌词);
-
         // 创建文字格式
         this->DWrite工厂->CreateTextFormat(
             this->字体名称.c_str(),
             nullptr,
-            DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL,
+            this->字体样式_主歌词_字重,
+            this->字体样式_主歌词_斜体,
             DWRITE_FONT_STRETCH_NORMAL,
             this->DPI(15),
             L"zh-CN",
             &this->DWrite主歌词文本格式
         );
-
-        this->DWrite主歌词文本格式->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-        this->DWrite主歌词文本格式->SetTextAlignment(this->对齐方式_主歌词);
 
         // 创建文字布局
         this->DWrite工厂->CreateTextLayout(
@@ -241,6 +235,12 @@ void 呈现窗口类::绘制歌词(
             &this->DWrite主歌词文本布局
         );
 
+        this->DWrite主歌词文本布局->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        this->DWrite主歌词文本布局->SetTextAlignment(this->对齐方式_主歌词);
+        this->DWrite主歌词文本布局->SetUnderline(this->字体样式_主歌词_下划线, DWRITE_TEXT_RANGE{0, this->主歌词.size()});
+        this->DWrite主歌词文本布局->SetStrikethrough(this->字体样式_主歌词_删除线, DWRITE_TEXT_RANGE{0, this->主歌词.size()});
+        this->D2D纯色笔刷->SetColor(this->深浅模式 ? this->字体颜色_浅色_主歌词 : this->字体颜色_深色_主歌词);
+
         //绘制文字显示
         this->D2D呈现目标->DrawTextLayout(
             D2D1::Point2F(this->DPI(5), this->DPI(5)),
@@ -251,23 +251,17 @@ void 呈现窗口类::绘制歌词(
 
         /******************************************/
 
-        // 设置副歌词文本颜色
-        this->D2D纯色笔刷->SetColor(this->深浅模式 ? this->字体颜色_浅色_副歌词 : this->字体颜色_深色_副歌词);
-
         // 创建文字格式
         this->DWrite工厂->CreateTextFormat(
             this->字体名称.c_str(),
             nullptr,
-            DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL,
+            this->字体样式_副歌词_字重,
+            this->字体样式_副歌词_斜体,
             DWRITE_FONT_STRETCH_NORMAL,
             this->DPI(15),
             L"zh-CN",
             &this->DWrite副歌词文本格式
         );
-
-        this->DWrite副歌词文本格式->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-        this->DWrite副歌词文本格式->SetTextAlignment(this->对齐方式_副歌词);
 
         // 创建文字布局
         this->DWrite工厂->CreateTextLayout(
@@ -278,6 +272,12 @@ void 呈现窗口类::绘制歌词(
             (float) (rect.bottom - rect.top),
             &this->DWrite副歌词文本布局
         );
+
+        this->DWrite副歌词文本布局->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        this->DWrite副歌词文本布局->SetTextAlignment(this->对齐方式_副歌词);
+        this->DWrite副歌词文本布局->SetUnderline(this->字体样式_副歌词_下划线, DWRITE_TEXT_RANGE{0, this->副歌词.size()});
+        this->DWrite副歌词文本布局->SetStrikethrough(this->字体样式_副歌词_删除线, DWRITE_TEXT_RANGE{0, this->副歌词.size()});
+        this->D2D纯色笔刷->SetColor(this->深浅模式 ? this->字体颜色_浅色_副歌词 : this->字体颜色_深色_副歌词);
 
         //绘制文字显示
         this->D2D呈现目标->DrawTextLayout(
