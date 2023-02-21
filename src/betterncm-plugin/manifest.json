@@ -4,7 +4,7 @@
     "slug": "Taskbar-Lyrics",
     "description": "在任务栏上嵌入歌词，理论支持Windows 11所有版本任务栏",
     "preview": "preview.png",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "author": "沫烬染",
     "author_links": [
         "https://github.com/mo-jinran"
