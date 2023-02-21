@@ -182,9 +182,9 @@ plugin.onLoad(async () => {
             plugin.setConfig("style", undefined);
             TaskbarLyricsAPI.style(defaultConfig.style);
             document.querySelector("#basic_weight_select_value").textContent = defaultConfig["style"]["basic"]["weight"];
-            document.querySelector("#basic_underline_checkbox").textContent = defaultConfig["style"]["basic"]["underline"];
+            document.querySelector("#basic_underline_checkbox").checked = defaultConfig["style"]["basic"]["underline"];
             document.querySelector("#basic_strikethrough_checkbox").checked = defaultConfig["style"]["basic"]["strikethrough"];
-            document.querySelector("#extra_weight_select_value").checked = defaultConfig["style"]["extra"]["weight"];
+            document.querySelector("#extra_weight_select_value").textContent = defaultConfig["style"]["extra"]["weight"];
             document.querySelector("#extra_underline_checkbox").checked = defaultConfig["style"]["extra"]["underline"];
             document.querySelector("#extra_strikethrough_checkbox").checked = defaultConfig["style"]["extra"]["strikethrough"];
         }
