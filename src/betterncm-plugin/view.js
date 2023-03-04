@@ -24,51 +24,11 @@ plugin.onConfig(tools => {
 
 
     // 界面样式
-    const cssText = `
-    #taskbar-lyrics-dom h1 {
-        height: 30px;
-        display: flex;
-        align-items: center;
-        margin: 10px 0;
-    }
-
-    #taskbar-lyrics-dom h1 strong {
-        font-size: 1.25rem;
-        font-weight: bold;
-    }
-
-    #taskbar-lyrics-dom hr {
-        margin: 20px 0;
-        border: none;
-        height: 1px;
-        background-color: rgba(255, 255, 255, 0.2);
-    }
-
-    #taskbar-lyrics-dom section > div {
-        display: flex;
-        align-items: center;
-        height: 30px;
-        margin: 5px 0;
-    }
-
-    #taskbar-lyrics-dom section div p {
-        margin: 5px 0;
-    }
-
-    #taskbar-lyrics-dom section div input[type="color"] {
-        width: 150px;
-        padding: unset;
-    }
-
-    #taskbar-lyrics-dom section div input[type="number"] {
-        width: 150px;
-    }
-
-    #taskbar-lyrics-dom .u-select {
-        display: inline-block;
-        width: 150px;
-        margin: 0.2em 0.5em;
-    }`;
+    const cssFilePath = `${this.pluginPath}/style.css`;
+    betterncm.fs.readFileText(cssFilePath).then(cssText => {
+        const cssStyle = dom("style", { textContent: cssText });
+        document.head.appendChild(cssStyle);
+    });
 
 
     // dom函数被文档标注为弃用
@@ -342,8 +302,7 @@ plugin.onConfig(tools => {
             )
         ),
 
-
-        // 样式标签，负责提供界面加载完成事件与界面样式
-        dom("style", { textContent: cssText, onload: onload })
+        // 样式标签，负责提供界面加载完成事件
+        dom("style", { onload: onload })
     )
 });

@@ -13,8 +13,6 @@ plugin.onLoad(async () => {
 
     // 配置界面加载完成
     const onload = () => {
-        console.log("Taskbar-Lyrics配置界面加载完成");
-
         const basic_weight_select_value = document.querySelector("#basic_weight_select_value");
         const basic_weight_select_box = document.querySelector("#basic_weight_select_box");
         const extra_weight_select_value = document.querySelector("#extra_weight_select_value");
