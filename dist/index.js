@@ -130,35 +130,13 @@ plugin.onLoad(async () => {
     async function startTaskbarLyrics() {
         await betterncm.app.exec(`${TaskbarLyricsPath} ${TaskbarLyricsPort}`, false, true);
         TaskbarLyricsAPI.start();
-
-        plugin.getConfig("font", false) && TaskbarLyricsAPI.font(
-            plugin.getConfig("font", defaultConfig.font)
-        );
-
-        plugin.getConfig("color", false) && TaskbarLyricsAPI.color(
-            plugin.getConfig("color", defaultConfig.color)
-        );
-
-        plugin.getConfig("style", false) && TaskbarLyricsAPI.style(
-            plugin.getConfig("style", defaultConfig.style)
-        );
-
-        plugin.getConfig("position", false) && TaskbarLyricsAPI.position(
-            plugin.getConfig("position", defaultConfig.position)
-        );
-
-        plugin.getConfig("margin", false) && TaskbarLyricsAPI.margin(
-            plugin.getConfig("margin", defaultConfig.margin)
-        );
-
-        plugin.getConfig("align", false) && TaskbarLyricsAPI.align(
-            plugin.getConfig("align", defaultConfig.align)
-        );
-
-        plugin.getConfig("screen", false) && TaskbarLyricsAPI.screen(
-            plugin.getConfig("screen", defaultConfig.screen)
-        );
-
+        TaskbarLyricsAPI.font(plugin.getConfig("font", defaultConfig.font));
+        TaskbarLyricsAPI.color(plugin.getConfig("color", defaultConfig.color));
+        TaskbarLyricsAPI.style(plugin.getConfig("style", defaultConfig.style));
+        TaskbarLyricsAPI.position(plugin.getConfig("position", defaultConfig.position));
+        TaskbarLyricsAPI.margin(plugin.getConfig("margin", defaultConfig.margin));
+        TaskbarLyricsAPI.align(plugin.getConfig("align", defaultConfig.align));
+        TaskbarLyricsAPI.screen(plugin.getConfig("screen", defaultConfig.screen));
         watchLyricsChange();
     }
 

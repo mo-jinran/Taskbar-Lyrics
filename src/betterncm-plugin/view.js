@@ -39,17 +39,9 @@ plugin.onConfig(tools => {
             dom("h1", {},
                 dom("strong", { textContent: "歌词设置：" })
             ),
-            dom("p", {},
+            dom("div", {},
                 dom("span", { textContent: "歌词开关：" }),
                 tools.makeCheckbox({ checked: true, onchange: masterSwitch }),
-                dom("p", { textContent: "不要点太快，玩坏了请自己寻找解决方法" }),
-            ),
-            dom("p", {},
-                dom("span", { textContent: "歌词修改：" }),
-                dom("p", { textContent: "目前插件从 [软件内词栏] 获取歌词传递给 [任务栏歌词] 程序" }),
-                dom("p", { textContent: "只需要修改 [设置-歌词-启用] 中的 [最后两个选项] 即可修改" }),
-                dom("p", { textContent: "不过启用或者关闭 [软件内词栏] 选项对插件是没有任何影响的" }),
-                dom("p", { textContent: "未来修改歌词获取方式从 [软件内词栏] 换为同类型插件的方式" })
             )
         ),
 
@@ -174,11 +166,21 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { textContent: "主歌词-下划线：" }),
-                tools.makeCheckbox({ id: "basic_underline_checkbox", name: "basic", onchange: fontStyle.setUnderline, checked: fontStyle.config.basic.underline, })
+                tools.makeCheckbox({
+                    id: "basic_underline_checkbox",
+                    name: "basic",
+                    onchange: fontStyle.setUnderline,
+                    checked: plugin.getConfig("style", defaultConfig["style"])["basic"]["underline"]
+                })
             ),
             dom("div", {},
                 dom("span", { textContent: "主歌词-删除线：" }),
-                tools.makeCheckbox({ id: "basic_strikethrough_checkbox", name: "basic", onchange: fontStyle.setStrikethrough, checked: fontStyle.config.basic.strikethrough, })
+                tools.makeCheckbox({
+                    id: "basic_strikethrough_checkbox",
+                    name: "basic",
+                    onchange: fontStyle.setStrikethrough,
+                    checked: plugin.getConfig("style", defaultConfig["style"])["basic"]["strikethrough"]
+                })
             ),
 
             dom("div", {},
@@ -216,11 +218,21 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { textContent: "副歌词-下划线：" }),
-                tools.makeCheckbox({ id: "extra_underline_checkbox", name: "extra", onchange: fontStyle.setUnderline, checked: fontStyle.config.extra.underline })
+                tools.makeCheckbox({
+                    id: "extra_underline_checkbox",
+                    name: "extra",
+                    onchange: fontStyle.setUnderline,
+                    checked: plugin.getConfig("style", defaultConfig["style"])["extra"]["underline"]
+                })
             ),
             dom("div", {},
                 dom("span", { textContent: "副歌词-删除线：" }),
-                tools.makeCheckbox({ id: "extra_strikethrough_checkbox", name: "extra", onchange: fontStyle.setStrikethrough, checked: fontStyle.config.extra.strikethrough })
+                tools.makeCheckbox({
+                    id: "extra_strikethrough_checkbox",
+                    name: "extra",
+                    onchange: fontStyle.setStrikethrough,
+                    checked: plugin.getConfig("style", defaultConfig["style"])["extra"]["strikethrough"]
+                })
             )
         ),
 
@@ -275,15 +287,15 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { textContent: "主歌词：" }),
-                tools.makeBtn("左", textAlign.set, true, { value: ["basic", WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING] }),
-                tools.makeBtn("中", textAlign.set, true, { value: ["basic", WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_CENTER] }),
-                tools.makeBtn("右", textAlign.set, true, { value: ["basic", WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_TRAILING] })
+                tools.makeBtn("左", textAlign.set, true, { name: "basic", value: WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING }),
+                tools.makeBtn("中", textAlign.set, true, { name: "basic", value: WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_CENTER }),
+                tools.makeBtn("右", textAlign.set, true, { name: "basic", value: WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_TRAILING })
             ),
             dom("div", {},
                 dom("span", { textContent: "副歌词：" }),
-                tools.makeBtn("左", textAlign.set, true, { value: ["extra", WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING] }),
-                tools.makeBtn("中", textAlign.set, true, { value: ["extra", WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_CENTER] }),
-                tools.makeBtn("右", textAlign.set, true, { value: ["extra", WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_TRAILING] })
+                tools.makeBtn("左", textAlign.set, true, { name: "extra", value: WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING }),
+                tools.makeBtn("中", textAlign.set, true, { name: "extra", value: WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_CENTER }),
+                tools.makeBtn("右", textAlign.set, true, { name: "extra", value: WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_TRAILING })
             )
         ),
 
