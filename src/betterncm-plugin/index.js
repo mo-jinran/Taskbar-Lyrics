@@ -182,13 +182,13 @@ plugin.onLoad(async () => {
     }
 
 
-    this.index = [
+    this.index = {
         TaskbarLyricsAPI,
         WindowsEnum,
         defaultConfig,
         startTaskbarLyrics,
         stopTaskbarLyrics
-    ];
+    };
 
     addEventListener("beforeunload", stopTaskbarLyrics);
     startTaskbarLyrics();

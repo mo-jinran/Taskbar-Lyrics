@@ -2,13 +2,12 @@
 
 
 plugin.onLoad(async () => {
-    const [
+    const {
         TaskbarLyricsAPI,
-        WindowsEnum,
         defaultConfig,
         startTaskbarLyrics,
         stopTaskbarLyrics
-    ] = [...this.index];
+    } = { ...this.index };
 
 
     // 配置界面加载完成
@@ -209,7 +208,7 @@ plugin.onLoad(async () => {
     }
 
 
-    this.func = [
+    this.func = {
         onload,
         masterSwitch,
         fontFamily,
@@ -219,5 +218,5 @@ plugin.onLoad(async () => {
         margin,
         textAlign,
         parentTaskbar
-    ];
+    };
 });
