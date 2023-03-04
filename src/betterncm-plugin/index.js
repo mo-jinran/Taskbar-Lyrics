@@ -139,6 +139,10 @@ plugin.onLoad(async () => {
             plugin.getConfig("color", defaultConfig.color)
         );
 
+        plugin.getConfig("style", false) && TaskbarLyricsAPI.style(
+            plugin.getConfig("style", defaultConfig.style)
+        );
+
         plugin.getConfig("position", false) && TaskbarLyricsAPI.position(
             plugin.getConfig("position", defaultConfig.position)
         );

@@ -154,24 +154,28 @@ plugin.onLoad(async () => {
                 }
             }
         },
+        // 字重
         setWeight: (name, value) => {
             const config = { ...fontStyle.config };
             config[name].weight = Number(value);
             plugin.setConfig("style", config);
             TaskbarLyricsAPI.style(config);
         },
+        // 斜体
         setSlope: event => {
             const config = { ...fontStyle.config };
             config[event.target.name].slope = event.target.value || 0;
             plugin.setConfig("style", config);
             TaskbarLyricsAPI.style(config);
         },
+        // 下划线
         setUnderline: event => {
             const config = { ...fontStyle.config };
             config[event.target.name].underline = event.target.checked;
             plugin.setConfig("style", config);
             TaskbarLyricsAPI.style(config);
         },
+        // 删除线
         setStrikethrough: event => {
             const config = { ...fontStyle.config };
             config[event.target.name].strikethrough = event.target.checked;

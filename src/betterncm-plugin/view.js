@@ -214,11 +214,11 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { textContent: "主歌词-下划线：" }),
-                tools.makeCheckbox({ id: "basic_underline_checkbox", name: "basic", onchange: fontStyle.setUnderline })
+                tools.makeCheckbox({ id: "basic_underline_checkbox", name: "basic", onchange: fontStyle.setUnderline, checked: fontStyle.config.basic.underline, })
             ),
             dom("div", {},
                 dom("span", { textContent: "主歌词-删除线：" }),
-                tools.makeCheckbox({ id: "basic_strikethrough_checkbox", name: "basic", onchange: fontStyle.setStrikethrough })
+                tools.makeCheckbox({ id: "basic_strikethrough_checkbox", name: "basic", onchange: fontStyle.setStrikethrough, checked: fontStyle.config.basic.strikethrough, })
             ),
 
             dom("div", {},
@@ -256,11 +256,11 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { textContent: "副歌词-下划线：" }),
-                tools.makeCheckbox({ id: "extra_underline_checkbox", name: "extra", onchange: fontStyle.setUnderline })
+                tools.makeCheckbox({ id: "extra_underline_checkbox", name: "extra", onchange: fontStyle.setUnderline, checked: fontStyle.config.extra.underline })
             ),
             dom("div", {},
                 dom("span", { textContent: "副歌词-删除线：" }),
-                tools.makeCheckbox({ id: "extra_strikethrough_checkbox", name: "extra", onchange: fontStyle.setStrikethrough })
+                tools.makeCheckbox({ id: "extra_strikethrough_checkbox", name: "extra", onchange: fontStyle.setStrikethrough, checked: fontStyle.config.extra.strikethrough })
             )
         ),
 
