@@ -2,7 +2,6 @@
 
 
 plugin.onLoad(async () => {
-    let observer = null;
     const TaskbarLyricsPath = `${this.pluginPath}/taskbar-lyrics.exe`;
     const TaskbarLyricsPort = BETTERNCM_API_PORT + 2;
     const TaskbarLyricsFetch = (path, params) => fetch(
@@ -137,41 +136,12 @@ plugin.onLoad(async () => {
         TaskbarLyricsAPI.margin(plugin.getConfig("margin", defaultConfig.margin));
         TaskbarLyricsAPI.align(plugin.getConfig("align", defaultConfig.align));
         TaskbarLyricsAPI.screen(plugin.getConfig("screen", defaultConfig.screen));
-        watchLyricsChange();
     }
 
 
     // 关闭歌词
     async function stopTaskbarLyrics() {
         TaskbarLyricsAPI.stop();
-        if (observer) {
-            observer.disconnect();
-            observer = null;
-        }
-    }
-
-
-    // 监视软件内歌词变动
-    async function watchLyricsChange() {
-        const mLyric = await betterncm.utils.waitForElement("#x-g-mn .m-lyric");
-        observer = new MutationObserver(mutations => {
-            for (const mutation of mutations) {
-                let lyrics = {
-                    basic: "",
-                    extra: ""
-                };
-
-                if (mutation.addedNodes[2]) {
-                    lyrics.basic = mutation.addedNodes[0].firstChild.textContent;
-                    lyrics.extra = mutation.addedNodes[2].firstChild ? mutation.addedNodes[2].firstChild.textContent : "";
-                } else {
-                    lyrics.basic = mutation.addedNodes[0].textContent;
-                }
-
-                TaskbarLyricsAPI.lyrics(lyrics);
-            }
-        });
-        observer.observe(mLyric, { childList: true, subtree: true });
     }
 
 
