@@ -3,7 +3,7 @@
 
 plugin.onLoad(async () => {
     const { TaskbarLyricsPort, TaskbarLyricsAPI } = { ...this.api };
-    const defaultConfig = this.base;
+    const { defaultConfig } = { ...this.base };
     const { startGetLyric, stopGetLyric } = { ...this.lyric };
 
 
