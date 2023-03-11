@@ -104,8 +104,10 @@ copy src\betterncm-plugin\preview.png dist_debug</Command>
   <ItemGroup>
     <None Include="src\betterncm-plugin\func.js" />
     <None Include="src\betterncm-plugin\index.js" />
+    <None Include="src\betterncm-plugin\lyric.js" />
     <None Include="src\betterncm-plugin\manifest.json" />
     <Image Include="src\betterncm-plugin\preview.png" />
+    <None Include="src\betterncm-plugin\style.css" />
     <None Include="src\betterncm-plugin\view.js" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

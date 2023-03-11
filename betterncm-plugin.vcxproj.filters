@@ -22,5 +22,11 @@
     <None Include="src\betterncm-plugin\view.js">
       <Filter>源文件</Filter>
     </None>
+    <None Include="src\betterncm-plugin\lyric.js">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="src\betterncm-plugin\style.css">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
