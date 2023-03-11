@@ -10,10 +10,21 @@
         "https://github.com/mo-jinran"
     ],
     "type": "extension",
+    "loadAfter": [
+        "libsonginfo",
+        "liblyric"
+    ],
+    "requirements": [
+        "libsonginfo",
+        "liblyric"
+    ],
     "injects": {
         "Main": [
             {
                 "file": "index.js"
+            },
+            {
+                "file": "lyric.js"
             },
             {
                 "file": "func.js"
