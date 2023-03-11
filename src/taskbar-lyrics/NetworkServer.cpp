@@ -1,7 +1,7 @@
 ﻿#include "NetworkServer.hpp"
 #include "CreateWindow.hpp"
 #include "nlohmann/json.hpp"
-#include <d2d1_3.h>
+#include <d2d1.h>
 
 
 网络服务器类::网络服务器类(
@@ -16,7 +16,7 @@
     };
 
     auto 线程函数 = [this, handler, 端口] () {
-        this->网络服务器.Post("/taskbar/lyrics", handler(&网络服务器类::歌词));
+        this->网络服务器.Post("/taskbar/lyric", handler(&网络服务器类::歌词));
         this->网络服务器.Post("/taskbar/font", handler(&网络服务器类::字体));
         this->网络服务器.Post("/taskbar/color", handler(&网络服务器类::颜色));
         this->网络服务器.Post("/taskbar/style", handler(&网络服务器类::样式));
@@ -24,8 +24,7 @@
         this->网络服务器.Post("/taskbar/margin", handler(&网络服务器类::边距));
         this->网络服务器.Post("/taskbar/align", handler(&网络服务器类::对齐));
         this->网络服务器.Post("/taskbar/screen", handler(&网络服务器类::屏幕));
-        this->网络服务器.Post("/taskbar/start", handler(&网络服务器类::开始));
-        this->网络服务器.Post("/taskbar/stop", handler(&网络服务器类::停止));
+        this->网络服务器.Post("/taskbar/close", handler(&网络服务器类::关闭));
         this->网络服务器.listen("127.0.0.1", 端口);
     };
 
@@ -187,19 +186,7 @@ void 网络服务器类::屏幕(
 }
 
 
-void 网络服务器类::开始(
-    const httplib::Request& req,
-    httplib::Response& res
-) {
-    this->任务栏窗口->呈现窗口->主歌词 = L"成功连接到插件端";
-    this->任务栏窗口->呈现窗口->副歌词 = L"等待下一句歌词...";
-
-    PostMessage(this->任务栏窗口->窗口句柄, WM_PAINT, NULL, NULL);
-    res.status = 200;
-}
-
-
-void 网络服务器类::停止(
+void 网络服务器类::关闭(
     const httplib::Request& req,
     httplib::Response& res
 ) {
@@ -207,6 +194,6 @@ void 网络服务器类::停止(
     this->任务栏窗口->呈现窗口->副歌词 = L"正在尝试关闭任务栏歌词...";
 
     PostMessage(this->任务栏窗口->窗口句柄, WM_PAINT, NULL, NULL);
-    PostMessage(任务栏窗口->窗口句柄, WM_CLOSE, NULL, NULL);
+    PostMessage(this->任务栏窗口->窗口句柄, WM_CLOSE, NULL, NULL);
     res.status = 200;
 }

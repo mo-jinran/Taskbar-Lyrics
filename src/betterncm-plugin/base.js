@@ -2,32 +2,6 @@
 
 
 plugin.onLoad(async () => {
-    const TaskbarLyricsPath = `${this.pluginPath}/taskbar-lyrics.exe`;
-    const TaskbarLyricsPort = BETTERNCM_API_PORT + 2;
-    const TaskbarLyricsFetch = (path, params) => fetch(
-        `http://127.0.0.1:${TaskbarLyricsPort}/taskbar${path}`,
-        {
-            method: "POST",
-            body: JSON.stringify(params),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }
-    );
-    const TaskbarLyricsAPI = {
-        lyrics: params => TaskbarLyricsFetch("/lyrics", params),
-        font: params => TaskbarLyricsFetch("/font", params),
-        color: params => TaskbarLyricsFetch("/color", params),
-        style: params => TaskbarLyricsFetch("/style", params),
-        position: params => TaskbarLyricsFetch("/position", params),
-        margin: params => TaskbarLyricsFetch("/margin", params),
-        align: params => TaskbarLyricsFetch("/align", params),
-        screen: params => TaskbarLyricsFetch("/screen", params),
-        start: () => TaskbarLyricsFetch("/start", {}),
-        stop: () => TaskbarLyricsFetch("/stop", {})
-    };
-
-
     // 对应Windows的枚举
     const WindowsEnum = {
         WindowAlignment: {
@@ -68,6 +42,7 @@ plugin.onLoad(async () => {
     }
 
 
+    // 默认的配置
     const defaultConfig = {
         "font": {
             "font_family": "Microsoft YaHei"
@@ -125,41 +100,8 @@ plugin.onLoad(async () => {
     };
 
 
-    // 启动歌词
-    async function startTaskbarLyrics() {
-        await betterncm.app.exec(`${TaskbarLyricsPath} ${TaskbarLyricsPort}`, false, true);
-        TaskbarLyricsAPI.start();
-        TaskbarLyricsAPI.font(plugin.getConfig("font", defaultConfig.font));
-        TaskbarLyricsAPI.color(plugin.getConfig("color", defaultConfig.color));
-        TaskbarLyricsAPI.style(plugin.getConfig("style", defaultConfig.style));
-        TaskbarLyricsAPI.position(plugin.getConfig("position", defaultConfig.position));
-        TaskbarLyricsAPI.margin(plugin.getConfig("margin", defaultConfig.margin));
-        TaskbarLyricsAPI.align(plugin.getConfig("align", defaultConfig.align));
-        TaskbarLyricsAPI.screen(plugin.getConfig("screen", defaultConfig.screen));
-    }
-
-
-    // 关闭歌词
-    async function stopTaskbarLyrics() {
-        TaskbarLyricsAPI.stop();
-    }
-
-
-    try {
-        plugin.getConfig("color", defaultConfig["color"])["basic"]["light"]["hex_color"];
-    } catch {
-        plugin.setConfig("color", undefined);
-    }
-
-
-    this.index = {
-        TaskbarLyricsAPI,
+    this.base = {
         WindowsEnum,
-        defaultConfig,
-        startTaskbarLyrics,
-        stopTaskbarLyrics
+        defaultConfig
     };
-
-    addEventListener("beforeunload", stopTaskbarLyrics);
-    startTaskbarLyrics();
 });

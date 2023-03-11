@@ -2,12 +2,9 @@
 
 
 plugin.onLoad(async () => {
-    const {
-        TaskbarLyricsAPI,
-        defaultConfig,
-        startTaskbarLyrics,
-        stopTaskbarLyrics
-    } = { ...this.index };
+    const { TaskbarLyricsPort, TaskbarLyricsAPI } = { ...this.api };
+    const defaultConfig = this.base;
+    const { startGetLyric, stopGetLyric } = { ...this.lyric };
 
 
     // 配置界面加载完成
@@ -22,19 +19,13 @@ plugin.onLoad(async () => {
 
         basic_weight_select_value.addEventListener("click", event => {
             const open = event.target.parentElement.classList.contains("z-open");
-            if (open) {
-                event.target.parentElement.classList.remove("z-open");
-            } else {
-                event.target.parentElement.classList.add("z-open");
-            }
+            if (open) event.target.parentElement.classList.remove("z-open");
+            else event.target.parentElement.classList.add("z-open");
         });
         extra_weight_select_value.addEventListener("click", event => {
             const open = event.target.parentElement.classList.contains("z-open");
-            if (open) {
-                event.target.parentElement.classList.remove("z-open");
-            } else {
-                event.target.parentElement.classList.add("z-open");
-            }
+            if (open) event.target.parentElement.classList.remove("z-open");
+            else event.target.parentElement.classList.add("z-open");
         });
 
         basic_weight_select_box.addEventListener("click", event => {
@@ -53,7 +44,31 @@ plugin.onLoad(async () => {
 
 
     // 歌词开关
-    const masterSwitch = event => event.target.checked ? startTaskbarLyrics() : stopTaskbarLyrics();
+    const masterSwitch = {
+        on: () => {
+            const TaskbarLyricsPath = `${this.pluginPath}/taskbar-lyrics.exe`;
+            betterncm.app.exec(`${TaskbarLyricsPath} ${TaskbarLyricsPort}`, false, true);
+            TaskbarLyricsAPI.font(plugin.getConfig("font", defaultConfig.font));
+            TaskbarLyricsAPI.color(plugin.getConfig("color", defaultConfig.color));
+            TaskbarLyricsAPI.style(plugin.getConfig("style", defaultConfig.style));
+            TaskbarLyricsAPI.position(plugin.getConfig("position", defaultConfig.position));
+            TaskbarLyricsAPI.margin(plugin.getConfig("margin", defaultConfig.margin));
+            TaskbarLyricsAPI.align(plugin.getConfig("align", defaultConfig.align));
+            TaskbarLyricsAPI.screen(plugin.getConfig("screen", defaultConfig.screen));
+            startGetLyric();
+        },
+        off: () => {
+            TaskbarLyricsAPI.close({});
+            stopGetLyric();
+        },
+        switch: event => {
+            if (event.target.checked) {
+                masterSwitch.on();
+            } else {
+                masterSwitch.off();
+            }
+        }
+    }
 
 
     // 更换字体
@@ -206,6 +221,10 @@ plugin.onLoad(async () => {
             TaskbarLyricsAPI.screen(defaultConfig.screen);
         }
     }
+
+
+    addEventListener("beforeunload", masterSwitch.off);
+    masterSwitch.on();
 
 
     this.func = {

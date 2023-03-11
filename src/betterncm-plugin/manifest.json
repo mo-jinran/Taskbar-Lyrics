@@ -21,7 +21,10 @@
     "injects": {
         "Main": [
             {
-                "file": "index.js"
+                "file": "api.js"
+            },
+            {
+                "file": "base.js"
             },
             {
                 "file": "lyric.js"

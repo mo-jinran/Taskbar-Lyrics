@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include <Windows.h>
-#include <d2d1_3.h>
-#include <dwrite_3.h>
+#include <d2d1.h>
+#include <dwrite.h>
 #include <string>
 
 
@@ -54,8 +54,8 @@ class 呈现窗口类
     bool 组件按钮 = false;
     bool 居中对齐 = true;
 
-    std::wstring 主歌词 = L"桌面歌词启动成功";
-    std::wstring 副歌词 = L"等待插件端连接...";
+    std::wstring 主歌词 = L"任务栏歌词启动成功";
+    std::wstring 副歌词 = L"等待插件传输歌词...";
 
     std::wstring 字体名称 = L"Microsoft YaHei";
 

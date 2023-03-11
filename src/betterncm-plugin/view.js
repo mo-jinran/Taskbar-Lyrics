@@ -5,7 +5,7 @@ plugin.onConfig(tools => {
     const {
         WindowsEnum,
         defaultConfig
-    } = { ...this.index };
+    } = { ...this.base };
 
     const {
         onload,
@@ -38,7 +38,7 @@ plugin.onConfig(tools => {
             ),
             dom("div", {},
                 dom("span", { textContent: "歌词开关：" }),
-                tools.makeCheckbox({ checked: true, onchange: masterSwitch }),
+                tools.makeCheckbox({ checked: true, onchange: masterSwitch.switch }),
             )
         ),
 

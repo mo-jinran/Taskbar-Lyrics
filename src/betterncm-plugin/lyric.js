@@ -1,5 +1,8 @@
+"use strict";
+
+
 plugin.onLoad(async () => {
-    const TaskbarLyricsAPI = this.index.TaskbarLyricsAPI;
+    const TaskbarLyricsAPI = this.api.TaskbarLyricsAPI;
     const libsonginfo = loadedPlugins.libsonginfo.injects[0];
     const liblyric = loadedPlugins.liblyric;
 
@@ -24,7 +27,7 @@ plugin.onLoad(async () => {
         artistName = artistName.slice(3);
 
         // 发送歌曲信息
-        TaskbarLyricsAPI.lyrics({
+        TaskbarLyricsAPI.lyric({
             "basic": name,
             "extra": artistName
         });
@@ -54,10 +57,9 @@ plugin.onLoad(async () => {
                 const currentLyric = parsedLyric[nextIndex - 1] ?? "";
                 const nextLyric = parsedLyric[nextIndex] ?? "";
 
-                TaskbarLyricsAPI.lyrics({
-                    "basic": currentLyric?.originalLyric,
-                    // "extra": currentLyric?.translatedLyric
-                    "extra": nextLyric?.originalLyric
+                TaskbarLyricsAPI.lyric({
+                    "basic": currentLyric?.originalLyric ?? "",
+                    "extra": currentLyric?.translatedLyric ?? ""
                 });
 
                 currentIndex = nextIndex;
@@ -66,6 +68,20 @@ plugin.onLoad(async () => {
     }
 
 
-    libsonginfo.addEventListener("audio-id-updated", audio_id_updated);
-    libsonginfo.addEventListener("play-progress-updated", play_progress_updated);
+    function startGetLyric() {
+        libsonginfo.addEventListener("audio-id-updated", audio_id_updated);
+        libsonginfo.addEventListener("play-progress-updated", play_progress_updated);
+    }
+
+
+    function stopGetLyric() {
+        libsonginfo.removeEventListener("audio-id-updated", audio_id_updated);
+        libsonginfo.removeEventListener("play-progress-updated", play_progress_updated);
+    }
+
+
+    this.lyric = {
+        startGetLyric,
+        stopGetLyric
+    }
 });
