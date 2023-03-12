@@ -45,7 +45,7 @@ plugin.onLoad(async () => {
     // 默认的配置
     const defaultConfig = {
         "font": {
-            "font_family": "Microsoft YaHei"
+            "font_family": "Microsoft YaHei UI"
         },
         "color": {
             "basic": {

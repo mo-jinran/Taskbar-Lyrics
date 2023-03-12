@@ -7,26 +7,34 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\betterncm-plugin\index.js">
+    <None Include="src\betterncm-plugin\api.js">
       <Filter>源文件</Filter>
     </None>
-    <None Include="src\betterncm-plugin\manifest.json">
+    <None Include="src\betterncm-plugin\base.js">
       <Filter>源文件</Filter>
     </None>
-    <Image Include="src\betterncm-plugin\preview.png">
+    <None Include="src\betterncm-plugin\config.html">
       <Filter>源文件</Filter>
-    </Image>
+    </None>
     <None Include="src\betterncm-plugin\func.js">
-      <Filter>源文件</Filter>
-    </None>
-    <None Include="src\betterncm-plugin\view.js">
       <Filter>源文件</Filter>
     </None>
     <None Include="src\betterncm-plugin\lyric.js">
       <Filter>源文件</Filter>
     </None>
+    <None Include="src\betterncm-plugin\manifest.json">
+      <Filter>源文件</Filter>
+    </None>
     <None Include="src\betterncm-plugin\style.css">
       <Filter>源文件</Filter>
     </None>
+    <None Include="src\betterncm-plugin\view.js">
+      <Filter>源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="src\betterncm-plugin\preview.png">
+      <Filter>源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

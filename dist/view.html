@@ -1,0 +1,226 @@
+<body>
+    <!-- 歌词设置 -->
+    <section>
+        <h1>
+            <strong>歌词设置：</strong>
+        </h1>
+        <div>
+            <span>歌词开关：</span>
+            <input type="checkbox" checked>
+        </div>
+    </section>
+
+    <hr>
+
+    <!-- 更换字体 -->
+    <section>
+        <h1>
+            <strong>字体更换：</strong>
+            <a class="u-ibtn5 u-ibtnsz8">立即应用</a>
+            <a class="u-ibtn5 u-ibtnsz8">恢复默认</a>
+        </h1>
+        <div>
+            <span>字体名称：</span>
+            <input type="text" class="u-txt sc-flag" id="font_family">
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- 字体颜色 -->
+    <section>
+        <h1>
+            <strong>字体颜色：</strong>
+            <a class="u-ibtn5 u-ibtnsz8">立即应用</a>
+            <a class="u-ibtn5 u-ibtnsz8">恢复默认</a>
+        </h1>
+        <div>
+            <span>主歌词-浅色模式：</span>
+            <input type="color" class="u-txt sc-flag" id="basic_light_color">
+            <span>透明度：</span>
+            <input type="number" class="u-txt sc-flag" id="basic_light_opacity" step="0.01" min="0" max="1">
+        </div>
+        <div>
+            <span>主歌词-深色模式：</span>
+            <input type="color" class="u-txt sc-flag" id="basic_dark_color">
+            <span>透明度：</span>
+            <input type="number" class="u-txt sc-flag" id="basic_dark_opacity" step="0.01" min="0" max="1">
+        </div>
+        <div>
+            <span>副歌词-浅色模式：</span>
+            <input type="color" class="u-txt sc-flag" id="extra_light_color">
+            <span>透明度：</span>
+            <input type="number" class="u-txt sc-flag" id="extra_light_opacity" step="0.01" min="0" max="1">
+        </div>
+        <div>
+            <span>副歌词-深色模式：</span>
+            <input type="color" class="u-txt sc-flag" id="extra_dark_color">
+            <span>透明度：</span>
+            <input type="number" class="u-txt sc-flag" id="extra_dark_opacity" step="0.01" min="0" max="1">
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- 字体样式 -->
+    <section>
+        <h1>
+            <strong>字体样式：</strong>
+            <a class="u-ibtn5 u-ibtnsz8">恢复默认</a>
+        </h1>
+        <div>
+            <span>主歌词-字体字重：</span>
+            <div class="u-select" style="z-index: 2;">
+                <div class="value" id="basic_weight_select_value"></div>
+                <div class="sltwrap">
+                    <div class="select" id="basic_weight_select_box">
+                        <p class="option f-thide">Thin (100)</p>
+                        <p class="option f-thide">Extra-light (200)</p>
+                        <p class="option f-thide">Ultra-light (200)</p>
+                        <p class="option f-thide">Light (300)</p>
+                        <p class="option f-thide">Semi-light (350)</p>
+                        <p class="option f-thide">Normal (400)</p>
+                        <p class="option f-thide">Regular (400)</p>
+                        <p class="option f-thide">Medium (500)</p>
+                        <p class="option f-thide">Demi-bold (600)</p>
+                        <p class="option f-thide">Semi-bold (600)</p>
+                        <p class="option f-thide">Bold (700)</p>
+                        <p class="option f-thide">Extra-bold (800)</p>
+                        <p class="option f-thide">Ultra-bold (800)</p>
+                        <p class="option f-thide">Black (900)</p>
+                        <p class="option f-thide">Heavy (900)</p>
+                        <p class="option f-thide">Extra-black (950)</p>
+                        <p class="option f-thide">Ultra-black (950)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <span>主歌词-字体斜体：</span>
+            <a class="u-ibtn5 u-ibtnsz8">Normal</a>
+            <a class="u-ibtn5 u-ibtnsz8">Oblique</a>
+            <a class="u-ibtn5 u-ibtnsz8">Italic</a>
+        </div>
+        <div>
+            <span>主歌词-下划线：</span>
+            <input type="checkbox" id="basic_underline_checkbox">
+        </div>
+        <div>
+            <span>主歌词-删除线：</span>
+            <input type="checkbox" id="basic_strikethrough_checkbox">
+        </div>
+        <div>
+            <span>副歌词-字体字重：</span>
+            <div class="u-select">
+                <div class="value" id="extra_weight_select_value"></div>
+                <div class="sltwrap">
+                    <div class="select" id="extra_weight_select_box">
+                        <p class="option f-thide">Thin (100)</p>
+                        <p class="option f-thide">Extra-light (200)</p>
+                        <p class="option f-thide">Ultra-light (200)</p>
+                        <p class="option f-thide">Light (300)</p>
+                        <p class="option f-thide">Semi-light (350)</p>
+                        <p class="option f-thide">Normal (400)</p>
+                        <p class="option f-thide">Regular (400)</p>
+                        <p class="option f-thide">Medium (500)</p>
+                        <p class="option f-thide">Demi-bold (600)</p>
+                        <p class="option f-thide">Semi-bold (600)</p>
+                        <p class="option f-thide">Bold (700)</p>
+                        <p class="option f-thide">Extra-bold (800)</p>
+                        <p class="option f-thide">Ultra-bold (800)</p>
+                        <p class="option f-thide">Black (900)</p>
+                        <p class="option f-thide">Heavy (900)</p>
+                        <p class="option f-thide">Extra-black (950)</p>
+                        <p class="option f-thide">Ultra-black (950)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <span>副歌词-字体斜体：</span>
+            <a class="u-ibtn5 u-ibtnsz8">Normal</a>
+            <a class="u-ibtn5 u-ibtnsz8">Oblique</a>
+            <a class="u-ibtn5 u-ibtnsz8">Italic</a>
+        </div>
+        <div>
+            <span>副歌词-下划线：</span>
+            <input type="checkbox" id="extra_underline_checkbox">
+        </div>
+        <div>
+            <span>副歌词-删除线：</span>
+            <input type="checkbox" id="extra_strikethrough_checkbox">
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- 修改位置 -->
+    <section>
+        <h1>
+            <strong>修改位置：</strong>
+            <a class="u-ibtn5 u-ibtnsz8">恢复默认</a>
+        </h1>
+        <div>
+            <span>窗口位置：</span>
+            <a class="u-ibtn5 u-ibtnsz8">左</a>
+            <a class="u-ibtn5 u-ibtnsz8">中</a>
+            <a class="u-ibtn5 u-ibtnsz8">右</a>
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- 修改边距 -->
+    <section>
+        <h1>
+            <strong>修改边距：</strong>
+            <a class="u-ibtn5 u-ibtnsz8">立即应用</a>
+            <a class="u-ibtn5 u-ibtnsz8">恢复默认</a>
+        </h1>
+        <div>
+            <span>左边距：</span>
+            <input type="number" class="u-txt sc-flag" id="left">
+        </div>
+        <div>
+            <span>右边距：</span>
+            <input type="number" class="u-txt sc-flag" id="right">
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- 对齐方式 -->
+    <section>
+        <h1>
+            <strong>对齐方式：</strong>
+            <a class="u-ibtn5 u-ibtnsz8">恢复默认</a>
+        </h1>
+        <div>
+            <span>主歌词：</span>
+            <a class="u-ibtn5 u-ibtnsz8">左</a>
+            <a class="u-ibtn5 u-ibtnsz8">中</a>
+            <a class="u-ibtn5 u-ibtnsz8">右</a>
+        </div>
+        <div>
+            <span>副歌词：</span>
+            <a class="u-ibtn5 u-ibtnsz8">左</a>
+            <a class="u-ibtn5 u-ibtnsz8">中</a>
+            <a class="u-ibtn5 u-ibtnsz8">右</a>
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- 切换屏幕 -->
+    <section>
+        <h1>
+            <strong>切换屏幕：（实验功能，可能会移除）</strong>
+            <a class="u-ibtn5 u-ibtnsz8">恢复默认</a>
+        </h1>
+        <div>
+            <span>父任务栏：</span>
+            <a class="u-ibtn5 u-ibtnsz8">主屏幕</a>
+            <a class="u-ibtn5 u-ibtnsz8">副屏幕</a>
+        </div>
+    </section>
+</body>

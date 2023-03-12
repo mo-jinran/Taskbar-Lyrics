@@ -3,48 +3,12 @@
 
 plugin.onLoad(async () => {
     const { TaskbarLyricsPort, TaskbarLyricsAPI } = { ...this.api };
-    const { defaultConfig } = { ...this.base };
+    const { WindowsEnum, defaultConfig } = { ...this.base };
     const { startGetLyric, stopGetLyric } = { ...this.lyric };
 
 
-    // 配置界面加载完成
-    const onload = () => {
-        const basic_weight_select_value = document.querySelector("#basic_weight_select_value");
-        const basic_weight_select_box = document.querySelector("#basic_weight_select_box");
-        const extra_weight_select_value = document.querySelector("#extra_weight_select_value");
-        const extra_weight_select_box = document.querySelector("#extra_weight_select_box");
-
-        basic_weight_select_value.textContent = plugin.getConfig("style", defaultConfig["style"])["basic"]["weight"];
-        extra_weight_select_value.textContent = plugin.getConfig("style", defaultConfig["style"])["extra"]["weight"];
-
-        basic_weight_select_value.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
-        extra_weight_select_value.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
-
-        basic_weight_select_box.addEventListener("click", event => {
-            const name = event.target.parentElement.parentElement.parentElement.name;
-            const value = event.target.value;
-            fontStyle.setWeight(name, value);
-            basic_weight_select_value.textContent = event.target.value;
-        });
-        extra_weight_select_box.addEventListener("click", event => {
-            const name = event.target.parentElement.parentElement.parentElement.name;
-            const value = event.target.value;
-            fontStyle.setWeight(name, value);
-            extra_weight_select_value.textContent = event.target.value;
-        });
-    }
-
-
     // 歌词开关
-    const masterSwitch = {
+    const taskbarLyricsSwitch = {
         on: () => {
             const TaskbarLyricsPath = `${this.pluginPath}/taskbar-lyrics.exe`;
             betterncm.app.exec(`${TaskbarLyricsPath} ${TaskbarLyricsPort}`, false, true);
@@ -63,9 +27,9 @@ plugin.onLoad(async () => {
         },
         switch: event => {
             if (event.target.checked) {
-                masterSwitch.on();
+                taskbarLyricsSwitch.on();
             } else {
-                masterSwitch.off();
+                taskbarLyricsSwitch.off();
             }
         }
     }
@@ -73,44 +37,44 @@ plugin.onLoad(async () => {
 
     // 更换字体
     const fontFamily = {
-        set: () => {
+        set: elements => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("font", defaultConfig.font)));
-            config.font_family = document.querySelector("#font_family").value;
+            config.font_family = elements["fontFamily_"].value;
             plugin.setConfig("font", config);
             TaskbarLyricsAPI.font(config);
         },
-        default: () => {
+        default: elements => {
             plugin.setConfig("font", undefined);
             TaskbarLyricsAPI.font(defaultConfig.font);
-            document.querySelector("#font_family").value = defaultConfig.font.font_family;
+            elements["fontFamily_"].value = defaultConfig.font.font_family;
         }
     }
 
 
     // 字体颜色
     const fontColor = {
-        set: () => {
+        set: elements => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("color", defaultConfig.color)));
-            config.basic.light.hex_color = parseInt(document.querySelector("#basic_light_color").value.slice(1), 16);
-            config.basic.light.opacity = Number(document.querySelector("#basic_light_opacity").value);
-            config.basic.dark.hex_color = parseInt(document.querySelector("#basic_dark_color").value.slice(1), 16);
-            config.basic.dark.opacity = Number(document.querySelector("#basic_dark_opacity").value);
-            config.extra.light.hex_color = parseInt(document.querySelector("#extra_light_color").value.slice(1), 16);
-            config.extra.light.opacity = Number(document.querySelector("#extra_light_opacity").value);
-            config.extra.dark.hex_color = parseInt(document.querySelector("#extra_dark_color").value.slice(1), 16);
-            config.extra.dark.opacity = Number(document.querySelector("#extra_dark_opacity").value);
+            config.basic.light.hex_color = parseInt(elements.basicLightColor.value.slice(1), 16);
+            config.basic.light.opacity = Number(elements.basicLightOpacity.value);
+            config.basic.dark.hex_color = parseInt(elements.basicDarkColor.value.slice(1), 16);
+            config.basic.dark.opacity = Number(elements.basicDarkOpacity.value);
+            config.extra.light.hex_color = parseInt(elements.extraLightColor.value.slice(1), 16);
+            config.extra.light.opacity = Number(elements.extraLightOpacity.value);
+            config.extra.dark.hex_color = parseInt(elements.extraDarkColor.value.slice(1), 16);
+            config.extra.dark.opacity = Number(elements.extraDarkOpacity.value);
             plugin.setConfig("color", config);
             TaskbarLyricsAPI.color(config);
         },
-        default: () => {
-            document.querySelector("#basic_light_color").value = `#${defaultConfig.color.basic.light.hex_color.toString(16).padStart(6, "0")}`;
-            document.querySelector("#basic_light_opacity").value = defaultConfig.color.basic.light.opacity;
-            document.querySelector("#basic_dark_color").value = `#${defaultConfig.color.basic.dark.hex_color.toString(16).padStart(6, "0")}`;
-            document.querySelector("#basic_dark_opacity").value = defaultConfig.color.basic.dark.opacity;
-            document.querySelector("#extra_light_color").value = `#${defaultConfig.color.extra.light.hex_color.toString(16).padStart(6, "0")}`;
-            document.querySelector("#extra_light_opacity").value = defaultConfig.color.extra.light.opacity;
-            document.querySelector("#extra_dark_color").value = `#${defaultConfig.color.extra.dark.hex_color.toString(16).padStart(6, "0")}`;
-            document.querySelector("#extra_dark_opacity").value = defaultConfig.color.extra.dark.opacity;
+        default: elements => {
+            elements.basicLightColor.value = `#${defaultConfig.color.basic.light.hex_color.toString(16).padStart(6, "0")}`;
+            elements.basicLightOpacity.value = defaultConfig.color.basic.light.opacity;
+            elements.basicDarkColor.value = `#${defaultConfig.color.basic.dark.hex_color.toString(16).padStart(6, "0")}`;
+            elements.basicDarkOpacity.value = defaultConfig.color.basic.dark.opacity;
+            elements.extraLightColor.value = `#${defaultConfig.color.extra.light.hex_color.toString(16).padStart(6, "0")}`;
+            elements.extraLightOpacity.value = defaultConfig.color.extra.light.opacity;
+            elements.extraDarkColor.value = `#${defaultConfig.color.extra.dark.hex_color.toString(16).padStart(6, "0")}`;
+            elements.extraDarkOpacity.value = defaultConfig.color.extra.dark.opacity;
             plugin.setConfig("color", undefined);
             TaskbarLyricsAPI.color(defaultConfig.color);
         }
@@ -125,45 +89,96 @@ plugin.onLoad(async () => {
             plugin.setConfig("style", config);
             TaskbarLyricsAPI.style(config);
         },
-        // 斜体
-        setSlope: event => {
+        setSlopeBasicNormal: () => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("style", defaultConfig.style)));
-            config[event.target.name].slope = event.target.value || 0;
+            config["basic"].slope = WindowsEnum.DWRITE_FONT_STYLE.DWRITE_FONT_STYLE_NORMAL;
             plugin.setConfig("style", config);
             TaskbarLyricsAPI.style(config);
         },
-        // 下划线
-        setUnderline: event => {
+        setSlopeBasicOblique: () => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("style", defaultConfig.style)));
-            config[event.target.name].underline = event.target.checked;
+            config["basic"].slope = WindowsEnum.DWRITE_FONT_STYLE.DWRITE_FONT_STYLE_OBLIQUE;
             plugin.setConfig("style", config);
             TaskbarLyricsAPI.style(config);
         },
-        // 删除线
-        setStrikethrough: event => {
+        setSlopeBasicItalic: () => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("style", defaultConfig.style)));
-            config[event.target.name].strikethrough = event.target.checked;
+            config["basic"].slope = WindowsEnum.DWRITE_FONT_STYLE.DWRITE_FONT_STYLE_ITALIC;
             plugin.setConfig("style", config);
             TaskbarLyricsAPI.style(config);
         },
-        default: () => {
+        setSlopeExtraNormal: () => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("style", defaultConfig.style)));
+            config["extra"].slope = WindowsEnum.DWRITE_FONT_STYLE.DWRITE_FONT_STYLE_NORMAL;
+            plugin.setConfig("style", config);
+            TaskbarLyricsAPI.style(config);
+        },
+        setSlopeExtraOblique: () => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("style", defaultConfig.style)));
+            config["extra"].slope = WindowsEnum.DWRITE_FONT_STYLE.DWRITE_FONT_STYLE_OBLIQUE;
+            plugin.setConfig("style", config);
+            TaskbarLyricsAPI.style(config);
+        },
+        setSlopeExtraItalic: () => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("style", defaultConfig.style)));
+            config["extra"].slope = WindowsEnum.DWRITE_FONT_STYLE.DWRITE_FONT_STYLE_ITALIC;
+            plugin.setConfig("style", config);
+            TaskbarLyricsAPI.style(config);
+        },
+        setBasicUnderline: event => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("style", defaultConfig.style)));
+            config["basic"].underline = event.target.checked;
+            plugin.setConfig("style", config);
+            TaskbarLyricsAPI.style(config);
+        },
+        setBasicStrikethrough: event => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("style", defaultConfig.style)));
+            config["basic"].strikethrough = event.target.checked;
+            plugin.setConfig("style", config);
+            TaskbarLyricsAPI.style(config);
+        },
+        setExtraUnderline: event => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("style", defaultConfig.style)));
+            config["extra"].underline = event.target.checked;
+            plugin.setConfig("style", config);
+            TaskbarLyricsAPI.style(config);
+        },
+        setExtraStrikethrough: event => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("style", defaultConfig.style)));
+            config["extra"].strikethrough = event.target.checked;
+            plugin.setConfig("style", config);
+            TaskbarLyricsAPI.style(config);
+        },
+        default: elements => {
             plugin.setConfig("style", undefined);
             TaskbarLyricsAPI.style(defaultConfig.style);
-            document.querySelector("#basic_weight_select_value").textContent = defaultConfig["style"]["basic"]["weight"];
-            document.querySelector("#basic_underline_checkbox").checked = defaultConfig["style"]["basic"]["underline"];
-            document.querySelector("#basic_strikethrough_checkbox").checked = defaultConfig["style"]["basic"]["strikethrough"];
-            document.querySelector("#extra_weight_select_value").textContent = defaultConfig["style"]["extra"]["weight"];
-            document.querySelector("#extra_underline_checkbox").checked = defaultConfig["style"]["extra"]["underline"];
-            document.querySelector("#extra_strikethrough_checkbox").checked = defaultConfig["style"]["extra"]["strikethrough"];
+            elements["basicWeightSelectValue"].textContent = defaultConfig["style"]["basic"]["weight"];
+            elements["basicUnderline"].checked = defaultConfig["style"]["basic"]["underline"];
+            elements["basicStrikethrough"].checked = defaultConfig["style"]["basic"]["strikethrough"];
+            elements["extraWeightSelectValue"].textContent = defaultConfig["style"]["extra"]["weight"];
+            elements["extraUnderline"].checked = defaultConfig["style"]["extra"]["underline"];
+            elements["extraStrikethrough"].checked = defaultConfig["style"]["extra"]["strikethrough"];
         }
     }
 
 
     // 修改位置
     const position = {
-        set: event => {
+        setLeft: () => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("position", defaultConfig.position)));
-            config.position = Number(event.target.value) || 0;
+            config.position = WindowsEnum.WindowAlignment.WindowAlignmentLeft;
+            plugin.setConfig("position", config);
+            TaskbarLyricsAPI.position(config);
+        },
+        setCenter: () => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("position", defaultConfig.position)));
+            config.position = WindowsEnum.WindowAlignment.WindowAlignmentCenter;
+            plugin.setConfig("position", config);
+            TaskbarLyricsAPI.position(config);
+        },
+        setRight: () => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("position", defaultConfig.position)));
+            config.position = WindowsEnum.WindowAlignment.WindowAlignmentRight;
             plugin.setConfig("position", config);
             TaskbarLyricsAPI.position(config);
         },
@@ -176,28 +191,63 @@ plugin.onLoad(async () => {
 
     // 修改边距
     const margin = {
-        set: () => {
+        set: elements => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("margin", defaultConfig.position)));
-            config.left = Number(document.querySelector("#left").value);
-            config.right = Number(document.querySelector("#right").value);
+            config.left = Number(elements["left"].value);
+            config.right = Number(elements["right"].value);
             plugin.setConfig("margin", config);
             TaskbarLyricsAPI.margin(config);
         },
-        default: () => {
+        default: elements => {
             plugin.setConfig("margin", undefined);
             TaskbarLyricsAPI.margin(defaultConfig.margin);
-            document.querySelector("#left").value = defaultConfig.margin.left;
-            document.querySelector("#right").value = defaultConfig.margin.right;
+            elements["left"].value = defaultConfig.margin.left;
+            elements["right"].value = defaultConfig.margin.right;
         }
     }
 
 
     // 对齐方式
     const textAlign = {
-        set: event => {
+        setBasicLeft: () => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("align", defaultConfig.align)));
-            config.basic = event.target.name == "basic" ? Number(event.target.value) : plugin.getConfig("align", defaultConfig.align)["basic"]
-            config.extra = event.target.name == "extra" ? Number(event.target.value) : plugin.getConfig("align", defaultConfig.align)["extra"]
+            config.basic = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING;
+            config.extra = plugin.getConfig("align", defaultConfig.align)["extra"];
+            plugin.setConfig("align", config);
+            TaskbarLyricsAPI.align(config);
+        },
+        setBasicCenter: () => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("align", defaultConfig.align)));
+            config.basic = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_CENTER;
+            config.extra = plugin.getConfig("align", defaultConfig.align)["extra"];
+            plugin.setConfig("align", config);
+            TaskbarLyricsAPI.align(config);
+        },
+        setBasicRight: () => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("align", defaultConfig.align)));
+            config.basic = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_TRAILING;
+            config.extra = plugin.getConfig("align", defaultConfig.align)["extra"];
+            plugin.setConfig("align", config);
+            TaskbarLyricsAPI.align(config);
+        },
+        setExtraLeft: () => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("align", defaultConfig.align)));
+            config.basic = plugin.getConfig("align", defaultConfig.align)["basic"];
+            config.extra = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING;
+            plugin.setConfig("align", config);
+            TaskbarLyricsAPI.align(config);
+        },
+        setExtraCenter: () => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("align", defaultConfig.align)));
+            config.basic = plugin.getConfig("align", defaultConfig.align)["basic"];
+            config.extra = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_CENTER;
+            plugin.setConfig("align", config);
+            TaskbarLyricsAPI.align(config);
+        },
+        setExtraRight: () => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("align", defaultConfig.align)));
+            config.basic = plugin.getConfig("align", defaultConfig.align)["basic"];
+            config.extra = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_TRAILING;
             plugin.setConfig("align", config);
             TaskbarLyricsAPI.align(config);
         },
@@ -210,9 +260,15 @@ plugin.onLoad(async () => {
 
     // 切换屏幕
     const parentTaskbar = {
-        set: event => {
+        setPrimary: () => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("screen", defaultConfig.screen)));
-            config.parent_taskbar = event.target.value;
+            config.parent_taskbar = "Shell_TrayWnd";
+            plugin.setConfig("screen", config);
+            TaskbarLyricsAPI.screen(config);
+        },
+        setSecondary: () => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("screen", defaultConfig.screen)));
+            config.parent_taskbar = "Shell_SecondaryTrayWnd";
             plugin.setConfig("screen", config);
             TaskbarLyricsAPI.screen(config);
         },
@@ -223,13 +279,12 @@ plugin.onLoad(async () => {
     }
 
 
-    addEventListener("beforeunload", masterSwitch.off);
-    masterSwitch.on();
+    addEventListener("beforeunload", taskbarLyricsSwitch.off);
+    taskbarLyricsSwitch.on();
 
 
     this.func = {
-        onload,
-        masterSwitch,
+        taskbarLyricsSwitch,
         fontFamily,
         fontColor,
         fontStyle,

@@ -10,6 +10,19 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\betterncm-plugin\api.js" />
+    <None Include="src\betterncm-plugin\base.js" />
+    <None Include="src\betterncm-plugin\config.html" />
+    <None Include="src\betterncm-plugin\func.js" />
+    <None Include="src\betterncm-plugin\lyric.js" />
+    <None Include="src\betterncm-plugin\manifest.json" />
+    <None Include="src\betterncm-plugin\style.css" />
+    <None Include="src\betterncm-plugin\view.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="src\betterncm-plugin\preview.png" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -101,15 +114,6 @@ copy src\betterncm-plugin\preview.png dist_debug</Command>
       <Command>copy src\betterncm-plugin\* dist</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <None Include="src\betterncm-plugin\func.js" />
-    <None Include="src\betterncm-plugin\index.js" />
-    <None Include="src\betterncm-plugin\lyric.js" />
-    <None Include="src\betterncm-plugin\manifest.json" />
-    <Image Include="src\betterncm-plugin\preview.png" />
-    <None Include="src\betterncm-plugin\style.css" />
-    <None Include="src\betterncm-plugin\view.js" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

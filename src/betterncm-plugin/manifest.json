@@ -2,7 +2,7 @@
     "manifest_version": 1,
     "name": "任务栏歌词",
     "slug": "Taskbar-Lyrics",
-    "description": "在任务栏上嵌入歌词，理论支持Windows 11所有版本任务栏",
+    "description": "在任务栏上嵌入歌词，目前仅建议Windows 11",
     "preview": "preview.png",
     "version": "1.4.3",
     "author": "沫烬染",
