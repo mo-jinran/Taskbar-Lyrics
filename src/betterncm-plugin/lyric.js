@@ -63,8 +63,8 @@ plugin.onLoad(async () => {
                     "extra": currentLyric?.translatedLyric ?? nextLyric?.originalLyric ?? ""
                 };
 
-                const extraShow = plugin.getConfig("lyrics", defaultConfig.lyrics)["extra_show"];
-                switch (extraShow) {
+                const extra_show_value = plugin.getConfig("lyrics", defaultConfig.lyrics)["extra_show"]["value"];
+                switch (extra_show_value) {
                     case "0": {
                         lyrics.extra = "";
                     } break;

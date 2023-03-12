@@ -45,7 +45,10 @@ plugin.onLoad(async () => {
     // 默认的配置
     const defaultConfig = {
         "lyrics": {
-            "extra_show": 2
+            "extra_show": {
+                "value": 2,
+                "textContent": "当前翻译，没则用上个选项"
+            },
         },
         "font": {
             "font_family": "Microsoft YaHei UI"
@@ -74,13 +77,19 @@ plugin.onLoad(async () => {
         },
         "style": {
             "basic": {
-                "weight": WindowsEnum.DWRITE_FONT_WEIGHT.DWRITE_FONT_WEIGHT_NORMAL,
+                "weight": {
+                    "value": WindowsEnum.DWRITE_FONT_WEIGHT.DWRITE_FONT_WEIGHT_NORMAL,
+                    "textContent": "Normal (400)"
+                },
                 "slope": WindowsEnum.DWRITE_FONT_STYLE.DWRITE_FONT_STYLE_NORMAL,
                 "underline": false,
                 "strikethrough": false
             },
             "extra": {
-                "weight": WindowsEnum.DWRITE_FONT_WEIGHT.DWRITE_FONT_WEIGHT_NORMAL,
+                "weight": {
+                    "value": WindowsEnum.DWRITE_FONT_WEIGHT.DWRITE_FONT_WEIGHT_NORMAL,
+                    "textContent": "Normal (400)"
+                },
                 "slope": WindowsEnum.DWRITE_FONT_STYLE.DWRITE_FONT_STYLE_NORMAL,
                 "underline": false,
                 "strikethrough": false

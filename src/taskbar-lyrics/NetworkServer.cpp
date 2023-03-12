@@ -111,15 +111,15 @@ void 网络服务器类::样式(
 ) {
     auto json = nlohmann::json::parse(req.body);
 
-    this->任务栏窗口->呈现窗口->字体样式_主歌词_字重 = json["basic"]["weight"].get<DWRITE_FONT_WEIGHT>();
+    this->任务栏窗口->呈现窗口->字体样式_主歌词_字重 = json["basic"]["weight"]["value"].get<DWRITE_FONT_WEIGHT>();
     this->任务栏窗口->呈现窗口->字体样式_主歌词_斜体 = json["basic"]["slope"].get<DWRITE_FONT_STYLE>();
     this->任务栏窗口->呈现窗口->字体样式_主歌词_下划线 = json["basic"]["underline"].get<bool>();
     this->任务栏窗口->呈现窗口->字体样式_主歌词_删除线 = json["basic"]["strikethrough"].get<bool>();
-    this->任务栏窗口->呈现窗口->字体样式_副歌词_字重 = json["extra"]["weight"].get<DWRITE_FONT_WEIGHT>();
+    this->任务栏窗口->呈现窗口->字体样式_副歌词_字重 = json["extra"]["weight"]["value"].get<DWRITE_FONT_WEIGHT>();
     this->任务栏窗口->呈现窗口->字体样式_副歌词_斜体 = json["extra"]["slope"].get<DWRITE_FONT_STYLE>();
     this->任务栏窗口->呈现窗口->字体样式_副歌词_下划线 = json["extra"]["underline"].get<bool>();
     this->任务栏窗口->呈现窗口->字体样式_副歌词_删除线 = json["extra"]["strikethrough"].get<bool>();
-    
+
     PostMessage(this->任务栏窗口->窗口句柄, WM_PAINT, NULL, NULL);
     res.status = 200;
 }

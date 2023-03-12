@@ -25,20 +25,15 @@ plugin.onLoad(async () => {
             TaskbarLyricsAPI.close({});
             stopGetLyric();
         },
-        switch: event => {
-            if (event.target.checked) {
-                taskbarLyricsSwitch.on();
-            } else {
-                taskbarLyricsSwitch.off();
-            }
-        },
-        setExtraShow: value => {
+        switch: event => event.target.checked ? lyrics.on() : lyrics.off(),
+        setExtraShow: (value, textContent) => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("lyrics", defaultConfig.lyrics)));
-            config.extra_show = value;
+            config.extra_show.value = value;
+            config.extra_show.textContent = textContent;
             plugin.setConfig("lyrics", config);
         },
         default: elements => {
-            elements.extraShowWhatValue.textContent = defaultConfig.lyrics.extra_show;
+            elements.extraShowWhatValue.textContent = defaultConfig.lyrics.extra_show.textContent;
             plugin.setConfig("lyrics", undefined);
         }
     }
@@ -92,9 +87,10 @@ plugin.onLoad(async () => {
 
     // 字体样式
     const fontStyle = {
-        setWeight: (name, value) => {
+        setWeight: (name, value, textContent) => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("style", defaultConfig.style)));
-            config[name].weight = Number(value);
+            config[name].weight.value = Number(value);
+            config[name].weight.textContent = textContent;
             plugin.setConfig("style", config);
             TaskbarLyricsAPI.style(config);
         },
@@ -161,10 +157,10 @@ plugin.onLoad(async () => {
         default: elements => {
             plugin.setConfig("style", undefined);
             TaskbarLyricsAPI.style(defaultConfig.style);
-            elements["basicWeightSelectValue"].textContent = defaultConfig["style"]["basic"]["weight"];
+            elements["basicWeightSelectValue"].textContent = defaultConfig["style"]["basic"]["weight"]["textContent"];
             elements["basicUnderline"].checked = defaultConfig["style"]["basic"]["underline"];
             elements["basicStrikethrough"].checked = defaultConfig["style"]["basic"]["strikethrough"];
-            elements["extraWeightSelectValue"].textContent = defaultConfig["style"]["extra"]["weight"];
+            elements["extraWeightSelectValue"].textContent = defaultConfig["style"]["extra"]["weight"]["textContent"];
             elements["extraUnderline"].checked = defaultConfig["style"]["extra"]["underline"];
             elements["extraStrikethrough"].checked = defaultConfig["style"]["extra"]["strikethrough"];
         }

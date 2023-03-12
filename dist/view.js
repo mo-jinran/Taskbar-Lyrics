@@ -93,11 +93,12 @@ plugin.onLoad(async () => {
 
         extraShowWhatBox.addEventListener("click", event => {
             const value = event.target.dataset.value;
-            lyrics.setExtraShow(value);
-            extraShowWhatValue.textContent = value;
+            const textContent = event.target.textContent;
+            lyrics.setExtraShow(value, textContent);
+            extraShowWhatValue.textContent = textContent;
         });
 
-        extraShowWhatValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["extra_show"];
+        extraShowWhatValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["extra_show"]["textContent"];
     }
 
 
@@ -213,20 +214,22 @@ plugin.onLoad(async () => {
         basicWeightSelectBox.addEventListener("click", event => {
             const name = event.target.parentElement.dataset.type;
             const value = event.target.dataset.value;
-            fontStyle.setWeight(name, value);
-            basicWeightSelectValue.textContent = value;
+            const textContent = event.target.textContent;
+            fontStyle.setWeight(name, value, textContent);
+            basicWeightSelectValue.textContent = textContent;
         });
         extraWeightSelectBox.addEventListener("click", event => {
             const name = event.target.parentElement.dataset.type;
             const value = event.target.dataset.value;
-            fontStyle.setWeight(name, value);
-            extraWeightSelectValue.textContent = value;
+            const textContent = event.target.textContent;
+            fontStyle.setWeight(name, value, textContent);
+            extraWeightSelectValue.textContent = textContent;
         });
 
-        basicWeightSelectValue.textContent = plugin.getConfig("style", defaultConfig["style"])["basic"]["weight"];
+        basicWeightSelectValue.textContent = plugin.getConfig("style", defaultConfig["style"])["basic"]["weight"]["textContent"];
         basicUnderline.checked = plugin.getConfig("style", defaultConfig["style"])["basic"]["underline"];
         basicStrikethrough.checked = plugin.getConfig("style", defaultConfig["style"])["basic"]["strikethrough"];
-        extraWeightSelectValue.textContent = plugin.getConfig("style", defaultConfig["style"])["extra"]["weight"];
+        extraWeightSelectValue.textContent = plugin.getConfig("style", defaultConfig["style"])["extra"]["weight"]["textContent"];
         extraUnderline.checked = plugin.getConfig("style", defaultConfig["style"])["extra"]["underline"];
         extraStrikethrough.checked = plugin.getConfig("style", defaultConfig["style"])["extra"]["strikethrough"];
     }
