@@ -7,8 +7,8 @@ plugin.onLoad(async () => {
     const { startGetLyric, stopGetLyric } = { ...this.lyric };
 
 
-    // 歌词开关
-    const taskbarLyricsSwitch = {
+    // 歌词设置
+    const lyrics = {
         on: () => {
             const TaskbarLyricsPath = `${this.pluginPath}/taskbar-lyrics.exe`;
             betterncm.app.exec(`${TaskbarLyricsPath} ${TaskbarLyricsPort}`, false, true);
@@ -31,6 +31,15 @@ plugin.onLoad(async () => {
             } else {
                 taskbarLyricsSwitch.off();
             }
+        },
+        setExtraShow: value => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("lyrics", defaultConfig.lyrics)));
+            config.extra_show = value;
+            plugin.setConfig("lyrics", config);
+        },
+        default: elements => {
+            elements.extraShowWhatValue.textContent = defaultConfig.lyrics.extra_show;
+            plugin.setConfig("lyrics", undefined);
         }
     }
 
@@ -279,12 +288,12 @@ plugin.onLoad(async () => {
     }
 
 
-    addEventListener("beforeunload", taskbarLyricsSwitch.off);
-    taskbarLyricsSwitch.on();
+    addEventListener("beforeunload", lyrics.off);
+    lyrics.on();
 
 
     this.func = {
-        taskbarLyricsSwitch,
+        lyrics,
         fontFamily,
         fontColor,
         fontStyle,

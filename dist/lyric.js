@@ -3,6 +3,7 @@
 
 plugin.onLoad(async () => {
     const TaskbarLyricsAPI = this.api.TaskbarLyricsAPI;
+    const defaultConfig = this.base.defaultConfig;
     const libsonginfo = loadedPlugins.libsonginfo.injects[0];
     const liblyric = loadedPlugins.liblyric;
 
@@ -57,11 +58,42 @@ plugin.onLoad(async () => {
                 const currentLyric = parsedLyric[nextIndex - 1] ?? "";
                 const nextLyric = parsedLyric[nextIndex] ?? "";
 
-                TaskbarLyricsAPI.lyric({
+                const lyrics = {
                     "basic": currentLyric?.originalLyric ?? "",
-                    "extra": currentLyric?.translatedLyric ?? ""
-                });
+                    "extra": currentLyric?.translatedLyric ?? nextLyric?.originalLyric ?? ""
+                };
 
+                const extraShow = plugin.getConfig("lyrics", defaultConfig.lyrics)["extra_show"];
+                switch (extraShow) {
+                    case "0": {
+                        lyrics.extra = "";
+                    } break;
+
+                    case "1": {
+                        lyrics.extra = nextLyric?.originalLyric ?? "";
+                    } break;
+
+                    case "2": {
+                        lyrics.extra = currentLyric?.translatedLyric
+                            ?? nextLyric?.originalLyric
+                            ?? "";
+                    } break;
+
+                    case "3": {
+                        lyrics.extra = currentLyric?.romanLyric
+                            ?? currentLyric?.translatedLyric
+                            ?? nextLyric?.originalLyric
+                            ?? "";
+                    } break;
+
+                    default: {
+                        lyrics.extra = currentLyric?.translatedLyric
+                            ?? nextLyric?.originalLyric
+                            ?? ""
+                    } break;
+                }
+
+                TaskbarLyricsAPI.lyric(lyrics);
                 currentIndex = nextIndex;
             }
         }

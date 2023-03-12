@@ -14,10 +14,25 @@
             <section class="lyrics-settings">
                 <h1>
                     <strong>歌词设置：</strong>
+                    <button class="u-ibtn5 u-ibtnsz8 reset">恢复默认</button>
                 </h1>
                 <div>
                     <span>歌词开关：</span>
                     <input type="checkbox" class="lyrics-switch" checked>
+                </div>
+                <div>
+                    <span>副歌词显示：</span>
+                    <div class="u-select">
+                        <div class="value extra-show-what-value"></div>
+                        <div class="sltwrap">
+                            <ul class="select extra-show-what-box">
+                                <li class="option f-thide" data-value="0">隐藏歌词，会让主歌词独占两行</li>
+                                <li class="option f-thide" data-value="1">下句歌词，没有则使用上个选项</li>
+                                <li class="option f-thide" data-value="2">当前翻译，没有则使用上个选项</li>
+                                <li class="option f-thide" data-value="3">当前音译，没有则使用上个选项</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </section>
 

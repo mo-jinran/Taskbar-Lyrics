@@ -14,7 +14,7 @@ plugin.onConfig(tools => configView);
 plugin.onLoad(async () => {
     const { defaultConfig } = { ...this.base };
     const {
-        taskbarLyricsSwitch,
+        lyrics,
         fontFamily,
         fontColor,
         fontStyle,
@@ -69,10 +69,35 @@ plugin.onLoad(async () => {
     }
 
 
-    // 歌词开关
+    // 歌词设置
     const setLyricsSettings = async () => {
+        const reset = configView.querySelector(".lyrics-settings .reset");
+
         const lyricsSwitch = configView.querySelector(".lyrics-settings .lyrics-switch");
-        lyricsSwitch.addEventListener("change", event => taskbarLyricsSwitch.switch(event));
+        const extraShowWhatValue = configView.querySelector(".lyrics-settings .extra-show-what-value");
+        const extraShowWhatBox = configView.querySelector(".lyrics-settings .extra-show-what-box");
+
+        const elements = {
+            extraShowWhatValue
+        }
+
+        reset.addEventListener("click", () => lyrics.default(elements));
+
+        lyricsSwitch.addEventListener("change", event => lyrics.switch(event));
+
+        extraShowWhatValue.addEventListener("click", event => {
+            const open = event.target.parentElement.classList.contains("z-open");
+            if (open) event.target.parentElement.classList.remove("z-open");
+            else event.target.parentElement.classList.add("z-open");
+        });
+
+        extraShowWhatBox.addEventListener("click", event => {
+            const value = event.target.dataset.value;
+            lyrics.setExtraShow(value);
+            extraShowWhatValue.textContent = value;
+        });
+
+        extraShowWhatValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["extra_show"];
     }
 
 

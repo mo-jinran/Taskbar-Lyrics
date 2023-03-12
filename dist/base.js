@@ -44,6 +44,9 @@ plugin.onLoad(async () => {
 
     // 默认的配置
     const defaultConfig = {
+        "lyrics": {
+            "extra_show": 2
+        },
         "font": {
             "font_family": "Microsoft YaHei UI"
         },
