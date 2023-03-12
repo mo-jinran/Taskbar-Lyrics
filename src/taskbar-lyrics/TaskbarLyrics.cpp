@@ -7,7 +7,6 @@
     HINSTANCE   实例句柄,
     int         显示方法
 ) {
-    this->检测实例();
     this->获取端口();
 
     this->任务栏窗口 = new 任务栏窗口类(实例句柄, 显示方法);
@@ -27,18 +26,6 @@
 
     delete this->任务栏窗口;
     this->任务栏窗口 = nullptr;
-}
-
-
-void 任务栏歌词类::检测实例()
-{
-    this->互斥锁 = CreateMutex(NULL, TRUE, this->互斥锁名称.c_str());
-    if (GetLastError() == ERROR_ALREADY_EXISTS) {
-        HWND 任务栏_句柄 = FindWindow(L"Shell_TrayWnd", NULL);
-        HWND 旧句柄 = FindWindowEx(任务栏_句柄, NULL, this->互斥锁名称.c_str(), NULL);
-        if (!旧句柄) 旧句柄 = FindWindow(this->互斥锁名称.c_str(), NULL);
-        PostMessage(旧句柄, WM_CLOSE, NULL, NULL);
-    }
 }
 
 

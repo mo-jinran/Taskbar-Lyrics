@@ -14,8 +14,6 @@ class 任务栏歌词类
 
     private:
     HANDLE 等待句柄;
-    HANDLE 互斥锁 = nullptr;
-    std::wstring 互斥锁名称 = L"BetterNCM_TaskbarLyrics";
     unsigned short 端口 = 3798;
 
 
@@ -26,6 +24,5 @@ class 任务栏歌词类
 
     private:
     void 网易云进程检测();
-    void 检测实例();
     void 获取端口();
 };
