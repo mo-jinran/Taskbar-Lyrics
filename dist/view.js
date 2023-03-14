@@ -103,7 +103,6 @@ plugin.onLoad(async () => {
         });
 
         extraShowWhatValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["extra_show"]["textContent"];
-
         adjust.value = plugin.getConfig("lyrics", defaultConfig["lyrics"])["adjust"];
     }
 
@@ -195,16 +194,16 @@ plugin.onLoad(async () => {
 
         reset.addEventListener("click", () => style.default(elements));
 
-        basicNormal.addEventListener("click", () => style.setSlopeBasicNormal());
-        basicOblique.addEventListener("click", () => style.setSlopeBasicOblique());
-        basicItalic.addEventListener("click", () => style.setSlopeBasicItalic());
-        basicUnderline.addEventListener("change", event => style.setBasicUnderline(event));
-        basicStrikethrough.addEventListener("change", event => style.setBasicStrikethrough(event));
-        extraNormal.addEventListener("click", () => style.setSlopeExtraNormal());
-        extraOblique.addEventListener("click", () => style.setSlopeExtraOblique());
-        extraItalic.addEventListener("click", () => style.setSlopeExtraItalic());
-        extraUnderline.addEventListener("change", event => style.setExtraUnderline(event));
-        extraStrikethrough.addEventListener("change", event => style.setExtraStrikethrough(event));
+        basicNormal.addEventListener("click", event => style.setSlopeNormal(event));
+        basicOblique.addEventListener("click", event => style.setSlopeOblique(event));
+        basicItalic.addEventListener("click", event => style.setSlopeItalic(event));
+        basicUnderline.addEventListener("change", event => style.setUnderline(event));
+        basicStrikethrough.addEventListener("change", event => style.setStrikethrough(event));
+        extraNormal.addEventListener("click", event => style.setSlopeNormal(event));
+        extraOblique.addEventListener("click", event => style.setSlopeOblique(event));
+        extraItalic.addEventListener("click", event => style.setSlopeItalic(event));
+        extraUnderline.addEventListener("change", event => style.setUnderline(event));
+        extraStrikethrough.addEventListener("change", event => style.setStrikethrough(event));
 
         basicWeightSelectValue.addEventListener("click", event => {
             const open = event.target.parentElement.classList.contains("z-open");
@@ -288,12 +287,12 @@ plugin.onLoad(async () => {
         const extraCenter = configView.querySelector(".align-settings .extra-center");
         const extraRight = configView.querySelector(".align-settings .extra-right");
         reset.addEventListener("click", () => align.default());
-        basicLeft.addEventListener("click", () => align.setBasicLeft());
-        basicCenter.addEventListener("click", () => align.setBasicCenter());
-        basicRight.addEventListener("click", () => align.setBasicRight());
-        extraLeft.addEventListener("click", () => align.setExtraLeft());
-        extraCenter.addEventListener("click", () => align.setExtraCenter());
-        extraRight.addEventListener("click", () => align.setExtraRight());
+        basicLeft.addEventListener("click", event => align.setLeft(event));
+        basicCenter.addEventListener("click", event => align.setCenter(event));
+        basicRight.addEventListener("click", event => align.setRight(event));
+        extraLeft.addEventListener("click", event => align.setLeft(event));
+        extraCenter.addEventListener("click", event => align.setCenter(event));
+        extraRight.addEventListener("click", event => align.setRight(event));
     }
 
 
