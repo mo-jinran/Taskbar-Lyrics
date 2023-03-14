@@ -46,23 +46,23 @@ plugin.onLoad(async () => {
 
 
     // 更换字体
-    const fontFamily = {
+    const font = {
         set: elements => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("font", defaultConfig.font)));
-            config.font_family = elements["fontFamily_"].value;
+            config.font_family = elements["font_family"].value;
             plugin.setConfig("font", config);
             TaskbarLyricsAPI.font(config);
         },
         default: elements => {
             plugin.setConfig("font", undefined);
             TaskbarLyricsAPI.font(defaultConfig.font);
-            elements["fontFamily_"].value = defaultConfig.font.font_family;
+            elements["font_family"].value = defaultConfig.font.font_family;
         }
     }
 
 
     // 字体颜色
-    const fontColor = {
+    const color = {
         set: elements => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("color", defaultConfig.color)));
             config.basic.light.hex_color = parseInt(elements.basicLightColor.value.slice(1), 16);
@@ -92,7 +92,7 @@ plugin.onLoad(async () => {
 
 
     // 字体样式
-    const fontStyle = {
+    const style = {
         setWeight: (name, value, textContent) => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("style", defaultConfig.style)));
             config[name].weight.value = Number(value);
@@ -219,7 +219,7 @@ plugin.onLoad(async () => {
 
 
     // 对齐方式
-    const textAlign = {
+    const align = {
         setBasicLeft: () => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("align", defaultConfig.align)));
             config.basic = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING;
@@ -270,7 +270,7 @@ plugin.onLoad(async () => {
 
 
     // 切换屏幕
-    const parentTaskbar = {
+    const screen = {
         setPrimary: () => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("screen", defaultConfig.screen)));
             config.parent_taskbar = "Shell_TrayWnd";
@@ -296,12 +296,12 @@ plugin.onLoad(async () => {
 
     this.func = {
         lyrics,
-        fontFamily,
-        fontColor,
-        fontStyle,
+        font,
+        color,
+        style,
         position,
         margin,
-        textAlign,
-        parentTaskbar
+        align,
+        screen
     };
 });
