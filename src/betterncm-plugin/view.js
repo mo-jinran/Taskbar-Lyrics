@@ -71,16 +71,20 @@ plugin.onLoad(async () => {
 
     // 歌词设置
     const setLyricsSettings = async () => {
+        const apply = configView.querySelector(".lyrics-settings .apply");
         const reset = configView.querySelector(".lyrics-settings .reset");
 
         const lyricsSwitch = configView.querySelector(".lyrics-settings .lyrics-switch");
         const extraShowWhatValue = configView.querySelector(".lyrics-settings .extra-show-what-value");
         const extraShowWhatBox = configView.querySelector(".lyrics-settings .extra-show-what-box");
+        const adjust = configView.querySelector(".lyrics-settings .adjust");
 
         const elements = {
-            extraShowWhatValue
+            extraShowWhatValue,
+            adjust
         }
 
+        apply.addEventListener("click", () => lyrics.set(elements));
         reset.addEventListener("click", () => lyrics.default(elements));
 
         lyricsSwitch.addEventListener("change", event => lyrics.switch(event));
@@ -99,6 +103,8 @@ plugin.onLoad(async () => {
         });
 
         extraShowWhatValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["extra_show"]["textContent"];
+
+        adjust.value = plugin.getConfig("lyrics", defaultConfig["lyrics"])["adjust"];
     }
 
 

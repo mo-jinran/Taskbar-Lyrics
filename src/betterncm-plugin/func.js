@@ -32,8 +32,14 @@ plugin.onLoad(async () => {
             config.extra_show.textContent = textContent;
             plugin.setConfig("lyrics", config);
         },
+        set: elements => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("lyrics", defaultConfig.lyrics)));
+            config.adjust = Number(elements.adjust.value);
+            plugin.setConfig("lyrics", config);
+        },
         default: elements => {
             elements.extraShowWhatValue.textContent = defaultConfig.lyrics.extra_show.textContent;
+            elements.adjust.value = defaultConfig.lyrics.adjust;
             plugin.setConfig("lyrics", undefined);
         }
     }

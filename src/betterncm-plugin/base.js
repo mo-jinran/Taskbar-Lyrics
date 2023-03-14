@@ -49,6 +49,7 @@ plugin.onLoad(async () => {
                 "value": 2,
                 "textContent": "当前翻译，没则用上个选项"
             },
+            "adjust": 0.0,
         },
         "font": {
             "font_family": "Microsoft YaHei UI"
