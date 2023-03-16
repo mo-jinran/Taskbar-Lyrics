@@ -56,8 +56,8 @@ plugin.onLoad(async () => {
             plugin.setConfig("lyrics", config);
         },
         default: elements => {
-            elements.LyricsRetrievalMethodValue.textContent = defaultConfig.lyrics.retrieval_method.textContent;
-            elements.extraShowWhatValue.textContent = defaultConfig.lyrics.extra_show.textContent;
+            elements.retrievalMethodValue.textContent = defaultConfig.lyrics.retrieval_method.textContent;
+            elements.extraShowValue.textContent = defaultConfig.lyrics.extra_show.textContent;
             elements.adjust.value = defaultConfig.lyrics.adjust;
             stopGetLyric();
             plugin.setConfig("lyrics", undefined);
@@ -154,10 +154,10 @@ plugin.onLoad(async () => {
         default: elements => {
             plugin.setConfig("style", undefined);
             TaskbarLyricsAPI.style(defaultConfig.style);
-            elements["basicWeightSelectValue"].textContent = defaultConfig["style"]["basic"]["weight"]["textContent"];
+            elements["basicWeightValue"].textContent = defaultConfig["style"]["basic"]["weight"]["textContent"];
             elements["basicUnderline"].checked = defaultConfig["style"]["basic"]["underline"];
             elements["basicStrikethrough"].checked = defaultConfig["style"]["basic"]["strikethrough"];
-            elements["extraWeightSelectValue"].textContent = defaultConfig["style"]["extra"]["weight"]["textContent"];
+            elements["extraWeightValue"].textContent = defaultConfig["style"]["extra"]["weight"]["textContent"];
             elements["extraUnderline"].checked = defaultConfig["style"]["extra"]["underline"];
             elements["extraStrikethrough"].checked = defaultConfig["style"]["extra"]["strikethrough"];
         }

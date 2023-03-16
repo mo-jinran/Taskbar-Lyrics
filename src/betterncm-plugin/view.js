@@ -75,15 +75,15 @@ plugin.onLoad(async () => {
         const reset = configView.querySelector(".lyrics-settings .reset");
 
         const lyricsSwitch = configView.querySelector(".lyrics-settings .lyrics-switch");
-        const LyricsRetrievalMethodValue = configView.querySelector(".lyrics-settings .lyrics-retrieval-method-value");
-        const LyricsRetrievalMethodBox = configView.querySelector(".lyrics-settings .lyrics-retrieval-method-box");
-        const extraShowWhatValue = configView.querySelector(".lyrics-settings .extra-show-what-value");
-        const extraShowWhatBox = configView.querySelector(".lyrics-settings .extra-show-what-box");
+        const retrievalMethodValue = configView.querySelector(".lyrics-settings .retrieval-method.value");
+        const retrievalMethodSelect = configView.querySelector(".lyrics-settings .retrieval-method.select");
+        const extraShowValue = configView.querySelector(".lyrics-settings .extra-show.value");
+        const extraShowSelect = configView.querySelector(".lyrics-settings .extra-show.select");
         const adjust = configView.querySelector(".lyrics-settings .adjust");
 
         const elements = {
-            LyricsRetrievalMethodValue,
-            extraShowWhatValue,
+            retrievalMethodValue,
+            extraShowValue,
             adjust
         }
 
@@ -92,32 +92,32 @@ plugin.onLoad(async () => {
 
         lyricsSwitch.addEventListener("change", event => lyrics.switch(event));
 
-        LyricsRetrievalMethodValue.addEventListener("click", event => {
+        retrievalMethodValue.addEventListener("click", event => {
             const open = event.target.parentElement.classList.contains("z-open");
             if (open) event.target.parentElement.classList.remove("z-open");
             else event.target.parentElement.classList.add("z-open");
         });
-        LyricsRetrievalMethodBox.addEventListener("click", event => {
+        retrievalMethodSelect.addEventListener("click", event => {
             const value = event.target.dataset.value;
             const textContent = event.target.textContent;
             lyrics.setRetrievalMethod(value, textContent);
-            LyricsRetrievalMethodValue.textContent = textContent;
+            retrievalMethodValue.textContent = textContent;
         });
 
-        extraShowWhatValue.addEventListener("click", event => {
+        extraShowValue.addEventListener("click", event => {
             const open = event.target.parentElement.classList.contains("z-open");
             if (open) event.target.parentElement.classList.remove("z-open");
             else event.target.parentElement.classList.add("z-open");
         });
-        extraShowWhatBox.addEventListener("click", event => {
+        extraShowSelect.addEventListener("click", event => {
             const value = event.target.dataset.value;
             const textContent = event.target.textContent;
             lyrics.setExtraShow(value, textContent);
-            extraShowWhatValue.textContent = textContent;
+            extraShowValue.textContent = textContent;
         });
 
-        LyricsRetrievalMethodValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["retrieval_method"]["textContent"];
-        extraShowWhatValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["extra_show"]["textContent"];
+        retrievalMethodValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["retrieval_method"]["textContent"];
+        extraShowValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["extra_show"]["textContent"];
         adjust.value = plugin.getConfig("lyrics", defaultConfig["lyrics"])["adjust"];
     }
 
@@ -183,15 +183,15 @@ plugin.onLoad(async () => {
     const setStyleSettings = async () => {
         const reset = configView.querySelector(".style-settings .reset");
 
-        const basicWeightSelectValue = configView.querySelector(".style-settings .basic-weight-select-value");
-        const basicWeightSelectBox = configView.querySelector(".style-settings .basic-weight-select-box");
+        const basicWeightValue = configView.querySelector(".style-settings .basic-weight.value");
+        const basicWeightSelect = configView.querySelector(".style-settings .basic-weight.select");
         const basicNormal = configView.querySelector(".style-settings .basic-normal");
         const basicOblique = configView.querySelector(".style-settings .basic-oblique");
         const basicItalic = configView.querySelector(".style-settings .basic-italic");
         const basicUnderline = configView.querySelector(".style-settings .basic-underline");
         const basicStrikethrough = configView.querySelector(".style-settings .basic-strikethrough");
-        const extraWeightSelectValue = configView.querySelector(".style-settings .extra-weight-select-value");
-        const extraWeightSelectBox = configView.querySelector(".style-settings .extra-weight-select-box");
+        const extraWeightValue = configView.querySelector(".style-settings .extra-weight.value");
+        const extraWeightSelect = configView.querySelector(".style-settings .extra-weight.select");
         const extraNormal = configView.querySelector(".style-settings .extra-normal");
         const extraOblique = configView.querySelector(".style-settings .extra-oblique");
         const extraItalic = configView.querySelector(".style-settings .extra-italic");
@@ -199,10 +199,10 @@ plugin.onLoad(async () => {
         const extraStrikethrough = configView.querySelector(".style-settings .extra-strikethrough");
 
         const elements = {
-            basicWeightSelectValue,
+            basicWeightValue,
             basicUnderline,
             basicStrikethrough,
-            extraWeightSelectValue,
+            extraWeightValue,
             extraUnderline,
             extraStrikethrough
         }
@@ -220,36 +220,36 @@ plugin.onLoad(async () => {
         extraUnderline.addEventListener("change", event => style.setUnderline(event));
         extraStrikethrough.addEventListener("change", event => style.setStrikethrough(event));
 
-        basicWeightSelectValue.addEventListener("click", event => {
+        basicWeightValue.addEventListener("click", event => {
             const open = event.target.parentElement.classList.contains("z-open");
             if (open) event.target.parentElement.classList.remove("z-open");
             else event.target.parentElement.classList.add("z-open");
         });
-        extraWeightSelectValue.addEventListener("click", event => {
+        basicWeightSelect.addEventListener("click", event => {
+            const name = event.target.parentElement.dataset.type;
+            const value = event.target.dataset.value;
+            const textContent = event.target.textContent;
+            style.setWeight(name, value, textContent);
+            basicWeightValue.textContent = textContent;
+        });
+
+        extraWeightValue.addEventListener("click", event => {
             const open = event.target.parentElement.classList.contains("z-open");
             if (open) event.target.parentElement.classList.remove("z-open");
             else event.target.parentElement.classList.add("z-open");
         });
-
-        basicWeightSelectBox.addEventListener("click", event => {
+        extraWeightSelect.addEventListener("click", event => {
             const name = event.target.parentElement.dataset.type;
             const value = event.target.dataset.value;
             const textContent = event.target.textContent;
             style.setWeight(name, value, textContent);
-            basicWeightSelectValue.textContent = textContent;
-        });
-        extraWeightSelectBox.addEventListener("click", event => {
-            const name = event.target.parentElement.dataset.type;
-            const value = event.target.dataset.value;
-            const textContent = event.target.textContent;
-            style.setWeight(name, value, textContent);
-            extraWeightSelectValue.textContent = textContent;
+            extraWeightValue.textContent = textContent;
         });
 
-        basicWeightSelectValue.textContent = plugin.getConfig("style", defaultConfig["style"])["basic"]["weight"]["textContent"];
+        basicWeightValue.textContent = plugin.getConfig("style", defaultConfig["style"])["basic"]["weight"]["textContent"];
         basicUnderline.checked = plugin.getConfig("style", defaultConfig["style"])["basic"]["underline"];
         basicStrikethrough.checked = plugin.getConfig("style", defaultConfig["style"])["basic"]["strikethrough"];
-        extraWeightSelectValue.textContent = plugin.getConfig("style", defaultConfig["style"])["extra"]["weight"]["textContent"];
+        extraWeightValue.textContent = plugin.getConfig("style", defaultConfig["style"])["extra"]["weight"]["textContent"];
         extraUnderline.checked = plugin.getConfig("style", defaultConfig["style"])["extra"]["underline"];
         extraStrikethrough.checked = plugin.getConfig("style", defaultConfig["style"])["extra"]["strikethrough"];
     }
