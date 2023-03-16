@@ -168,14 +168,18 @@ body.s-theme-white #taskbar-lyrics-dom .content input[type="checkbox"]:checked {
 #taskbar-lyrics-dom .u-select {
     display: inline-block;
     width: 200px;
-    margin: 0.2em 0.5em;
+    margin: 0 5px;
+}
+
+#taskbar-lyrics-dom input[type="checkbox"] {
+    margin: 0 5px;
 }
 
 #taskbar-lyrics-dom button.u-ibtn5 {
-    margin: .2em .5em;
+    margin: 0 5px;
 }
 
 #taskbar-lyrics-dom input.u-txt {
-    margin: .2em .5em;
-    border-radius: .5em;
+    margin: 0 5px;
+    border-radius: 4px;
 }
