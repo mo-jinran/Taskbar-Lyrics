@@ -75,11 +75,14 @@ plugin.onLoad(async () => {
         const reset = configView.querySelector(".lyrics-settings .reset");
 
         const lyricsSwitch = configView.querySelector(".lyrics-settings .lyrics-switch");
+        const LyricsRetrievalMethodValue = configView.querySelector(".lyrics-settings .lyrics-retrieval-method-value");
+        const LyricsRetrievalMethodBox = configView.querySelector(".lyrics-settings .lyrics-retrieval-method-box");
         const extraShowWhatValue = configView.querySelector(".lyrics-settings .extra-show-what-value");
         const extraShowWhatBox = configView.querySelector(".lyrics-settings .extra-show-what-box");
         const adjust = configView.querySelector(".lyrics-settings .adjust");
 
         const elements = {
+            LyricsRetrievalMethodValue,
             extraShowWhatValue,
             adjust
         }
@@ -89,12 +92,23 @@ plugin.onLoad(async () => {
 
         lyricsSwitch.addEventListener("change", event => lyrics.switch(event));
 
+        LyricsRetrievalMethodValue.addEventListener("click", event => {
+            const open = event.target.parentElement.classList.contains("z-open");
+            if (open) event.target.parentElement.classList.remove("z-open");
+            else event.target.parentElement.classList.add("z-open");
+        });
+        LyricsRetrievalMethodBox.addEventListener("click", event => {
+            const value = event.target.dataset.value;
+            const textContent = event.target.textContent;
+            lyrics.setRetrievalMethod(value, textContent);
+            LyricsRetrievalMethodValue.textContent = textContent;
+        });
+
         extraShowWhatValue.addEventListener("click", event => {
             const open = event.target.parentElement.classList.contains("z-open");
             if (open) event.target.parentElement.classList.remove("z-open");
             else event.target.parentElement.classList.add("z-open");
         });
-
         extraShowWhatBox.addEventListener("click", event => {
             const value = event.target.dataset.value;
             const textContent = event.target.textContent;
@@ -102,6 +116,7 @@ plugin.onLoad(async () => {
             extraShowWhatValue.textContent = textContent;
         });
 
+        LyricsRetrievalMethodValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["retrieval_method"]["textContent"];
         extraShowWhatValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["extra_show"]["textContent"];
         adjust.value = plugin.getConfig("lyrics", defaultConfig["lyrics"])["adjust"];
     }

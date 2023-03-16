@@ -8,8 +8,33 @@ plugin.onLoad(async () => {
     const liblyric = loadedPlugins.liblyric;
 
 
+    let observer = null;
     let parsedLyric = null;
     let currentIndex = 0;
+
+
+    // 监视软件内歌词变动
+    const watchLyricsChange = async () => {
+        const mLyric = await betterncm.utils.waitForElement("#x-g-mn .m-lyric");
+        observer = new MutationObserver(mutations => {
+            for (const mutation of mutations) {
+                let lyrics = {
+                    basic: "",
+                    extra: ""
+                };
+
+                if (mutation.addedNodes[2]) {
+                    lyrics.basic = mutation.addedNodes[0].firstChild.textContent;
+                    lyrics.extra = mutation.addedNodes[2].firstChild ? mutation.addedNodes[2].firstChild.textContent : "";
+                } else {
+                    lyrics.basic = mutation.addedNodes[0].textContent;
+                }
+
+                TaskbarLyricsAPI.lyric(lyrics);
+            }
+        });
+        observer.observe(mLyric, { childList: true, subtree: true });
+    }
 
 
     // 音乐ID发生变化时
@@ -100,15 +125,32 @@ plugin.onLoad(async () => {
     }
 
 
+    // 开始获取歌词
     function startGetLyric() {
-        libsonginfo.addEventListener("audio-id-updated", audio_id_updated);
-        libsonginfo.addEventListener("play-progress-updated", play_progress_updated);
+        const config = plugin.getConfig("lyrics", defaultConfig.lyrics);
+        if (config["retrieval_method"]["value"] == "0") {
+            libsonginfo.addEventListener("audio-id-updated", audio_id_updated);
+            libsonginfo.addEventListener("play-progress-updated", play_progress_updated);
+        }
+        if (config["retrieval_method"]["value"] == "1") {
+            watchLyricsChange();
+        }
     }
 
 
+    // 停止获取歌词
     function stopGetLyric() {
-        libsonginfo.removeEventListener("audio-id-updated", audio_id_updated);
-        libsonginfo.removeEventListener("play-progress-updated", play_progress_updated);
+        const config = plugin.getConfig("lyrics", defaultConfig.lyrics);
+        if (config["retrieval_method"]["value"] == "0") {
+            libsonginfo.removeEventListener("audio-id-updated", audio_id_updated);
+            libsonginfo.removeEventListener("play-progress-updated", play_progress_updated);
+        }
+        if (config["retrieval_method"]["value"] == "1") {
+            if (observer) {
+                observer.disconnect();
+                observer = null;
+            }
+        }
     }
 
 

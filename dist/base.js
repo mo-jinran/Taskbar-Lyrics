@@ -49,6 +49,10 @@ plugin.onLoad(async () => {
                 "value": 2,
                 "textContent": "当前翻译，没则用上个选项"
             },
+            "retrieval_method": {
+                "value": 0,
+                "textContent": "[新] 发送网络请求解析歌词",
+            },
             "adjust": 0.0,
         },
         "font": {

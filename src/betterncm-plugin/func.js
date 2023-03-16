@@ -32,6 +32,14 @@ plugin.onLoad(async () => {
     // 歌词设置
     const lyrics = {
         switch: event => event.target.checked ? TaskbarLyricsStart() : TaskbarLyricsClose(),
+        setRetrievalMethod: (value, textContent) => {
+            const config = JSON.parse(JSON.stringify(plugin.getConfig("lyrics", defaultConfig.lyrics)));
+            config.retrieval_method.value = value;
+            config.retrieval_method.textContent = textContent;
+            stopGetLyric();
+            plugin.setConfig("lyrics", config);
+            startGetLyric();
+        },
         setExtraShow: (value, textContent) => {
             const config = JSON.parse(JSON.stringify(plugin.getConfig("lyrics", defaultConfig.lyrics)));
             config.extra_show.value = value;
@@ -44,9 +52,12 @@ plugin.onLoad(async () => {
             plugin.setConfig("lyrics", config);
         },
         default: elements => {
+            elements.LyricsRetrievalMethodValue.textContent = defaultConfig.lyrics.retrieval_method.textContent;
             elements.extraShowWhatValue.textContent = defaultConfig.lyrics.extra_show.textContent;
             elements.adjust.value = defaultConfig.lyrics.adjust;
+            stopGetLyric();
             plugin.setConfig("lyrics", undefined);
+            startGetLyric();
         }
     }
 

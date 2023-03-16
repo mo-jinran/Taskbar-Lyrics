@@ -22,6 +22,18 @@
                     <input type="checkbox" class="lyrics-switch" checked>
                 </div>
                 <div>
+                    <span>获取方法：</span>
+                    <div class="u-select" style="z-index: 2;">
+                        <div class="value lyrics-retrieval-method-value"></div>
+                        <div class="sltwrap">
+                            <ul class="select lyrics-retrieval-method-box">
+                                <li class="option f-thide" data-value="0">[新] 发送网络请求解析歌词</li>
+                                <li class="option f-thide" data-value="1">[旧] 监听软件词栏获取歌词</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div>
                     <span>副歌词显示：</span>
                     <div class="u-select">
                         <div class="value extra-show-what-value"></div>
@@ -267,13 +279,13 @@
                 <div>
                     <p>
                         <span>作者名称：</span>
-                        <a onclick="betterncm.ncm.openUrl('https://github.com/mo-jinran')" title="https://github.com/mo-jinran">🌈沫烬染🐾</a>
+                        <a onclick="betterncm.ncm.openUrl(this.title)" title="https://github.com/mo-jinran">🌈沫烬染🐾</a>
                     </p>
                 </div>
                 <div>
                     <p>
                         <span>仓库链接：</span>
-                        <a onclick="betterncm.ncm.openUrl('https://github.com/mo-jinran/Taskbar-Lyrics')" title="https://github.com/mo-jinran/Taskbar-Lyrics">Taskbar-Lyrics</a>
+                        <a onclick="betterncm.ncm.openUrl(this.title)" title="https://github.com/mo-jinran/Taskbar-Lyrics">Taskbar-Lyrics</a>
                     </p>
                 </div>
                 <div>
