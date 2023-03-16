@@ -11,11 +11,9 @@
     ],
     "type": "extension",
     "loadAfter": [
-        "libsonginfo",
         "liblyric"
     ],
     "requirements": [
-        "libsonginfo",
         "liblyric"
     ],
     "injects": {
