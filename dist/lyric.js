@@ -73,7 +73,6 @@ plugin.onLoad(async () => {
 
     // 音乐进度发生变化时
     async function play_progress(_, time) {
-        console.log("更新进度了");
         const adjust = Number(plugin.getConfig("lyrics", defaultConfig.lyrics)["adjust"]);
         if (parsedLyric) {
             let nextIndex = parsedLyric.findIndex(item => item.time > (time + adjust) * 1000);
