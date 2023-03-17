@@ -13,7 +13,7 @@ plugin.onLoad(async () => {
         const PluginPath = this.pluginPath.replace("/./", "\\");
         const copyCmd = `copy "${PluginPath}\\taskbar-lyrics.exe" "${DataPath}"`;
         const runCmd = `"${DataPath}\\taskbar-lyrics.exe" ${TaskbarLyricsPort}`;
-        await betterncm.app.exec(`cmd /c "${copyCmd} & ${runCmd}"`, false, true);
+        await betterncm.app.exec(`cmd /c "${copyCmd} & ${runCmd}"`, false, false);
         TaskbarLyricsAPI.font(pluginConfig.get("font"));
         TaskbarLyricsAPI.color(pluginConfig.get("color"));
         TaskbarLyricsAPI.style(pluginConfig.get("style"));
