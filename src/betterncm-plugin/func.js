@@ -32,6 +32,10 @@ plugin.onLoad(async () => {
     };
 
 
+    addEventListener("beforeunload", TaskbarLyricsClose);
+    TaskbarLyricsStart();
+
+
     // 歌词设置
     const lyrics = {
         switch: event => event.target.checked ? TaskbarLyricsStart() : TaskbarLyricsClose(),
@@ -254,10 +258,6 @@ plugin.onLoad(async () => {
             TaskbarLyricsAPI.screen(defaultConfig.screen);
         }
     }
-
-
-    addEventListener("beforeunload", TaskbarLyricsClose);
-    TaskbarLyricsStart();
 
 
     this.func = {
