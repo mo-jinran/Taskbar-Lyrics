@@ -117,8 +117,15 @@ plugin.onLoad(async () => {
     };
 
 
+    const pluginConfig = {
+        get: name => Object.assign({}, defaultConfig[name], plugin.getConfig(name, defaultConfig[name])),
+        set: (name, value) => plugin.setConfig(name, value)
+    }
+
+
     this.base = {
         WindowsEnum,
-        defaultConfig
+        defaultConfig,
+        pluginConfig
     };
 });

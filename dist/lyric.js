@@ -3,7 +3,7 @@
 
 plugin.onLoad(async () => {
     const TaskbarLyricsAPI = this.api.TaskbarLyricsAPI;
-    const defaultConfig = this.base.defaultConfig;
+    const { defaultConfig, pluginConfig } = this.base;
     const liblyric = loadedPlugins.liblyric;
 
 
@@ -74,7 +74,7 @@ plugin.onLoad(async () => {
 
     // 音乐进度发生变化时
     async function play_progress(_, time) {
-        const adjust = Number(plugin.getConfig("lyrics", defaultConfig.lyrics)["adjust"]);
+        const adjust = Number(pluginConfig.get("lyrics")["adjust"]);
         if (parsedLyric) {
             let nextIndex = parsedLyric.findIndex(item => item.time > (time + adjust) * 1000);
             nextIndex = (nextIndex <= -1) ? parsedLyric.length : nextIndex;
@@ -88,7 +88,7 @@ plugin.onLoad(async () => {
                     "extra": currentLyric?.translatedLyric ?? nextLyric?.originalLyric ?? ""
                 };
 
-                const extra_show_value = plugin.getConfig("lyrics", defaultConfig.lyrics)["extra_show"]["value"];
+                const extra_show_value = pluginConfig.get("lyrics")["extra_show"]["value"];
                 switch (extra_show_value) {
                     case "0": {
                         lyrics.extra = "";
@@ -127,7 +127,7 @@ plugin.onLoad(async () => {
 
     // 开始获取歌词
     function startGetLyric() {
-        const config = plugin.getConfig("lyrics", defaultConfig.lyrics);
+        const config = pluginConfig.get("lyrics");
         if (config["retrieval_method"]["value"] == "0") {
             legacyNativeCmder.appendRegisterCall("Load", "audioplayer", play_load);
             legacyNativeCmder.appendRegisterCall("PlayProgress", "audioplayer", play_progress);
@@ -144,7 +144,7 @@ plugin.onLoad(async () => {
 
     // 停止获取歌词
     function stopGetLyric() {
-        const config = plugin.getConfig("lyrics", defaultConfig.lyrics);
+        const config = pluginConfig.get("lyrics");
         if (config["retrieval_method"]["value"] == "0") {
             legacyNativeCmder.removeRegisterCall("Load", "audioplayer", play_load);
             legacyNativeCmder.removeRegisterCall("PlayProgress", "audioplayer", play_progress);

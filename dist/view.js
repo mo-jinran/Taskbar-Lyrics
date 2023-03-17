@@ -12,7 +12,7 @@ plugin.onConfig(tools => configView);
 
 
 plugin.onLoad(async () => {
-    const { defaultConfig } = { ...this.base };
+    const { defaultConfig, pluginConfig } = { ...this.base };
     const {
         lyrics,
         font,
@@ -116,9 +116,9 @@ plugin.onLoad(async () => {
             extraShowValue.textContent = textContent;
         });
 
-        retrievalMethodValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["retrieval_method"]["textContent"];
-        extraShowValue.textContent = plugin.getConfig("lyrics", defaultConfig["lyrics"])["extra_show"]["textContent"];
-        adjust.value = plugin.getConfig("lyrics", defaultConfig["lyrics"])["adjust"];
+        retrievalMethodValue.textContent = pluginConfig.get("lyrics")["retrieval_method"]["textContent"];
+        extraShowValue.textContent = pluginConfig.get("lyrics")["extra_show"]["textContent"];
+        adjust.value = pluginConfig.get("lyrics")["adjust"];
     }
 
 
@@ -136,7 +136,7 @@ plugin.onLoad(async () => {
         apply.addEventListener("click", () => font.set(elements));
         reset.addEventListener("click", () => font.default(elements));
 
-        font_family.value = plugin.getConfig("font", defaultConfig["font"])["font_family"];
+        font_family.value = pluginConfig.get("font")["font_family"];
     }
 
 
@@ -168,14 +168,14 @@ plugin.onLoad(async () => {
         apply.addEventListener("click", () => color.set(elements));
         reset.addEventListener("click", () => color.default(elements));
 
-        basicLightColor.value = `#${plugin.getConfig("color", defaultConfig["color"])["basic"]["light"]["hex_color"].toString(16)}`;
-        basicLightOpacity.value = plugin.getConfig("color", defaultConfig["color"])["basic"]["light"]["opacity"];
-        basicDarkColor.value = `#${plugin.getConfig("color", defaultConfig["color"])["basic"]["dark"]["hex_color"].toString(16)}`;
-        basicDarkOpacity.value = plugin.getConfig("color", defaultConfig["color"])["basic"]["dark"]["opacity"];
-        extraLightColor.value = `#${plugin.getConfig("color", defaultConfig["color"])["extra"]["light"]["hex_color"].toString(16)}`;
-        extraLightOpacity.value = plugin.getConfig("color", defaultConfig["color"])["extra"]["light"]["opacity"];
-        extraDarkColor.value = `#${plugin.getConfig("color", defaultConfig["color"])["extra"]["dark"]["hex_color"].toString(16)}`;
-        extraDarkOpacity.value = plugin.getConfig("color", defaultConfig["color"])["extra"]["dark"]["opacity"];
+        basicLightColor.value = `#${pluginConfig.get("color")["basic"]["light"]["hex_color"].toString(16)}`;
+        basicLightOpacity.value = pluginConfig.get("color")["basic"]["light"]["opacity"];
+        basicDarkColor.value = `#${pluginConfig.get("color")["basic"]["dark"]["hex_color"].toString(16)}`;
+        basicDarkOpacity.value = pluginConfig.get("color")["basic"]["dark"]["opacity"];
+        extraLightColor.value = `#${pluginConfig.get("color")["extra"]["light"]["hex_color"].toString(16)}`;
+        extraLightOpacity.value = pluginConfig.get("color")["extra"]["light"]["opacity"];
+        extraDarkColor.value = `#${pluginConfig.get("color")["extra"]["dark"]["hex_color"].toString(16)}`;
+        extraDarkOpacity.value = pluginConfig.get("color")["extra"]["dark"]["opacity"];
     }
 
 
@@ -246,12 +246,12 @@ plugin.onLoad(async () => {
             extraWeightValue.textContent = textContent;
         });
 
-        basicWeightValue.textContent = plugin.getConfig("style", defaultConfig["style"])["basic"]["weight"]["textContent"];
-        basicUnderline.checked = plugin.getConfig("style", defaultConfig["style"])["basic"]["underline"];
-        basicStrikethrough.checked = plugin.getConfig("style", defaultConfig["style"])["basic"]["strikethrough"];
-        extraWeightValue.textContent = plugin.getConfig("style", defaultConfig["style"])["extra"]["weight"]["textContent"];
-        extraUnderline.checked = plugin.getConfig("style", defaultConfig["style"])["extra"]["underline"];
-        extraStrikethrough.checked = plugin.getConfig("style", defaultConfig["style"])["extra"]["strikethrough"];
+        basicWeightValue.textContent = pluginConfig.get("style")["basic"]["weight"]["textContent"];
+        basicUnderline.checked = pluginConfig.get("style")["basic"]["underline"];
+        basicStrikethrough.checked = pluginConfig.get("style")["basic"]["strikethrough"];
+        extraWeightValue.textContent = pluginConfig.get("style")["extra"]["weight"]["textContent"];
+        extraUnderline.checked = pluginConfig.get("style")["extra"]["underline"];
+        extraStrikethrough.checked = pluginConfig.get("style")["extra"]["strikethrough"];
     }
 
 
@@ -287,8 +287,8 @@ plugin.onLoad(async () => {
         apply.addEventListener("click", () => margin.set(elements));
         reset.addEventListener("click", () => margin.default(elements));
 
-        left.value = plugin.getConfig("margin", defaultConfig["margin"])["left"];
-        right.value = plugin.getConfig("margin", defaultConfig["margin"])["right"];
+        left.value = pluginConfig.get("margin")["left"];
+        right.value = pluginConfig.get("margin")["right"];
     }
 
 
