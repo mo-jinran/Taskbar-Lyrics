@@ -91,13 +91,23 @@ body.s-theme-white #taskbar-lyrics-dom .tab_button.active::after {
 
 #taskbar-lyrics-dom .content section>div {
     display: flex;
-    align-items: center;
-    height: 30px;
+    min-height: 30px;
     margin: 5px 0;
 }
 
+#taskbar-lyrics-dom .content .item_container {
+    flex-direction: row;
+    align-items: center;
+}
+
+#taskbar-lyrics-dom .content .text_container {
+    flex-direction: column;
+    align-items: start;
+}
+
 #taskbar-lyrics-dom .content p {
-    font-size: 16px;
+    font-size: 14px;
+    margin: 5px 0;
 }
 
 #taskbar-lyrics-dom .content a {
@@ -106,16 +116,16 @@ body.s-theme-white #taskbar-lyrics-dom .tab_button.active::after {
 
 
 
-#taskbar-lyrics-dom .content input[type="color"] {
+#taskbar-lyrics-dom .content input.color-input {
     width: 150px;
     padding: unset;
 }
 
-#taskbar-lyrics-dom .content input[type="number"] {
+#taskbar-lyrics-dom .content input.number-input {
     width: 150px;
 }
 
-#taskbar-lyrics-dom .content input[type="checkbox"] {
+#taskbar-lyrics-dom .content input.switch-btn {
     width: 44px;
     height: 22px;
     appearance: none;
@@ -124,7 +134,7 @@ body.s-theme-white #taskbar-lyrics-dom .tab_button.active::after {
     position: relative;
 }
 
-#taskbar-lyrics-dom .content input[type="checkbox"]::before {
+#taskbar-lyrics-dom .content input.switch-btn::before {
     content: "关";
     text-align: center;
     line-height: 18px;
@@ -139,11 +149,11 @@ body.s-theme-white #taskbar-lyrics-dom .tab_button.active::after {
     transition: all 0.1s ease-out;
 }
 
-#taskbar-lyrics-dom .content input[type="checkbox"]:checked {
+#taskbar-lyrics-dom .content input.switch-btn:checked {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-#taskbar-lyrics-dom .content input[type="checkbox"]:checked::before {
+#taskbar-lyrics-dom .content input.switch-btn:checked::before {
     content: "开";
     text-align: center;
     line-height: 18px;
@@ -151,15 +161,15 @@ body.s-theme-white #taskbar-lyrics-dom .tab_button.active::after {
     left: calc(100% - 19px);
 }
 
-body.s-theme-white #taskbar-lyrics-dom .content input[type="checkbox"] {
+body.s-theme-white #taskbar-lyrics-dom .content input.switch-btn {
     border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-body.s-theme-white #taskbar-lyrics-dom .content input[type="checkbox"]::before {
+body.s-theme-white #taskbar-lyrics-dom .content input.switch-btn::before {
     background-color: rgba(0, 0, 0, 0.3);
 }
 
-body.s-theme-white #taskbar-lyrics-dom .content input[type="checkbox"]:checked {
+body.s-theme-white #taskbar-lyrics-dom .content input.switch-btn:checked {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -171,7 +181,7 @@ body.s-theme-white #taskbar-lyrics-dom .content input[type="checkbox"]:checked {
     margin: 0 5px;
 }
 
-#taskbar-lyrics-dom input[type="checkbox"] {
+#taskbar-lyrics-dom input.switch-btn {
     margin: 0 5px;
 }
 
