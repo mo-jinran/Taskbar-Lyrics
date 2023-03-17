@@ -10,6 +10,7 @@ plugin.onLoad(async () => {
     let observer = null;
     let parsedLyric = null;
     let currentIndex = 0;
+    let musicId = 0;
 
 
     // 监视软件内歌词变动
@@ -43,7 +44,7 @@ plugin.onLoad(async () => {
 
         // 获取歌曲信息
         const playingSong = betterncm.ncm.getPlayingSong();
-        const musicId = playingSong.data.id ?? 0;
+        musicId = playingSong.data.id ?? 0;
         const name = playingSong.data.name ?? "";
         const artists = playingSong.data.artists ?? "";
 
@@ -73,7 +74,6 @@ plugin.onLoad(async () => {
 
     // 音乐进度发生变化时
     async function play_progress(_, time) {
-        console.log("更新进度了");
         const adjust = Number(plugin.getConfig("lyrics", defaultConfig.lyrics)["adjust"]);
         if (parsedLyric) {
             let nextIndex = parsedLyric.findIndex(item => item.time > (time + adjust) * 1000);
@@ -131,6 +131,10 @@ plugin.onLoad(async () => {
         if (config["retrieval_method"]["value"] == "0") {
             legacyNativeCmder.appendRegisterCall("Load", "audioplayer", play_load);
             legacyNativeCmder.appendRegisterCall("PlayProgress", "audioplayer", play_progress);
+            const playingSong = betterncm.ncm.getPlayingSong();
+            if (playingSong.data.id != musicId) {
+                play_load();
+            }
         }
         if (config["retrieval_method"]["value"] == "1") {
             watchLyricsChange();
