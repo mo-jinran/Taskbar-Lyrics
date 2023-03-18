@@ -39,7 +39,6 @@ plugin.onLoad(async () => {
 
     // 音乐ID发生变化时
     async function play_load() {
-        console.log("更新音乐了");
         parsedLyric = null;
 
         // 获取歌曲信息
