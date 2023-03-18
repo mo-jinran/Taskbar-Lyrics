@@ -11,7 +11,7 @@ plugin.onLoad(async () => {
     const TaskbarLyricsStart = async () => {
         const DataPath = await betterncm.app.getDataPath();
         const PluginPath = this.pluginPath.replace("/./", "\\");
-        const copyCmd = `copy "${PluginPath}\\taskbar-lyrics.exe" "${DataPath}"`;
+        const copyCmd = `copy /y "${PluginPath}\\taskbar-lyrics.exe" "${DataPath}"`;
         const runCmd = `"${DataPath}\\taskbar-lyrics.exe" ${TaskbarLyricsPort}`;
         await betterncm.app.exec(`cmd /c "${copyCmd} & ${runCmd}"`, false, false);
         TaskbarLyricsAPI.font(pluginConfig.get("font"));
