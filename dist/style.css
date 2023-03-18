@@ -90,6 +90,10 @@ body.s-theme-white #taskbar-lyrics-dom .tab_button.active::after {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
+body.s-theme-white #taskbar-lyrics-dom .content hr {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
 #taskbar-lyrics-dom .content section>div {
     display: flex;
     min-height: 30px;
