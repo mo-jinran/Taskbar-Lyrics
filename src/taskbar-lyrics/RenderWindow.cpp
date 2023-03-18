@@ -168,8 +168,21 @@ void 呈现窗口类::绘制歌词(
     this->D2D呈现目标->BindDC(hdc, &rect);
     this->D2D呈现目标->BeginDraw();
 
+    DWRITE_TRIMMING 歌词裁剪 = {
+        DWRITE_TRIMMING_GRANULARITY_CHARACTER,
+        0,
+        0
+    };
+
     if (this->副歌词.empty())
     {
+        D2D1_RECT_F 主歌词_矩形 = D2D1::RectF(
+            rect.left + this->DPI(10),
+            rect.top + this->DPI(10),
+            rect.right - this->DPI(10),
+            rect.bottom - this->DPI(10)
+        );
+
         // 创建文字格式
         this->DWrite工厂->CreateTextFormat(
             this->字体名称.c_str(),
@@ -187,11 +200,12 @@ void 呈现窗口类::绘制歌词(
             this->主歌词.c_str(),
             this->主歌词.size(),
             this->DWrite主歌词文本格式,
-            (float) (rect.right - rect.left),
-            (float) (rect.bottom - rect.top),
+            (float) (主歌词_矩形.right - 主歌词_矩形.left),
+            (float) (主歌词_矩形.bottom - 主歌词_矩形.top),
             &this->DWrite主歌词文本布局
         );
 
+        this->DWrite主歌词文本布局->SetTrimming(&歌词裁剪, nullptr);
         this->DWrite主歌词文本布局->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
         this->DWrite主歌词文本布局->SetTextAlignment(this->对齐方式_主歌词);
         this->DWrite主歌词文本布局->SetUnderline(this->字体样式_主歌词_下划线, DWRITE_TEXT_RANGE{0, this->主歌词.size()});
@@ -200,7 +214,7 @@ void 呈现窗口类::绘制歌词(
 
         //绘制文字显示
         this->D2D呈现目标->DrawTextLayout(
-            D2D1::Point2F(this->DPI(10), this->DPI(10)),
+            D2D1::Point2F(主歌词_矩形.left, 主歌词_矩形.top),
             this->DWrite主歌词文本布局,
             this->D2D纯色笔刷,
             D2D1_DRAW_TEXT_OPTIONS_NO_SNAP
@@ -213,6 +227,13 @@ void 呈现窗口类::绘制歌词(
     }
     else
     {
+        D2D1_RECT_F 主歌词_矩形 = D2D1::RectF(
+            rect.left + this->DPI(5),
+            rect.top + this->DPI(5),
+            rect.right - this->DPI(5),
+            rect.bottom / 2.0f
+        );
+
         // 创建文字格式
         this->DWrite工厂->CreateTextFormat(
             this->字体名称.c_str(),
@@ -230,11 +251,12 @@ void 呈现窗口类::绘制歌词(
             this->主歌词.c_str(),
             this->主歌词.size(),
             this->DWrite主歌词文本格式,
-            (float) (rect.right - rect.left),
-            (float) (rect.bottom - rect.top),
+            (float) (主歌词_矩形.right - 主歌词_矩形.left),
+            (float) (主歌词_矩形.bottom - 主歌词_矩形.top),
             &this->DWrite主歌词文本布局
         );
 
+        this->DWrite主歌词文本布局->SetTrimming(&歌词裁剪, nullptr);
         this->DWrite主歌词文本布局->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
         this->DWrite主歌词文本布局->SetTextAlignment(this->对齐方式_主歌词);
         this->DWrite主歌词文本布局->SetUnderline(this->字体样式_主歌词_下划线, DWRITE_TEXT_RANGE{0, this->主歌词.size()});
@@ -243,13 +265,20 @@ void 呈现窗口类::绘制歌词(
 
         //绘制文字显示
         this->D2D呈现目标->DrawTextLayout(
-            D2D1::Point2F(this->DPI(5), this->DPI(5)),
+            D2D1::Point2F(主歌词_矩形.left, 主歌词_矩形.top),
             this->DWrite主歌词文本布局,
             this->D2D纯色笔刷,
             D2D1_DRAW_TEXT_OPTIONS_NO_SNAP
         );
 
         /******************************************/
+
+        D2D1_RECT_F 副歌词_矩形 = D2D1::RectF(
+            rect.left + this->DPI(5),
+            rect.bottom / 2.0f,
+            rect.right - this->DPI(5),
+            rect.bottom - this->DPI(5)
+        );
 
         // 创建文字格式
         this->DWrite工厂->CreateTextFormat(
@@ -268,11 +297,12 @@ void 呈现窗口类::绘制歌词(
             this->副歌词.c_str(),
             this->副歌词.size(),
             this->DWrite副歌词文本格式,
-            (float) (rect.right - rect.left),
-            (float) (rect.bottom - rect.top),
+            (float) (副歌词_矩形.right - 副歌词_矩形.left),
+            (float) (副歌词_矩形.bottom - 副歌词_矩形.top),
             &this->DWrite副歌词文本布局
         );
 
+        this->DWrite副歌词文本布局->SetTrimming(&歌词裁剪, nullptr);
         this->DWrite副歌词文本布局->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
         this->DWrite副歌词文本布局->SetTextAlignment(this->对齐方式_副歌词);
         this->DWrite副歌词文本布局->SetUnderline(this->字体样式_副歌词_下划线, DWRITE_TEXT_RANGE{0, this->副歌词.size()});
@@ -281,7 +311,7 @@ void 呈现窗口类::绘制歌词(
 
         //绘制文字显示
         this->D2D呈现目标->DrawTextLayout(
-            D2D1::Point2F(this->DPI(5), (float) (rect.bottom - rect.top) / 2),
+            D2D1::Point2F(副歌词_矩形.left, 副歌词_矩形.top),
             this->DWrite副歌词文本布局,
             this->D2D纯色笔刷,
             D2D1_DRAW_TEXT_OPTIONS_NO_SNAP
