@@ -4,8 +4,8 @@
     height: 100%;
     overflow: hidden;
     display: flex;
-    gap: 16px;
     flex-direction: column;
+    gap: 16px;
 }
 
 
@@ -75,6 +75,7 @@ body.s-theme-white #taskbar-lyrics-dom .tab_button.active::after {
     display: flex;
     align-items: center;
     margin: 10px 0;
+    gap: 10px;
 }
 
 #taskbar-lyrics-dom .content h1 strong {
