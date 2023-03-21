@@ -9,11 +9,13 @@ plugin.onLoad(async () => {
 
     // 启动任务栏歌词软件
     const TaskbarLyricsStart = async () => {
-        const DataPath = await betterncm.app.getDataPath();
-        const PluginPath = this.pluginPath.replace("/./", "\\");
-        const copyCmd = `copy /y "${PluginPath}\\taskbar-lyrics.exe" "${DataPath}"`;
-        const runCmd = `"${DataPath}\\taskbar-lyrics.exe" ${TaskbarLyricsPort}`;
-        await betterncm.app.exec(`cmd /c "${copyCmd} & ${runCmd}"`, false, false);
+        const dataPath = await betterncm.app.getDataPath();
+        const pluginPath = this.pluginPath.replace("/./", "\\");
+        const taskkill = `taskkill /F /IM "taskbar-lyrics.exe"`;
+        const xcopy = `xcopy /C /D /Y "${pluginPath}\\taskbar-lyrics.exe" "${dataPath}"`;
+        const exec = `"${dataPath}\\taskbar-lyrics.exe" ${TaskbarLyricsPort}`;
+        const cmd = `${taskkill} & ${xcopy} && ${exec}`;
+        await betterncm.app.exec(`cmd /S /C ${cmd}`, false, false);
         TaskbarLyricsAPI.font(pluginConfig.get("font"));
         TaskbarLyricsAPI.color(pluginConfig.get("color"));
         TaskbarLyricsAPI.style(pluginConfig.get("style"));
