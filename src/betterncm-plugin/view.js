@@ -12,7 +12,7 @@ plugin.onConfig(tools => configView);
 
 
 plugin.onLoad(async () => {
-    const { defaultConfig, pluginConfig } = { ...this.base };
+    const pluginConfig = this.base.pluginConfig;
     const {
         lyrics,
         font,
