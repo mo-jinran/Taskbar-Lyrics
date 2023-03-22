@@ -9,8 +9,9 @@ plugin.onLoad(async () => {
 
     // 启动任务栏歌词软件
     const TaskbarLyricsStart = async () => {
-        const dataPath = await betterncm.app.getDataPath();
-        const pluginPath = this.pluginPath.replace("/./", "\\");
+        // 这BetterNCM获取的路径是不标准的会出问题，要替换掉下面那俩字符
+        const dataPath = (await betterncm.app.getDataPath()).replace("/", "\\");
+        const pluginPath = this.pluginPath.replace("/./", "\\").replace("/", "\\");
         const taskkill = `taskkill /F /IM "taskbar-lyrics.exe"`;
         const xcopy = `xcopy /C /D /Y "${pluginPath}\\taskbar-lyrics.exe" "${dataPath}"`;
         const exec = `"${dataPath}\\taskbar-lyrics.exe" ${TaskbarLyricsPort}`;
