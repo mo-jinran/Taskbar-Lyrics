@@ -67,6 +67,15 @@ plugin.onLoad(async () => {
             lyricData?.romalrc?.lyric ?? ""
         ).filter(item => item.originalLyric != "");
 
+        // 纯音乐只显示歌曲名与作曲家
+        if (
+            (parsedLyric.length == 1)
+            && (parsedLyric[0].time == 0)
+            && (parsedLyric[0].duration != 0)
+        ) {
+            parsedLyric = [];
+        }
+
         currentIndex = 0;
     }
 
