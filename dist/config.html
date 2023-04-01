@@ -1,60 +1,16 @@
 <div id="taskbar-lyrics-dom">
     <!-- tab选项卡 -->
     <header class="tab_box">
-        <button class="tab_button active">歌词</button>
+        <button class="tab_button active">字体</button>
+        <button class="tab_button">歌词</button>
         <button class="tab_button">窗口</button>
         <button class="tab_button">关于</button>
     </header>
 
     <!-- 主体内容 -->
     <main class="content_box">
-        <!-- 歌词 -->
+        <!-- 字体 -->
         <div class="content show">
-            <!-- 歌词设置 -->
-            <section class="lyrics-settings">
-                <h1>
-                    <strong>歌词设置：</strong>
-                    <button class="u-ibtn5 u-ibtnsz8 apply">立即应用</button>
-                    <button class="u-ibtn5 u-ibtnsz8 reset">恢复默认</button>
-                </h1>
-                <div class="item_container">
-                    <span>歌词开关：</span>
-                    <input type="checkbox" class="switch-btn lyrics-switch" checked>
-                </div>
-                <div class="item_container">
-                    <span>获取方法：</span>
-                    <div class="u-select" style="z-index: 2;">
-                        <div class="value retrieval-method"></div>
-                        <div class="sltwrap">
-                            <ul class="select retrieval-method">
-                                <li class="option f-thide" data-value="0">[新] 发送网络请求解析歌词</li>
-                                <li class="option f-thide" data-value="1">[旧] 监听软件词栏获取歌词</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="item_container">
-                    <span>延迟调整：</span>
-                    <input type="number" class="u-txt sc-flag number-input adjust" step="0.1" min="-10" max="10">
-                </div>
-                <div class="item_container">
-                    <span>副歌词显示：</span>
-                    <div class="u-select">
-                        <div class="value extra-show"></div>
-                        <div class="sltwrap">
-                            <ul class="select extra-show">
-                                <li class="option f-thide" data-value="0">隐藏歌词，让歌词独占两行</li>
-                                <li class="option f-thide" data-value="1">下句歌词，没则用上个选项</li>
-                                <li class="option f-thide" data-value="2">当前翻译，没则用上个选项</li>
-                                <li class="option f-thide" data-value="3">当前音译，没则用上个选项</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <hr />
-
             <!-- 更换字体 -->
             <section class="font-settings">
                 <h1>
@@ -196,6 +152,74 @@
             </section>
         </div>
 
+        <!-- 歌词 -->
+        <div class="content">
+            <!-- 歌词设置 -->
+            <section class="lyrics-settings">
+                <h1>
+                    <strong>歌词设置：</strong>
+                    <button class="u-ibtn5 u-ibtnsz8 apply">立即应用</button>
+                    <button class="u-ibtn5 u-ibtnsz8 reset">恢复默认</button>
+                </h1>
+                <div class="item_container">
+                    <span>歌词开关：</span>
+                    <input type="checkbox" class="switch-btn lyrics-switch" checked>
+                </div>
+                <div class="item_container">
+                    <span>获取方法：</span>
+                    <div class="u-select" style="z-index: 2;">
+                        <div class="value retrieval-method"></div>
+                        <div class="sltwrap">
+                            <ul class="select retrieval-method">
+                                <li class="option f-thide" data-value="0">[新] 发送网络请求解析歌词</li>
+                                <li class="option f-thide" data-value="1">[旧] 监听软件词栏获取歌词</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="item_container">
+                    <span>延迟调整：</span>
+                    <input type="number" class="u-txt sc-flag number-input adjust" step="0.1" min="-10" max="10">
+                </div>
+                <div class="item_container">
+                    <span>副歌词显示：</span>
+                    <div class="u-select">
+                        <div class="value extra-show"></div>
+                        <div class="sltwrap">
+                            <ul class="select extra-show">
+                                <li class="option f-thide" data-value="0">隐藏歌词，让歌词独占两行</li>
+                                <li class="option f-thide" data-value="1">下句歌词，没则用上个选项</li>
+                                <li class="option f-thide" data-value="2">当前翻译，没则用上个选项</li>
+                                <li class="option f-thide" data-value="3">当前音译，没则用上个选项</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr />
+
+            <!-- 对齐方式 -->
+            <section class="align-settings">
+                <h1>
+                    <strong>对齐方式：</strong>
+                    <button class="u-ibtn5 u-ibtnsz8 reset">恢复默认</button>
+                </h1>
+                <div class="item_container">
+                    <span>主歌词：</span>
+                    <button class="u-ibtn5 u-ibtnsz8 basic-left" data-type="basic">左</button>
+                    <button class="u-ibtn5 u-ibtnsz8 basic-center" data-type="basic">中</button>
+                    <button class="u-ibtn5 u-ibtnsz8 basic-right" data-type="basic">右</button>
+                </div>
+                <div class="item_container">
+                    <span>副歌词：</span>
+                    <button class="u-ibtn5 u-ibtnsz8 extra-left" data-type="extra">左</button>
+                    <button class="u-ibtn5 u-ibtnsz8 extra-center" data-type="extra">中</button>
+                    <button class="u-ibtn5 u-ibtnsz8 extra-right" data-type="extra">右</button>
+                </div>
+            </section>
+        </div>
+
         <!-- 窗口 -->
         <div class="content">
             <!-- 修改位置 -->
@@ -228,28 +252,6 @@
                 <div class="item_container">
                     <span>右边距：</span>
                     <input type="number" class="u-txt sc-flag number-input right">
-                </div>
-            </section>
-
-            <hr />
-
-            <!-- 对齐方式 -->
-            <section class="align-settings">
-                <h1>
-                    <strong>对齐方式：</strong>
-                    <button class="u-ibtn5 u-ibtnsz8 reset">恢复默认</button>
-                </h1>
-                <div class="item_container">
-                    <span>主歌词：</span>
-                    <button class="u-ibtn5 u-ibtnsz8 basic-left" data-type="basic">左</button>
-                    <button class="u-ibtn5 u-ibtnsz8 basic-center" data-type="basic">中</button>
-                    <button class="u-ibtn5 u-ibtnsz8 basic-right" data-type="basic">右</button>
-                </div>
-                <div class="item_container">
-                    <span>副歌词：</span>
-                    <button class="u-ibtn5 u-ibtnsz8 extra-left" data-type="extra">左</button>
-                    <button class="u-ibtn5 u-ibtnsz8 extra-center" data-type="extra">中</button>
-                    <button class="u-ibtn5 u-ibtnsz8 extra-right" data-type="extra">右</button>
                 </div>
             </section>
 

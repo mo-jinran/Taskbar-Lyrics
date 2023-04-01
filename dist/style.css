@@ -44,6 +44,7 @@
     left: 10px;
     right: 10px;
     bottom: 0px;
+    backdrop-filter: blur(4px);
 }
 
 body.s-theme-white #taskbar-lyrics-dom .tab_button.active::after {
