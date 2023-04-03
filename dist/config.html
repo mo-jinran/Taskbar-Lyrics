@@ -181,20 +181,21 @@
                     <span>延迟调整：</span>
                     <input type="number" class="u-txt sc-flag number-input adjust" step="0.1" min="-10" max="10">
                 </div>
-                <div class="item_container">
-                    <span>副歌词显示：</span>
-                    <div class="u-select">
-                        <div class="value extra-show"></div>
-                        <div class="sltwrap">
-                            <ul class="select extra-show">
-                                <li class="option f-thide" data-value="0">隐藏歌词，让歌词独占两行</li>
-                                <li class="option f-thide" data-value="1">下句歌词，没则用上个选项</li>
-                                <li class="option f-thide" data-value="2">当前翻译，没则用上个选项</li>
-                                <li class="option f-thide" data-value="3">当前音译，没则用上个选项</li>
-                            </ul>
-                        </div>
-                    </div>
+            </section>
+
+            <hr />
+
+            <section class="extra-show-settings">
+                <h1>
+                    <strong>歌词显示设置：</strong>
+                    <button class="u-ibtn5 u-ibtnsz8 reset">恢复默认</button>
+                </h1>
+                <div class="item_container" id="options">
+                    <span>待选择区域：</span>
                 </div>
+                <div class="item_container" id="saved_options">
+                    <span>已选择区域：</span>
+                </div>              
             </section>
 
             <hr />

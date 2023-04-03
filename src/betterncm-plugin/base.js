@@ -45,15 +45,40 @@ plugin.onLoad(async () => {
     // 默认的配置
     const defaultConfig = {
         "lyrics": {
-            "extra_show": {
-                "value": 2,
-                "textContent": "当前翻译，没则用上个选项"
-            },
             "retrieval_method": {
                 "value": 0,
                 "textContent": "[新] 发送网络请求解析歌词",
             },
             "adjust": 0.0,
+        },
+        "extra_show": {
+            "options": [
+                {
+                    "value": "lyrics_translation",
+                    "textContent": "歌词 & 翻译"
+                },
+                {
+                    "value": "lyrics_romanization",
+                    "textContent": "歌词 & 音译"
+                },
+                {
+                    "value": "lyrics_lyrics",
+                    "textContent": "双行歌词"
+                },
+                {
+                    "value": "lyrics",
+                    "textContent": "单行歌词"
+                },
+                {
+                    "value": "title_lyrics",
+                    "textContent": "标题 & 歌词"
+                },
+                {
+                    "value": "artist_title_lyrics",
+                    "textContent": "歌手 - 标题 & 歌词"
+                },
+            ],
+            "saved_options": []
         },
         "font": {
             "font_family": "Microsoft YaHei UI"

@@ -50,12 +50,6 @@ plugin.onLoad(async () => {
             pluginConfig.set("lyrics", config);
             startGetLyric();
         },
-        setExtraShow: (value, textContent) => {
-            const config = JSON.parse(JSON.stringify(pluginConfig.get("lyrics")));
-            config.extra_show.value = value;
-            config.extra_show.textContent = textContent;
-            pluginConfig.set("lyrics", config);
-        },
         set: elements => {
             const config = JSON.parse(JSON.stringify(pluginConfig.get("lyrics")));
             config.adjust = Number(elements.adjust.value);
@@ -71,6 +65,68 @@ plugin.onLoad(async () => {
         }
     }
 
+    const extraShow = {
+        createOptionElement: (option, saved, elements) => {
+            let optionElement = document.createElement("div");
+            optionElement.classList.add("option");
+            optionElement.innerText = option.textContent;
+            optionElement.setAttribute("data-value", option.value);
+            let btn = document.createElement("button");
+            btn.classList.add("option-btn");
+            btn.addEventListener("click", function () {
+                extraShow.createOptionElement(option, !saved, elements);
+                optionElement.remove();
+                extraShow.set(elements);
+            });
+            optionElement.addEventListener("mouseover", () => {
+                btn.style.display = "flex";
+            });
+            optionElement.addEventListener("mouseout", () => {
+                btn.style.display = "none";
+            });
+            optionElement.appendChild(btn);
+            if (saved) {
+                btn.innerText = "x";
+                btn.classList.add("delete-btn");
+                elements.savedOptionsArea.appendChild(optionElement);
+            } else {
+                btn.innerText = "+";
+                btn.classList.add("add-btn");
+                elements.optionsArea.appendChild(optionElement);
+            }
+        },
+        set: (elements) => {
+            let options = [];
+            elements.optionsArea.querySelectorAll(".option").forEach((element) =>
+                options.push({
+                    value: element.getAttribute("data-value"),
+                    textContent: element.firstChild.nodeValue,
+                })
+            );
+            let savedOptions = [];
+            elements.savedOptionsArea.querySelectorAll(".option").forEach((element) =>
+                savedOptions.push({
+                    value: element.getAttribute("data-value"),
+                    textContent: element.firstChild.nodeValue,
+                })
+            );
+            const config = JSON.parse(JSON.stringify(pluginConfig.get("extra_show")));
+            config.options = options;
+            config.saved_options = savedOptions;
+            pluginConfig.set("extra_show", config);
+        },
+        default: (elements) => {
+            elements.optionsArea.querySelectorAll(".option").forEach((element) => element.remove());
+            defaultConfig.extra_show.options.forEach((option) =>
+                extraShow.createOptionElement(option, false, elements)
+            );
+            elements.savedOptionsArea.querySelectorAll(".option").forEach((element) => element.remove());
+            defaultConfig.extra_show.saved_options.forEach((option) =>
+                extraShow.createOptionElement(option, true, elements)
+            );
+            pluginConfig.set("extra_show", undefined);
+        },
+    };
 
     // 更换字体
     const font = {
@@ -265,6 +321,7 @@ plugin.onLoad(async () => {
 
     this.func = {
         lyrics,
+        extraShow,
         font,
         color,
         style,

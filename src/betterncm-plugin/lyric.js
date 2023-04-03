@@ -30,6 +30,38 @@ plugin.onLoad(async () => {
                     lyrics.basic = mutation.addedNodes[0].textContent;
                 }
 
+                const savedOptions = pluginConfig.get("extra_show")["saved_options"];
+                for (let i = 0; i < savedOptions.length; i++) {
+                    if (savedOptions[i].value == "lyrics") {
+                        lyrics.basic = mutation.addedNodes[0].firstChild.textContent;
+                        lyrics.extra = "";
+                        break;
+                    } else if (savedOptions[i].value == "title_lyrics") {
+                        if (betterncm.ncm.getPlaying()?.title) {
+                            lyrics.basic = betterncm.ncm.getPlaying()?.title;
+                            lyrics.extra = mutation.addedNodes[0].firstChild.textContent;
+                            break;
+                        } else {
+                            continue;
+                        }
+                    } else if (savedOptions[i].value == "artist_title_lyrics") {
+                        let song = betterncm.ncm.getPlayingSong()
+                        if (song && song?.data?.artists && song?.data?.name) {
+                            lyrics.basic = song.data.artists.map(element => element.name).join("/") + " - " + song.data.name;
+                            lyrics.extra = mutation.addedNodes[0].firstChild.textContent;
+                            break;
+                        } else {
+                            continue;
+                        }
+                    } else if (savedOptions[i].value == "lyrics_translation" || savedOptions[i].value == "lyrics_romanization") {
+                        if (mutation?.addedNodes[2]?.firstChild) {
+                            break;
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+
                 TaskbarLyricsAPI.lyric(lyrics);
             }
         });
@@ -84,37 +116,51 @@ plugin.onLoad(async () => {
 
                 const lyrics = {
                     "basic": currentLyric?.originalLyric ?? "",
-                    "extra": currentLyric?.translatedLyric ?? nextLyric?.originalLyric ?? ""
+                    "extra": ""
                 };
 
-                const extra_show_value = pluginConfig.get("lyrics")["extra_show"]["value"];
-                switch (extra_show_value) {
-                    case "0": {
+                const savedOptions = pluginConfig.get("extra_show")["saved_options"];
+                for (let i = 0; i < savedOptions.length; i++) {
+                    if (savedOptions[i].value == "lyrics") {
+                        lyrics.basic = currentLyric?.originalLyric ?? "";
                         lyrics.extra = "";
-                    } break;
-
-                    case "1": {
-                        lyrics.extra = nextLyric?.originalLyric ?? "";
-                    } break;
-
-                    case "2": {
-                        lyrics.extra = currentLyric?.translatedLyric
-                            ?? nextLyric?.originalLyric
-                            ?? "";
-                    } break;
-
-                    case "3": {
-                        lyrics.extra = currentLyric?.romanLyric
-                            ?? currentLyric?.translatedLyric
-                            ?? nextLyric?.originalLyric
-                            ?? "";
-                    } break;
-
-                    default: {
-                        lyrics.extra = currentLyric?.translatedLyric
-                            ?? nextLyric?.originalLyric
-                            ?? ""
-                    } break;
+                        break;
+                    } else if (savedOptions[i].value == "lyrics_lyrics") {
+                        lyrics.basic = currentLyric?.originalLyric ?? "";
+                        lyrics.extra = currentLyric?.translatedLyric ?? nextLyric?.originalLyric ?? "";
+                        break;
+                    } else if (savedOptions[i].value == "title_lyrics") {
+                        if (betterncm.ncm.getPlaying()?.title) {
+                            lyrics.basic = betterncm.ncm.getPlaying()?.title;
+                            lyrics.extra = currentLyric?.originalLyric ?? "";
+                            break;
+                        } else {
+                            continue;
+                        }
+                    } else if (savedOptions[i].value == "artist_title_lyrics") {
+                        let song = betterncm.ncm.getPlayingSong()
+                        if (song && song?.data?.artists && song?.data?.name) {
+                            lyrics.basic = song.data.artists.map(element => element.name).join("/") + " - " + song.data.name;
+                            lyrics.extra = currentLyric?.originalLyric ?? "";
+                            break;
+                        } else {
+                            continue;
+                        }
+                    } else if (savedOptions[i].value == "lyrics_translation") {
+                        if (currentLyric?.translatedLyric) {
+                            lyrics.extra = currentLyric?.translatedLyric
+                            break;
+                        } else {
+                            continue;
+                        }
+                    } else if (savedOptions[i].value == "lyrics_romanization") {
+                        if (currentLyric?.romanLyric) {
+                            lyrics.extra = currentLyric?.romanLyric
+                            break;
+                        } else {
+                            continue;
+                        }
+                    }
                 }
 
                 TaskbarLyricsAPI.lyric(lyrics);

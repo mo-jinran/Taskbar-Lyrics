@@ -15,6 +15,7 @@ plugin.onLoad(async () => {
     const pluginConfig = this.base.pluginConfig;
     const {
         lyrics,
+        extraShow,
         font,
         color,
         style,
@@ -77,13 +78,10 @@ plugin.onLoad(async () => {
         const lyricsSwitch = configView.querySelector(".lyrics-settings .lyrics-switch");
         const retrievalMethodValue = configView.querySelector(".lyrics-settings .retrieval-method.value");
         const retrievalMethodSelect = configView.querySelector(".lyrics-settings .retrieval-method.select");
-        const extraShowValue = configView.querySelector(".lyrics-settings .extra-show.value");
-        const extraShowSelect = configView.querySelector(".lyrics-settings .extra-show.select");
         const adjust = configView.querySelector(".lyrics-settings .adjust");
 
         const elements = {
             retrievalMethodValue,
-            extraShowValue,
             adjust
         }
 
@@ -104,23 +102,30 @@ plugin.onLoad(async () => {
             retrievalMethodValue.textContent = textContent;
         });
 
-        extraShowValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
-        extraShowSelect.addEventListener("click", event => {
-            const value = event.target.dataset.value;
-            const textContent = event.target.textContent;
-            lyrics.setExtraShow(value, textContent);
-            extraShowValue.textContent = textContent;
-        });
-
         retrievalMethodValue.textContent = pluginConfig.get("lyrics")["retrieval_method"]["textContent"];
-        extraShowValue.textContent = pluginConfig.get("lyrics")["extra_show"]["textContent"];
         adjust.value = pluginConfig.get("lyrics")["adjust"];
     }
 
+    const setExtraShowSettings = async () => {
+        const reset = configView.querySelector(".extra-show-settings .reset");
+
+        const optionsArea = configView.querySelector(".extra-show-settings #options");
+        const savedOptionsArea = configView.querySelector(".extra-show-settings #saved_options");
+
+        const elements = {
+            optionsArea,
+            savedOptionsArea
+        }
+
+        reset.addEventListener("click", () => extraShow.default(elements));
+
+        pluginConfig.get("extra_show")["options"].forEach(option =>
+            extraShow.createOptionElement(option, false, elements)
+        );
+        pluginConfig.get("extra_show")["saved_options"].forEach(option =>
+            extraShow.createOptionElement(option, true, elements)
+        );
+    }
 
     // 更换字体
     const setFontSettings = async () => {
@@ -328,6 +333,7 @@ plugin.onLoad(async () => {
 
     setTabSwitch();
     setLyricsSettings();
+    setExtraShowSettings();
     setFontSettings();
     setColorSettings();
     setStyleSettings();

@@ -189,3 +189,35 @@ body.s-theme-white #taskbar-lyrics-dom .content input.switch-btn:checked {
 #taskbar-lyrics-dom input.u-txt {
     border-radius: 4px;
 }
+
+#taskbar-lyrics-dom .option-btn {
+    top: -10px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+#taskbar-lyrics-dom .delete-btn {
+    display: none;
+    background-color: red;
+}
+
+#taskbar-lyrics-dom .add-btn {
+    display: none;
+    background-color: green;
+}
+
+#taskbar-lyrics-dom .option {
+    display: flex;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: rgba(200, 200, 200, 0.2);
+    cursor: pointer;
+  }
