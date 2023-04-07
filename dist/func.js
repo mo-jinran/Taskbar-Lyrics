@@ -148,21 +148,8 @@ plugin.onLoad(async () => {
             pluginConfig.set("lyrics", config);
             startGetLyric();
         },
-        setExtraShow: (value, textContent) => {
-            const config = JSON.parse(JSON.stringify(pluginConfig.get("lyrics")));
-            config.extra_show.value = value;
-            config.extra_show.textContent = textContent;
-            pluginConfig.set("lyrics", config);
-        },
-        set: elements => {
-            const config = JSON.parse(JSON.stringify(pluginConfig.get("lyrics")));
-            config.adjust = Number(elements.adjust.value);
-            pluginConfig.set("lyrics", config);
-        },
         default: elements => {
             elements.retrievalMethodValue.textContent = defaultConfig.lyrics.retrieval_method.textContent;
-            elements.extraShowValue.textContent = defaultConfig.lyrics.extra_show.textContent;
-            elements.adjust.value = defaultConfig.lyrics.adjust;
             stopGetLyric();
             pluginConfig.set("lyrics", undefined);
             startGetLyric();
@@ -178,8 +165,21 @@ plugin.onLoad(async () => {
             config.next_line_lyrics_position.textContent = textContent;
             pluginConfig.set("effect", config);
         },
+        setExtraShow: (value, textContent) => {
+            const config = JSON.parse(JSON.stringify(pluginConfig.get("effect")));
+            config.extra_show.value = value;
+            config.extra_show.textContent = textContent;
+            pluginConfig.set("effect", config);
+        },
+        set: elements => {
+            const config = JSON.parse(JSON.stringify(pluginConfig.get("effect")));
+            config.adjust = Number(elements.adjust.value);
+            pluginConfig.set("effect", config);
+        },
         default: elements => {
             elements.nextLineLyricsPositionValue.textContent = defaultConfig.effect.next_line_lyrics_position.textContent;
+            elements.extraShowValue.textContent = defaultConfig.effect.extra_show.textContent;
+            elements.adjust.value = defaultConfig.effect.adjust;
             pluginConfig.set("effect", undefined);
         }
     }

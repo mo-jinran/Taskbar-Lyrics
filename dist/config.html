@@ -158,7 +158,6 @@
             <section class="lyrics-settings">
                 <h1>
                     <strong>歌词设置：</strong>
-                    <button class="u-ibtn5 u-ibtnsz8 apply">立即应用</button>
                     <button class="u-ibtn5 u-ibtnsz8 reset">恢复默认</button>
                 </h1>
                 <div class="item_container">
@@ -167,30 +166,12 @@
                 </div>
                 <div class="item_container">
                     <span>获取方法：</span>
-                    <div class="u-select" style="z-index: 2;">
+                    <div class="u-select">
                         <div class="value retrieval-method"></div>
                         <div class="sltwrap">
                             <ul class="select retrieval-method">
                                 <li class="option f-thide" data-value="0">[新] 发送网络请求解析歌词</li>
                                 <li class="option f-thide" data-value="1">[旧] 监听软件词栏获取歌词</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="item_container">
-                    <span>延迟调整：</span>
-                    <input type="number" class="u-txt sc-flag number-input adjust" step="0.1" min="-10" max="10">
-                </div>
-                <div class="item_container">
-                    <span>副歌词显示：</span>
-                    <div class="u-select">
-                        <div class="value extra-show"></div>
-                        <div class="sltwrap">
-                            <ul class="select extra-show">
-                                <li class="option f-thide" data-value="0">隐藏歌词，让歌词独占两行</li>
-                                <li class="option f-thide" data-value="1">下句歌词，没则用上个选项</li>
-                                <li class="option f-thide" data-value="2">当前翻译，没则用上个选项</li>
-                                <li class="option f-thide" data-value="3">当前音译，没则用上个选项</li>
                             </ul>
                         </div>
                     </div>
@@ -203,17 +184,36 @@
             <section class="effect-settings">
                 <h1>
                     <strong>显示效果：</strong>
+                    <button class="u-ibtn5 u-ibtnsz8 apply">立即应用</button>
                     <button class="u-ibtn5 u-ibtnsz8 reset">恢复默认</button>
                 </h1>
                 <div class="item_container">
+                    <span>延迟调整：</span>
+                    <input type="number" class="u-txt sc-flag number-input adjust" step="0.1" min="-10" max="10">
+                </div>
+                <div class="item_container">
                     <span>下句歌词位置：</span>
-                    <div class="u-select">
+                    <div class="u-select" style="z-index: 2;">
                         <div class="value next-line-lyrics-position"></div>
                         <div class="sltwrap">
                             <ul class="select next-line-lyrics-position">
-                                <li class="option f-thide" data-value="0">副歌词</li>
-                                <li class="option f-thide" data-value="1">主歌词</li>
-                                <li class="option f-thide" data-value="2">交错式</li>
+                                <li class="option f-thide" data-value="0">副歌词，下句歌词显示在这</li>
+                                <li class="option f-thide" data-value="1">主歌词，下句歌词显示在这</li>
+                                <li class="option f-thide" data-value="2">交错式，就跟桌面歌词一样</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="item_container">
+                    <span>副歌词显示：</span>
+                    <div class="u-select">
+                        <div class="value extra-show"></div>
+                        <div class="sltwrap">
+                            <ul class="select extra-show">
+                                <li class="option f-thide" data-value="0">隐藏歌词，让歌词独占两行</li>
+                                <li class="option f-thide" data-value="1">下句歌词，没则用上个选项</li>
+                                <li class="option f-thide" data-value="2">当前翻译，没则用上个选项</li>
+                                <li class="option f-thide" data-value="3">当前音译，没则用上个选项</li>
                             </ul>
                         </div>
                     </div>

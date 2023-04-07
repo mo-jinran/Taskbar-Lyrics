@@ -90,21 +90,21 @@ plugin.onLoad(async () => {
             }
         },
         "lyrics": {
-            "extra_show": {
-                "value": 2,
-                "textContent": "当前翻译，没则用上个选项"
-            },
             "retrieval_method": {
                 "value": 0,
                 "textContent": "[新] 发送网络请求解析歌词",
-            },
-            "adjust": 0.0,
+            }
         },
         "effect": {
             "next_line_lyrics_position": {
                 "value": 0,
-                "textContent": "副歌词"
+                "textContent": "副歌词，下句歌词显示在这"
             },
+            "extra_show": {
+                "value": 2,
+                "textContent": "当前翻译，没则用上个选项"
+            },
+            "adjust": 0.0
         },
         "align": {
             "basic": WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING,

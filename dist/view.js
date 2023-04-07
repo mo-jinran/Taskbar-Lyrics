@@ -205,23 +205,16 @@ plugin.onLoad(async () => {
 
     // 歌词设置
     const setLyricsSettings = async () => {
-        const apply = configView.querySelector(".content.lyrics .lyrics-settings .apply");
         const reset = configView.querySelector(".content.lyrics .lyrics-settings .reset");
 
         const lyricsSwitch = configView.querySelector(".content.lyrics .lyrics-settings .lyrics-switch");
         const retrievalMethodValue = configView.querySelector(".content.lyrics .lyrics-settings .retrieval-method.value");
         const retrievalMethodSelect = configView.querySelector(".content.lyrics .lyrics-settings .retrieval-method.select");
-        const extraShowValue = configView.querySelector(".content.lyrics .lyrics-settings .extra-show.value");
-        const extraShowSelect = configView.querySelector(".content.lyrics .lyrics-settings .extra-show.select");
-        const adjust = configView.querySelector(".content.lyrics .lyrics-settings .adjust");
 
         const elements = {
-            retrievalMethodValue,
-            extraShowValue,
-            adjust
+            retrievalMethodValue
         }
 
-        apply.addEventListener("click", () => lyrics.set(elements));
         reset.addEventListener("click", () => lyrics.default(elements));
 
         lyricsSwitch.addEventListener("change", event => lyrics.switch(event));
@@ -238,35 +231,28 @@ plugin.onLoad(async () => {
             retrievalMethodValue.textContent = textContent;
         });
 
-        extraShowValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
-        extraShowSelect.addEventListener("click", event => {
-            const value = event.target.dataset.value;
-            const textContent = event.target.textContent;
-            lyrics.setExtraShow(value, textContent);
-            extraShowValue.textContent = textContent;
-        });
-
         retrievalMethodValue.textContent = pluginConfig.get("lyrics")["retrieval_method"]["textContent"];
-        extraShowValue.textContent = pluginConfig.get("lyrics")["extra_show"]["textContent"];
-        adjust.value = pluginConfig.get("lyrics")["adjust"];
     }
 
 
     // 显示效果
     const setEffectSettings = async () => {
+        const apply = configView.querySelector(".content.lyrics .effect-settings .apply");
         const reset = configView.querySelector(".content.lyrics .effect-settings .reset");
 
         const nextLineLyricsPositionValue = configView.querySelector(".content.lyrics .effect-settings .next-line-lyrics-position.value");
         const nextLineLyricsPositionSelect = configView.querySelector(".content.lyrics .effect-settings .next-line-lyrics-position.select");
+        const extraShowValue = configView.querySelector(".content.lyrics .effect-settings .extra-show.value");
+        const extraShowSelect = configView.querySelector(".content.lyrics .effect-settings .extra-show.select");
+        const adjust = configView.querySelector(".content.lyrics .effect-settings .adjust");
 
         const elements = {
-            nextLineLyricsPositionValue
+            nextLineLyricsPositionValue,
+            extraShowValue,
+            adjust
         }
 
+        apply.addEventListener("click", () => effect.set(elements));
         reset.addEventListener("click", () => effect.default(elements));
 
         nextLineLyricsPositionValue.addEventListener("click", event => {
@@ -281,7 +267,21 @@ plugin.onLoad(async () => {
             nextLineLyricsPositionValue.textContent = textContent;
         });
 
+        extraShowValue.addEventListener("click", event => {
+            const open = event.target.parentElement.classList.contains("z-open");
+            if (open) event.target.parentElement.classList.remove("z-open");
+            else event.target.parentElement.classList.add("z-open");
+        });
+        extraShowSelect.addEventListener("click", event => {
+            const value = event.target.dataset.value;
+            const textContent = event.target.textContent;
+            lyrics.setExtraShow(value, textContent);
+            extraShowValue.textContent = textContent;
+        });
+
         nextLineLyricsPositionValue.textContent = pluginConfig.get("effect")["next_line_lyrics_position"]["textContent"];
+        extraShowValue.textContent = pluginConfig.get("effect")["extra_show"]["textContent"];
+        adjust.value = pluginConfig.get("effect")["adjust"];
     }
 
 
