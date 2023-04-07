@@ -16,7 +16,7 @@ plugin.onLoad(async () => {
     // 监视软件内歌词变动
     const watchLyricsChange = async () => {
         const mLyric = await betterncm.utils.waitForElement("#x-g-mn .m-lyric");
-        observer = new MutationObserver(mutations => {
+        const MutationCallback = mutations => {
             for (const mutation of mutations) {
                 let lyrics = {
                     basic: "",
@@ -30,9 +30,11 @@ plugin.onLoad(async () => {
                     lyrics.basic = mutation.addedNodes[0].textContent;
                 }
 
-                TaskbarLyricsAPI.lyric(lyrics);
+                TaskbarLyricsAPI.lyrics(lyrics);
             }
-        });
+        }
+
+        observer = new MutationObserver(MutationCallback);
         observer.observe(mLyric, { childList: true, subtree: true });
     }
 
@@ -53,7 +55,7 @@ plugin.onLoad(async () => {
         artistName = artistName.slice(3);
 
         // 发送歌曲信息
-        TaskbarLyricsAPI.lyric({
+        TaskbarLyricsAPI.lyrics({
             "basic": name,
             "extra": artistName
         });
@@ -126,7 +128,7 @@ plugin.onLoad(async () => {
                     } break;
                 }
 
-                TaskbarLyricsAPI.lyric(lyrics);
+                TaskbarLyricsAPI.lyrics(lyrics);
                 currentIndex = nextIndex;
             }
         }

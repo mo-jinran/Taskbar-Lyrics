@@ -30,7 +30,7 @@ plugin.onLoad(async () => {
                     lyrics.basic = mutation.addedNodes[0].textContent;
                 }
 
-                TaskbarLyricsAPI.lyric(lyrics);
+                TaskbarLyricsAPI.lyrics(lyrics);
             }
         }
 
@@ -55,7 +55,7 @@ plugin.onLoad(async () => {
         artistName = artistName.slice(3);
 
         // 发送歌曲信息
-        TaskbarLyricsAPI.lyric({
+        TaskbarLyricsAPI.lyrics({
             "basic": name,
             "extra": artistName
         });
@@ -128,7 +128,7 @@ plugin.onLoad(async () => {
                     } break;
                 }
 
-                TaskbarLyricsAPI.lyric(lyrics);
+                TaskbarLyricsAPI.lyrics(lyrics);
                 currentIndex = nextIndex;
             }
         }

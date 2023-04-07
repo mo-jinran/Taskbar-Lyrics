@@ -69,65 +69,12 @@ plugin.onLoad(async () => {
     }
 
 
-    // 歌词设置
-    const setLyricsSettings = async () => {
-        const apply = configView.querySelector(".lyrics-settings .apply");
-        const reset = configView.querySelector(".lyrics-settings .reset");
-
-        const lyricsSwitch = configView.querySelector(".lyrics-settings .lyrics-switch");
-        const retrievalMethodValue = configView.querySelector(".lyrics-settings .retrieval-method.value");
-        const retrievalMethodSelect = configView.querySelector(".lyrics-settings .retrieval-method.select");
-        const extraShowValue = configView.querySelector(".lyrics-settings .extra-show.value");
-        const extraShowSelect = configView.querySelector(".lyrics-settings .extra-show.select");
-        const adjust = configView.querySelector(".lyrics-settings .adjust");
-
-        const elements = {
-            retrievalMethodValue,
-            extraShowValue,
-            adjust
-        }
-
-        apply.addEventListener("click", () => lyrics.set(elements));
-        reset.addEventListener("click", () => lyrics.default(elements));
-
-        lyricsSwitch.addEventListener("change", event => lyrics.switch(event));
-
-        retrievalMethodValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
-        retrievalMethodSelect.addEventListener("click", event => {
-            const value = event.target.dataset.value;
-            const textContent = event.target.textContent;
-            lyrics.setRetrievalMethod(value, textContent);
-            retrievalMethodValue.textContent = textContent;
-        });
-
-        extraShowValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
-        extraShowSelect.addEventListener("click", event => {
-            const value = event.target.dataset.value;
-            const textContent = event.target.textContent;
-            lyrics.setExtraShow(value, textContent);
-            extraShowValue.textContent = textContent;
-        });
-
-        retrievalMethodValue.textContent = pluginConfig.get("lyrics")["retrieval_method"]["textContent"];
-        extraShowValue.textContent = pluginConfig.get("lyrics")["extra_show"]["textContent"];
-        adjust.value = pluginConfig.get("lyrics")["adjust"];
-    }
-
-
     // 更换字体
     const setFontSettings = async () => {
-        const apply = configView.querySelector(".font-settings .apply");
-        const reset = configView.querySelector(".font-settings .reset");
+        const apply = configView.querySelector(".content.font .font-settings .apply");
+        const reset = configView.querySelector(".content.font .font-settings .reset");
 
-        const font_family = configView.querySelector(".font-settings .font-family");
+        const font_family = configView.querySelector(".content.font .font-settings .font-family");
 
         const elements = {
             font_family
@@ -142,17 +89,17 @@ plugin.onLoad(async () => {
 
     // 字体颜色
     const setColorSettings = async () => {
-        const apply = configView.querySelector(".color-settings .apply");
-        const reset = configView.querySelector(".color-settings .reset");
+        const apply = configView.querySelector(".content.font .color-settings .apply");
+        const reset = configView.querySelector(".content.font .color-settings .reset");
 
-        const basicLightColor = configView.querySelector(".color-settings .basic-light-color");
-        const basicLightOpacity = configView.querySelector(".color-settings .basic-light-opacity");
-        const basicDarkColor = configView.querySelector(".color-settings .basic-dark-color");
-        const basicDarkOpacity = configView.querySelector(".color-settings .basic-dark-opacity");
-        const extraLightColor = configView.querySelector(".color-settings .extra-light-color");
-        const extraLightOpacity = configView.querySelector(".color-settings .extra-light-opacity");
-        const extraDarkColor = configView.querySelector(".color-settings .extra-dark-color");
-        const extraDarkOpacity = configView.querySelector(".color-settings .extra-dark-opacity");
+        const basicLightColor = configView.querySelector(".content.font .color-settings .basic-light-color");
+        const basicLightOpacity = configView.querySelector(".content.font .color-settings .basic-light-opacity");
+        const basicDarkColor = configView.querySelector(".content.font .color-settings .basic-dark-color");
+        const basicDarkOpacity = configView.querySelector(".content.font .color-settings .basic-dark-opacity");
+        const extraLightColor = configView.querySelector(".content.font .color-settings .extra-light-color");
+        const extraLightOpacity = configView.querySelector(".content.font .color-settings .extra-light-opacity");
+        const extraDarkColor = configView.querySelector(".content.font .color-settings .extra-dark-color");
+        const extraDarkOpacity = configView.querySelector(".content.font .color-settings .extra-dark-opacity");
 
         const elements = {
             basicLightColor,
@@ -181,22 +128,22 @@ plugin.onLoad(async () => {
 
     // 字体样式
     const setStyleSettings = async () => {
-        const reset = configView.querySelector(".style-settings .reset");
+        const reset = configView.querySelector(".content.font .style-settings .reset");
 
-        const basicWeightValue = configView.querySelector(".style-settings .basic-weight.value");
-        const basicWeightSelect = configView.querySelector(".style-settings .basic-weight.select");
-        const basicNormal = configView.querySelector(".style-settings .basic-normal");
-        const basicOblique = configView.querySelector(".style-settings .basic-oblique");
-        const basicItalic = configView.querySelector(".style-settings .basic-italic");
-        const basicUnderline = configView.querySelector(".style-settings .basic-underline");
-        const basicStrikethrough = configView.querySelector(".style-settings .basic-strikethrough");
-        const extraWeightValue = configView.querySelector(".style-settings .extra-weight.value");
-        const extraWeightSelect = configView.querySelector(".style-settings .extra-weight.select");
-        const extraNormal = configView.querySelector(".style-settings .extra-normal");
-        const extraOblique = configView.querySelector(".style-settings .extra-oblique");
-        const extraItalic = configView.querySelector(".style-settings .extra-italic");
-        const extraUnderline = configView.querySelector(".style-settings .extra-underline");
-        const extraStrikethrough = configView.querySelector(".style-settings .extra-strikethrough");
+        const basicWeightValue = configView.querySelector(".content.font .style-settings .basic-weight.value");
+        const basicWeightSelect = configView.querySelector(".content.font .style-settings .basic-weight.select");
+        const basicNormal = configView.querySelector(".content.font .style-settings .basic-normal");
+        const basicOblique = configView.querySelector(".content.font .style-settings .basic-oblique");
+        const basicItalic = configView.querySelector(".content.font .style-settings .basic-italic");
+        const basicUnderline = configView.querySelector(".content.font .style-settings .basic-underline");
+        const basicStrikethrough = configView.querySelector(".content.font .style-settings .basic-strikethrough");
+        const extraWeightValue = configView.querySelector(".content.font .style-settings .extra-weight.value");
+        const extraWeightSelect = configView.querySelector(".content.font .style-settings .extra-weight.select");
+        const extraNormal = configView.querySelector(".content.font .style-settings .extra-normal");
+        const extraOblique = configView.querySelector(".content.font .style-settings .extra-oblique");
+        const extraItalic = configView.querySelector(".content.font .style-settings .extra-italic");
+        const extraUnderline = configView.querySelector(".content.font .style-settings .extra-underline");
+        const extraStrikethrough = configView.querySelector(".content.font .style-settings .extra-strikethrough");
 
         const elements = {
             basicWeightValue,
@@ -255,13 +202,85 @@ plugin.onLoad(async () => {
     }
 
 
+    // 歌词设置
+    const setLyricsSettings = async () => {
+        const apply = configView.querySelector(".content.lyrics .lyrics-settings .apply");
+        const reset = configView.querySelector(".content.lyrics .lyrics-settings .reset");
+
+        const lyricsSwitch = configView.querySelector(".content.lyrics .lyrics-settings .lyrics-switch");
+        const retrievalMethodValue = configView.querySelector(".content.lyrics .lyrics-settings .retrieval-method.value");
+        const retrievalMethodSelect = configView.querySelector(".content.lyrics .lyrics-settings .retrieval-method.select");
+        const extraShowValue = configView.querySelector(".content.lyrics .lyrics-settings .extra-show.value");
+        const extraShowSelect = configView.querySelector(".content.lyrics .lyrics-settings .extra-show.select");
+        const adjust = configView.querySelector(".content.lyrics .lyrics-settings .adjust");
+
+        const elements = {
+            retrievalMethodValue,
+            extraShowValue,
+            adjust
+        }
+
+        apply.addEventListener("click", () => lyrics.set(elements));
+        reset.addEventListener("click", () => lyrics.default(elements));
+
+        lyricsSwitch.addEventListener("change", event => lyrics.switch(event));
+
+        retrievalMethodValue.addEventListener("click", event => {
+            const open = event.target.parentElement.classList.contains("z-open");
+            if (open) event.target.parentElement.classList.remove("z-open");
+            else event.target.parentElement.classList.add("z-open");
+        });
+        retrievalMethodSelect.addEventListener("click", event => {
+            const value = event.target.dataset.value;
+            const textContent = event.target.textContent;
+            lyrics.setRetrievalMethod(value, textContent);
+            retrievalMethodValue.textContent = textContent;
+        });
+
+        extraShowValue.addEventListener("click", event => {
+            const open = event.target.parentElement.classList.contains("z-open");
+            if (open) event.target.parentElement.classList.remove("z-open");
+            else event.target.parentElement.classList.add("z-open");
+        });
+        extraShowSelect.addEventListener("click", event => {
+            const value = event.target.dataset.value;
+            const textContent = event.target.textContent;
+            lyrics.setExtraShow(value, textContent);
+            extraShowValue.textContent = textContent;
+        });
+
+        retrievalMethodValue.textContent = pluginConfig.get("lyrics")["retrieval_method"]["textContent"];
+        extraShowValue.textContent = pluginConfig.get("lyrics")["extra_show"]["textContent"];
+        adjust.value = pluginConfig.get("lyrics")["adjust"];
+    }
+
+
+    // 对齐方式
+    const setAlignSettings = async () => {
+        const reset = configView.querySelector(".content.lyrics .align-settings .reset");
+        const basicLeft = configView.querySelector(".content.lyrics .align-settings .basic-left");
+        const basicCenter = configView.querySelector(".content.lyrics .align-settings .basic-center");
+        const basicRight = configView.querySelector(".content.lyrics .align-settings .basic-right");
+        const extraLeft = configView.querySelector(".content.lyrics .align-settings .extra-left");
+        const extraCenter = configView.querySelector(".content.lyrics .align-settings .extra-center");
+        const extraRight = configView.querySelector(".content.lyrics .align-settings .extra-right");
+        reset.addEventListener("click", () => align.default());
+        basicLeft.addEventListener("click", event => align.setLeft(event));
+        basicCenter.addEventListener("click", event => align.setCenter(event));
+        basicRight.addEventListener("click", event => align.setRight(event));
+        extraLeft.addEventListener("click", event => align.setLeft(event));
+        extraCenter.addEventListener("click", event => align.setCenter(event));
+        extraRight.addEventListener("click", event => align.setRight(event));
+    }
+
+
     // 修改位置
     const setPositionSettings = async () => {
-        const reset = configView.querySelector(".position-settings .reset");
+        const reset = configView.querySelector(".content.window .position-settings .reset");
 
-        const left = configView.querySelector(".position-settings .left");
-        const center = configView.querySelector(".position-settings .center");
-        const right = configView.querySelector(".position-settings .right");
+        const left = configView.querySelector(".content.window .position-settings .left");
+        const center = configView.querySelector(".content.window .position-settings .center");
+        const right = configView.querySelector(".content.window .position-settings .right");
 
         reset.addEventListener("click", () => position.default());
 
@@ -273,11 +292,11 @@ plugin.onLoad(async () => {
 
     // 修改边距
     const setMarginSettings = async () => {
-        const apply = configView.querySelector(".margin-settings .apply");
-        const reset = configView.querySelector(".margin-settings .reset");
+        const apply = configView.querySelector(".content.window .margin-settings .apply");
+        const reset = configView.querySelector(".content.window .margin-settings .reset");
 
-        const left = configView.querySelector(".margin-settings .left");
-        const right = configView.querySelector(".margin-settings .right");
+        const left = configView.querySelector(".content.window .margin-settings .left");
+        const right = configView.querySelector(".content.window .margin-settings .right");
 
         const elements = {
             left,
@@ -292,30 +311,11 @@ plugin.onLoad(async () => {
     }
 
 
-    // 对齐方式
-    const setAlignSettings = async () => {
-        const reset = configView.querySelector(".align-settings .reset");
-        const basicLeft = configView.querySelector(".align-settings .basic-left");
-        const basicCenter = configView.querySelector(".align-settings .basic-center");
-        const basicRight = configView.querySelector(".align-settings .basic-right");
-        const extraLeft = configView.querySelector(".align-settings .extra-left");
-        const extraCenter = configView.querySelector(".align-settings .extra-center");
-        const extraRight = configView.querySelector(".align-settings .extra-right");
-        reset.addEventListener("click", () => align.default());
-        basicLeft.addEventListener("click", event => align.setLeft(event));
-        basicCenter.addEventListener("click", event => align.setCenter(event));
-        basicRight.addEventListener("click", event => align.setRight(event));
-        extraLeft.addEventListener("click", event => align.setLeft(event));
-        extraCenter.addEventListener("click", event => align.setCenter(event));
-        extraRight.addEventListener("click", event => align.setRight(event));
-    }
-
-
     // 切换屏幕
     const setScreenSettings = async () => {
-        const reset = configView.querySelector(".screen-settings .reset");
-        const primary = configView.querySelector(".screen-settings .primary");
-        const secondary = configView.querySelector(".screen-settings .secondary");
+        const reset = configView.querySelector(".content.window .screen-settings .reset");
+        const primary = configView.querySelector(".content.window .screen-settings .primary");
+        const secondary = configView.querySelector(".content.window .screen-settings .secondary");
         reset.addEventListener("click", () => screen.default());
         primary.addEventListener("click", () => screen.setPrimary());
         secondary.addEventListener("click", () => screen.setSecondary());
