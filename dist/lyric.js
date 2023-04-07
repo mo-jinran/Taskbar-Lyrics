@@ -85,7 +85,7 @@ plugin.onLoad(async () => {
 
     // 音乐进度发生变化时
     async function play_progress(_, time) {
-        const adjust = Number(pluginConfig.get("lyrics")["adjust"]);
+        const adjust = Number(pluginConfig.get("effect")["adjust"]);
         if (parsedLyric) {
             let nextIndex = parsedLyric.findIndex(item => item.time > (time + adjust) * 1000);
             nextIndex = (nextIndex <= -1) ? parsedLyric.length : nextIndex;
@@ -99,7 +99,7 @@ plugin.onLoad(async () => {
                     "extra": currentLyric?.translatedLyric ?? nextLyric?.originalLyric ?? ""
                 };
 
-                const extra_show_value = pluginConfig.get("lyrics")["extra_show"]["value"];
+                const extra_show_value = pluginConfig.get("effect")["extra_show"]["value"];
                 switch (extra_show_value) {
                     case "0": {
                         lyrics.extra = "";
