@@ -57,7 +57,7 @@ class 呈现窗口类
     std::wstring 主歌词 = L"任务栏歌词启动成功";
     std::wstring 副歌词 = L"等待插件传输歌词...";
 
-    std::wstring 字体名称 = L"Microsoft YaHei";
+    std::wstring 字体名称 = L"Microsoft YaHei UI";
 
     D2D1::ColorF 字体颜色_浅色_主歌词 = D2D1::ColorF(0x000000, 1);
     D2D1::ColorF 字体颜色_浅色_副歌词 = D2D1::ColorF(0x000000, 1);
