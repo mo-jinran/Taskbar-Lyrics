@@ -14,13 +14,14 @@ plugin.onConfig(tools => configView);
 plugin.onLoad(async () => {
     const pluginConfig = this.base.pluginConfig;
     const {
-        lyrics,
         font,
         color,
         style,
+        lyrics,
+        effect,
+        align,
         position,
         margin,
-        align,
         screen,
     } = { ...this.func };
 
@@ -255,16 +256,48 @@ plugin.onLoad(async () => {
     }
 
 
+    // 显示效果
+    const setEffectSettings = async () => {
+        const reset = configView.querySelector(".content.lyrics .effect-settings .reset");
+
+        const nextLineLyricsPositionValue = configView.querySelector(".content.lyrics .effect-settings .next-line-lyrics-position.value");
+        const nextLineLyricsPositionSelect = configView.querySelector(".content.lyrics .effect-settings .next-line-lyrics-position.select");
+
+        const elements = {
+            nextLineLyricsPositionValue
+        }
+
+        reset.addEventListener("click", () => effect.default(elements));
+
+        nextLineLyricsPositionValue.addEventListener("click", event => {
+            const open = event.target.parentElement.classList.contains("z-open");
+            if (open) event.target.parentElement.classList.remove("z-open");
+            else event.target.parentElement.classList.add("z-open");
+        });
+        nextLineLyricsPositionSelect.addEventListener("click", event => {
+            const value = event.target.dataset.value;
+            const textContent = event.target.textContent;
+            effect.setNextLineLyricsPosition(value, textContent);
+            nextLineLyricsPositionValue.textContent = textContent;
+        });
+
+        nextLineLyricsPositionValue.textContent = pluginConfig.get("effect")["next_line_lyrics_position"]["textContent"];
+    }
+
+
     // 对齐方式
     const setAlignSettings = async () => {
         const reset = configView.querySelector(".content.lyrics .align-settings .reset");
+
         const basicLeft = configView.querySelector(".content.lyrics .align-settings .basic-left");
         const basicCenter = configView.querySelector(".content.lyrics .align-settings .basic-center");
         const basicRight = configView.querySelector(".content.lyrics .align-settings .basic-right");
         const extraLeft = configView.querySelector(".content.lyrics .align-settings .extra-left");
         const extraCenter = configView.querySelector(".content.lyrics .align-settings .extra-center");
         const extraRight = configView.querySelector(".content.lyrics .align-settings .extra-right");
+
         reset.addEventListener("click", () => align.default());
+
         basicLeft.addEventListener("click", event => align.setLeft(event));
         basicCenter.addEventListener("click", event => align.setCenter(event));
         basicRight.addEventListener("click", event => align.setRight(event));
@@ -314,9 +347,12 @@ plugin.onLoad(async () => {
     // 切换屏幕
     const setScreenSettings = async () => {
         const reset = configView.querySelector(".content.window .screen-settings .reset");
+
         const primary = configView.querySelector(".content.window .screen-settings .primary");
         const secondary = configView.querySelector(".content.window .screen-settings .secondary");
+
         reset.addEventListener("click", () => screen.default());
+
         primary.addEventListener("click", () => screen.setPrimary());
         secondary.addEventListener("click", () => screen.setSecondary());
     }
@@ -327,12 +363,13 @@ plugin.onLoad(async () => {
 
 
     setTabSwitch();
-    setLyricsSettings();
     setFontSettings();
     setColorSettings();
     setStyleSettings();
+    setLyricsSettings();
+    setEffectSettings();
+    setAlignSettings();
     setPositionSettings();
     setMarginSettings();
-    setAlignSettings();
     setScreenSettings();
 });

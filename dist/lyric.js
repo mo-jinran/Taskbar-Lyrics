@@ -11,6 +11,7 @@ plugin.onLoad(async () => {
     let parsedLyric = null;
     let currentIndex = 0;
     let musicId = 0;
+    let currentLine = 0;
 
 
     // 监视软件内歌词变动
@@ -105,7 +106,33 @@ plugin.onLoad(async () => {
                     } break;
 
                     case "1": {
-                        lyrics.extra = nextLyric?.originalLyric ?? "";
+                        const next_line_lyrics_position_value = pluginConfig.get("effect")["next_line_lyrics_position"]["value"];
+                        switch (next_line_lyrics_position_value) {
+                            case "0": {
+                                lyrics.extra = nextLyric?.originalLyric ?? "";
+                            } break;
+
+                            case "1": {
+                                lyrics.basic = nextLyric?.originalLyric ?? "";
+                                lyrics.extra = currentLyric?.originalLyric ?? "";
+                            } break;
+
+                            case "2": {
+                                if (currentLine == 0) {
+                                    lyrics.basic = currentLyric?.originalLyric ?? "";
+                                    lyrics.extra = nextLyric?.originalLyric ?? "";
+                                    currentLine = 1;
+                                } else {
+                                    lyrics.basic = nextLyric?.originalLyric ?? "";
+                                    lyrics.extra = currentLyric?.originalLyric ?? "";
+                                    currentLine = 0;
+                                }
+                            } break;
+
+                            default: {
+                                lyrics.extra = nextLyric?.originalLyric ?? "";
+                            } break;
+                        }
                     } break;
 
                     case "2": {

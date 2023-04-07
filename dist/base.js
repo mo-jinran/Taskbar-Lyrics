@@ -44,17 +44,6 @@ plugin.onLoad(async () => {
 
     // 默认的配置
     const defaultConfig = {
-        "lyrics": {
-            "extra_show": {
-                "value": 2,
-                "textContent": "当前翻译，没则用上个选项"
-            },
-            "retrieval_method": {
-                "value": 0,
-                "textContent": "[新] 发送网络请求解析歌词",
-            },
-            "adjust": 0.0,
-        },
         "font": {
             "font_family": "Microsoft YaHei UI"
         },
@@ -100,16 +89,33 @@ plugin.onLoad(async () => {
                 "strikethrough": false
             }
         },
+        "lyrics": {
+            "extra_show": {
+                "value": 2,
+                "textContent": "当前翻译，没则用上个选项"
+            },
+            "retrieval_method": {
+                "value": 0,
+                "textContent": "[新] 发送网络请求解析歌词",
+            },
+            "adjust": 0.0,
+        },
+        "effect": {
+            "next_line_lyrics_position": {
+                "value": 0,
+                "textContent": "副歌词"
+            },
+        },
+        "align": {
+            "basic": WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING,
+            "extra": WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING
+        },
         "position": {
             "position": WindowsEnum.WindowAlignment.WindowAlignmentLeft
         },
         "margin": {
             "left": 0,
             "right": 0
-        },
-        "align": {
-            "basic": WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING,
-            "extra": WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING
         },
         "screen": {
             "parent_taskbar": "Shell_TrayWnd"

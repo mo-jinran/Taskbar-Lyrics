@@ -39,39 +39,6 @@ plugin.onLoad(async () => {
     TaskbarLyricsStart();
 
 
-    // 歌词设置
-    const lyrics = {
-        switch: event => event.target.checked ? TaskbarLyricsStart() : TaskbarLyricsClose(),
-        setRetrievalMethod: (value, textContent) => {
-            const config = JSON.parse(JSON.stringify(pluginConfig.get("lyrics")));
-            config.retrieval_method.value = value;
-            config.retrieval_method.textContent = textContent;
-            stopGetLyric();
-            pluginConfig.set("lyrics", config);
-            startGetLyric();
-        },
-        setExtraShow: (value, textContent) => {
-            const config = JSON.parse(JSON.stringify(pluginConfig.get("lyrics")));
-            config.extra_show.value = value;
-            config.extra_show.textContent = textContent;
-            pluginConfig.set("lyrics", config);
-        },
-        set: elements => {
-            const config = JSON.parse(JSON.stringify(pluginConfig.get("lyrics")));
-            config.adjust = Number(elements.adjust.value);
-            pluginConfig.set("lyrics", config);
-        },
-        default: elements => {
-            elements.retrievalMethodValue.textContent = defaultConfig.lyrics.retrieval_method.textContent;
-            elements.extraShowValue.textContent = defaultConfig.lyrics.extra_show.textContent;
-            elements.adjust.value = defaultConfig.lyrics.adjust;
-            stopGetLyric();
-            pluginConfig.set("lyrics", undefined);
-            startGetLyric();
-        }
-    }
-
-
     // 更换字体
     const font = {
         set: elements => {
@@ -170,6 +137,81 @@ plugin.onLoad(async () => {
     }
 
 
+    // 歌词设置
+    const lyrics = {
+        switch: event => event.target.checked ? TaskbarLyricsStart() : TaskbarLyricsClose(),
+        setRetrievalMethod: (value, textContent) => {
+            const config = JSON.parse(JSON.stringify(pluginConfig.get("lyrics")));
+            config.retrieval_method.value = value;
+            config.retrieval_method.textContent = textContent;
+            stopGetLyric();
+            pluginConfig.set("lyrics", config);
+            startGetLyric();
+        },
+        setExtraShow: (value, textContent) => {
+            const config = JSON.parse(JSON.stringify(pluginConfig.get("lyrics")));
+            config.extra_show.value = value;
+            config.extra_show.textContent = textContent;
+            pluginConfig.set("lyrics", config);
+        },
+        set: elements => {
+            const config = JSON.parse(JSON.stringify(pluginConfig.get("lyrics")));
+            config.adjust = Number(elements.adjust.value);
+            pluginConfig.set("lyrics", config);
+        },
+        default: elements => {
+            elements.retrievalMethodValue.textContent = defaultConfig.lyrics.retrieval_method.textContent;
+            elements.extraShowValue.textContent = defaultConfig.lyrics.extra_show.textContent;
+            elements.adjust.value = defaultConfig.lyrics.adjust;
+            stopGetLyric();
+            pluginConfig.set("lyrics", undefined);
+            startGetLyric();
+        }
+    }
+
+
+    // 显示效果
+    const effect = {
+        setNextLineLyricsPosition: (value, textContent) => {
+            const config = JSON.parse(JSON.stringify(pluginConfig.get("effect")));
+            config.next_line_lyrics_position.value = value;
+            config.next_line_lyrics_position.textContent = textContent;
+            pluginConfig.set("effect", config);
+        },
+        default: elements => {
+            elements.nextLineLyricsPositionValue.textContent = defaultConfig.effect.next_line_lyrics_position.textContent;
+            pluginConfig.set("effect", undefined);
+        }
+    }
+
+
+    // 对齐方式
+    const align = {
+        setLeft: event => {
+            const config = JSON.parse(JSON.stringify(pluginConfig.get("align")));
+            config[event.target.dataset.type] = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING;
+            pluginConfig.set("align", config);
+            TaskbarLyricsAPI.align(config);
+        },
+        setCenter: event => {
+            const config = JSON.parse(JSON.stringify(pluginConfig.get("align")));
+            config[event.target.dataset.type] = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_CENTER;
+            pluginConfig.set("align", config);
+            TaskbarLyricsAPI.align(config);
+        },
+        setRight: event => {
+            const config = JSON.parse(JSON.stringify(pluginConfig.get("align")));
+            config[event.target.dataset.type] = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_TRAILING;
+            pluginConfig.set("align", config);
+            TaskbarLyricsAPI.align(config);
+        },
+        default: () => {
+            pluginConfig.set("align", undefined);
+            TaskbarLyricsAPI.align(defaultConfig.align);
+        }
+    }
+
+
     // 修改位置
     const position = {
         setLeft: () => {
@@ -215,33 +257,6 @@ plugin.onLoad(async () => {
     }
 
 
-    // 对齐方式
-    const align = {
-        setLeft: event => {
-            const config = JSON.parse(JSON.stringify(pluginConfig.get("align")));
-            config[event.target.dataset.type] = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING;
-            pluginConfig.set("align", config);
-            TaskbarLyricsAPI.align(config);
-        },
-        setCenter: event => {
-            const config = JSON.parse(JSON.stringify(pluginConfig.get("align")));
-            config[event.target.dataset.type] = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_CENTER;
-            pluginConfig.set("align", config);
-            TaskbarLyricsAPI.align(config);
-        },
-        setRight: event => {
-            const config = JSON.parse(JSON.stringify(pluginConfig.get("align")));
-            config[event.target.dataset.type] = WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_TRAILING;
-            pluginConfig.set("align", config);
-            TaskbarLyricsAPI.align(config);
-        },
-        default: () => {
-            pluginConfig.set("align", undefined);
-            TaskbarLyricsAPI.align(defaultConfig.align);
-        }
-    }
-
-
     // 切换屏幕
     const screen = {
         setPrimary: () => {
@@ -264,13 +279,14 @@ plugin.onLoad(async () => {
 
 
     this.func = {
-        lyrics,
         font,
         color,
         style,
+        lyrics,
+        effect,
+        align,
         position,
         margin,
-        align,
         screen
     };
 });
