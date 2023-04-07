@@ -69,59 +69,6 @@ plugin.onLoad(async () => {
     }
 
 
-    // 歌词设置
-    const setLyricsSettings = async () => {
-        const apply = configView.querySelector(".lyrics-settings .apply");
-        const reset = configView.querySelector(".lyrics-settings .reset");
-
-        const lyricsSwitch = configView.querySelector(".lyrics-settings .lyrics-switch");
-        const retrievalMethodValue = configView.querySelector(".lyrics-settings .retrieval-method.value");
-        const retrievalMethodSelect = configView.querySelector(".lyrics-settings .retrieval-method.select");
-        const extraShowValue = configView.querySelector(".lyrics-settings .extra-show.value");
-        const extraShowSelect = configView.querySelector(".lyrics-settings .extra-show.select");
-        const adjust = configView.querySelector(".lyrics-settings .adjust");
-
-        const elements = {
-            retrievalMethodValue,
-            extraShowValue,
-            adjust
-        }
-
-        apply.addEventListener("click", () => lyrics.set(elements));
-        reset.addEventListener("click", () => lyrics.default(elements));
-
-        lyricsSwitch.addEventListener("change", event => lyrics.switch(event));
-
-        retrievalMethodValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
-        retrievalMethodSelect.addEventListener("click", event => {
-            const value = event.target.dataset.value;
-            const textContent = event.target.textContent;
-            lyrics.setRetrievalMethod(value, textContent);
-            retrievalMethodValue.textContent = textContent;
-        });
-
-        extraShowValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
-        extraShowSelect.addEventListener("click", event => {
-            const value = event.target.dataset.value;
-            const textContent = event.target.textContent;
-            lyrics.setExtraShow(value, textContent);
-            extraShowValue.textContent = textContent;
-        });
-
-        retrievalMethodValue.textContent = pluginConfig.get("lyrics")["retrieval_method"]["textContent"];
-        extraShowValue.textContent = pluginConfig.get("lyrics")["extra_show"]["textContent"];
-        adjust.value = pluginConfig.get("lyrics")["adjust"];
-    }
-
-
     // 更换字体
     const setFontSettings = async () => {
         const apply = configView.querySelector(".font-settings .apply");
@@ -255,6 +202,78 @@ plugin.onLoad(async () => {
     }
 
 
+    // 歌词设置
+    const setLyricsSettings = async () => {
+        const apply = configView.querySelector(".lyrics-settings .apply");
+        const reset = configView.querySelector(".lyrics-settings .reset");
+
+        const lyricsSwitch = configView.querySelector(".lyrics-settings .lyrics-switch");
+        const retrievalMethodValue = configView.querySelector(".lyrics-settings .retrieval-method.value");
+        const retrievalMethodSelect = configView.querySelector(".lyrics-settings .retrieval-method.select");
+        const extraShowValue = configView.querySelector(".lyrics-settings .extra-show.value");
+        const extraShowSelect = configView.querySelector(".lyrics-settings .extra-show.select");
+        const adjust = configView.querySelector(".lyrics-settings .adjust");
+
+        const elements = {
+            retrievalMethodValue,
+            extraShowValue,
+            adjust
+        }
+
+        apply.addEventListener("click", () => lyrics.set(elements));
+        reset.addEventListener("click", () => lyrics.default(elements));
+
+        lyricsSwitch.addEventListener("change", event => lyrics.switch(event));
+
+        retrievalMethodValue.addEventListener("click", event => {
+            const open = event.target.parentElement.classList.contains("z-open");
+            if (open) event.target.parentElement.classList.remove("z-open");
+            else event.target.parentElement.classList.add("z-open");
+        });
+        retrievalMethodSelect.addEventListener("click", event => {
+            const value = event.target.dataset.value;
+            const textContent = event.target.textContent;
+            lyrics.setRetrievalMethod(value, textContent);
+            retrievalMethodValue.textContent = textContent;
+        });
+
+        extraShowValue.addEventListener("click", event => {
+            const open = event.target.parentElement.classList.contains("z-open");
+            if (open) event.target.parentElement.classList.remove("z-open");
+            else event.target.parentElement.classList.add("z-open");
+        });
+        extraShowSelect.addEventListener("click", event => {
+            const value = event.target.dataset.value;
+            const textContent = event.target.textContent;
+            lyrics.setExtraShow(value, textContent);
+            extraShowValue.textContent = textContent;
+        });
+
+        retrievalMethodValue.textContent = pluginConfig.get("lyrics")["retrieval_method"]["textContent"];
+        extraShowValue.textContent = pluginConfig.get("lyrics")["extra_show"]["textContent"];
+        adjust.value = pluginConfig.get("lyrics")["adjust"];
+    }
+
+
+    // 对齐方式
+    const setAlignSettings = async () => {
+        const reset = configView.querySelector(".align-settings .reset");
+        const basicLeft = configView.querySelector(".align-settings .basic-left");
+        const basicCenter = configView.querySelector(".align-settings .basic-center");
+        const basicRight = configView.querySelector(".align-settings .basic-right");
+        const extraLeft = configView.querySelector(".align-settings .extra-left");
+        const extraCenter = configView.querySelector(".align-settings .extra-center");
+        const extraRight = configView.querySelector(".align-settings .extra-right");
+        reset.addEventListener("click", () => align.default());
+        basicLeft.addEventListener("click", event => align.setLeft(event));
+        basicCenter.addEventListener("click", event => align.setCenter(event));
+        basicRight.addEventListener("click", event => align.setRight(event));
+        extraLeft.addEventListener("click", event => align.setLeft(event));
+        extraCenter.addEventListener("click", event => align.setCenter(event));
+        extraRight.addEventListener("click", event => align.setRight(event));
+    }
+
+
     // 修改位置
     const setPositionSettings = async () => {
         const reset = configView.querySelector(".position-settings .reset");
@@ -289,25 +308,6 @@ plugin.onLoad(async () => {
 
         left.value = pluginConfig.get("margin")["left"];
         right.value = pluginConfig.get("margin")["right"];
-    }
-
-
-    // 对齐方式
-    const setAlignSettings = async () => {
-        const reset = configView.querySelector(".align-settings .reset");
-        const basicLeft = configView.querySelector(".align-settings .basic-left");
-        const basicCenter = configView.querySelector(".align-settings .basic-center");
-        const basicRight = configView.querySelector(".align-settings .basic-right");
-        const extraLeft = configView.querySelector(".align-settings .extra-left");
-        const extraCenter = configView.querySelector(".align-settings .extra-center");
-        const extraRight = configView.querySelector(".align-settings .extra-right");
-        reset.addEventListener("click", () => align.default());
-        basicLeft.addEventListener("click", event => align.setLeft(event));
-        basicCenter.addEventListener("click", event => align.setCenter(event));
-        basicRight.addEventListener("click", event => align.setRight(event));
-        extraLeft.addEventListener("click", event => align.setLeft(event));
-        extraCenter.addEventListener("click", event => align.setCenter(event));
-        extraRight.addEventListener("click", event => align.setRight(event));
     }
 
 

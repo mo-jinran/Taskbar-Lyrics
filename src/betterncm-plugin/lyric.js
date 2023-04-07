@@ -16,7 +16,7 @@ plugin.onLoad(async () => {
     // 监视软件内歌词变动
     const watchLyricsChange = async () => {
         const mLyric = await betterncm.utils.waitForElement("#x-g-mn .m-lyric");
-        observer = new MutationObserver(mutations => {
+        const MutationCallback = mutations => {
             for (const mutation of mutations) {
                 let lyrics = {
                     basic: "",
@@ -32,7 +32,9 @@ plugin.onLoad(async () => {
 
                 TaskbarLyricsAPI.lyric(lyrics);
             }
-        });
+        }
+
+        observer = new MutationObserver(MutationCallback);
         observer.observe(mLyric, { childList: true, subtree: true });
     }
 
