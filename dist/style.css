@@ -1,0 +1,191 @@
+/* 根标签 */
+#taskbar-lyrics-dom {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+
+
+/* 上边的tab区域 */
+#taskbar-lyrics-dom .tab_box {
+    width: 100%;
+    height: 40px;
+    display: flex;
+}
+
+/* tab选项卡按钮 */
+#taskbar-lyrics-dom .tab_button {
+    width: 60px;
+    height: 100%;
+    border: none;
+    outline: none;
+    background: none;
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* tab选项卡按钮 激活效果 */
+#taskbar-lyrics-dom .tab_button.active {
+    position: relative;
+    font-weight: bold;
+}
+
+/* tab选项卡按钮 激活后底部黑白条 */
+#taskbar-lyrics-dom .tab_button.active::after {
+    content: "";
+    height: 5px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 0px;
+    backdrop-filter: blur(4px);
+}
+
+body.s-theme-white #taskbar-lyrics-dom .tab_button.active::after {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+
+
+/* 下边的内容区域 */
+#taskbar-lyrics-dom .content_box {
+    overflow: auto;
+    flex: 1;
+}
+
+/* 所有内容隐藏 */
+#taskbar-lyrics-dom .content {
+    display: none;
+}
+
+/* 指定内容显示 */
+#taskbar-lyrics-dom .content.show {
+    display: block;
+}
+
+
+
+#taskbar-lyrics-dom .content h1 {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    gap: 10px;
+}
+
+#taskbar-lyrics-dom .content h1 strong {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+#taskbar-lyrics-dom .content hr {
+    margin: 20px 0;
+    border: none;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+body.s-theme-white #taskbar-lyrics-dom .content hr {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#taskbar-lyrics-dom .content section>div {
+    display: flex;
+    min-height: 30px;
+    margin: 5px 0;
+    gap: 10px;
+}
+
+#taskbar-lyrics-dom .content .item_container {
+    flex-direction: row;
+    align-items: center;
+}
+
+#taskbar-lyrics-dom .content .text_container {
+    flex-direction: column;
+    align-items: start;
+}
+
+#taskbar-lyrics-dom .content p {
+    font-size: 14px;
+}
+
+#taskbar-lyrics-dom .content a {
+    font-weight: bold;
+}
+
+
+
+#taskbar-lyrics-dom .content input.color-input {
+    width: 150px;
+    padding: unset;
+}
+
+#taskbar-lyrics-dom .content input.number-input {
+    width: 150px;
+}
+
+#taskbar-lyrics-dom .content input.switch-btn {
+    width: 44px;
+    height: 22px;
+    appearance: none;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    position: relative;
+}
+
+#taskbar-lyrics-dom .content input.switch-btn::before {
+    content: "关";
+    text-align: center;
+    line-height: 18px;
+    font-size: 12px;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    height: 18px;
+    width: 18px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transition: all 0.1s ease-out;
+}
+
+#taskbar-lyrics-dom .content input.switch-btn:checked {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#taskbar-lyrics-dom .content input.switch-btn:checked::before {
+    content: "开";
+    text-align: center;
+    line-height: 18px;
+    font-size: 12px;
+    left: calc(100% - 19px);
+}
+
+body.s-theme-white #taskbar-lyrics-dom .content input.switch-btn {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+body.s-theme-white #taskbar-lyrics-dom .content input.switch-btn::before {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+body.s-theme-white #taskbar-lyrics-dom .content input.switch-btn:checked {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+
+
+#taskbar-lyrics-dom .u-select {
+    display: inline-block;
+    width: 200px;
+}
+
+#taskbar-lyrics-dom input.u-txt {
+    border-radius: 4px;
+}
