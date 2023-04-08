@@ -275,7 +275,7 @@ plugin.onLoad(async () => {
         extraShowSelect.addEventListener("click", event => {
             const value = event.target.dataset.value;
             const textContent = event.target.textContent;
-            lyrics.setExtraShow(value, textContent);
+            effect.setExtraShow(value, textContent);
             extraShowValue.textContent = textContent;
         });
 
