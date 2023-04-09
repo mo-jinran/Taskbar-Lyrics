@@ -44,9 +44,10 @@ plugin.onLoad(async () => {
     // 对应Windows的枚举
     const WindowsEnum = {
         WindowAlignment: {
-            WindowAlignmentLeft: 0,
-            WindowAlignmentCenter: 1,
-            WindowAlignmentRight: 2
+            WindowAlignmentAdaptive: 0,
+            WindowAlignmentLeft: 1,
+            WindowAlignmentCenter: 2,
+            WindowAlignmentRight: 3
         },
         DWRITE_TEXT_ALIGNMENT: {
             DWRITE_TEXT_ALIGNMENT_LEADING: 0,
@@ -151,8 +152,8 @@ plugin.onLoad(async () => {
         },
         "position": {
             "position": {
-                "value": WindowsEnum.WindowAlignment.WindowAlignmentLeft,
-                "textContent": "靠左，占满剩余空间宽度"
+                "value": WindowsEnum.WindowAlignment.WindowAlignmentAdaptive,
+                "textContent": "自动，自适应选择左或右"
             }
         },
         "margin": {

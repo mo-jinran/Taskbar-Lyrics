@@ -78,6 +78,21 @@ void 呈现窗口类::更新窗口()
 
     switch (this->窗口位置)
     {
+        case WindowAlignment::WindowAlignmentAdaptive:
+        {
+            if (this->居中对齐)
+            {
+                左 = static_cast<long>(this->组件按钮 ? this->DPI(160) : 0) + this->左边距;
+                宽 = this->开始按钮_矩形.left - static_cast<long>(this->组件按钮 ? this->DPI(160) : 0) - this->左边距 - this->右边距;
+            }
+            else
+            {
+                左 = this->活动区域_矩形.right + this->左边距;
+                宽 = this->通知区域_矩形.left - this->活动区域_矩形.right - this->左边距 - this->右边距;
+            }
+        }
+        break;
+
         case WindowAlignment::WindowAlignmentLeft:
         {
             if (this->居中对齐)
@@ -114,7 +129,7 @@ void 呈现窗口类::更新窗口()
 
         case WindowAlignment::WindowAlignmentRight:
         {
-            左 = this->活动区域_矩形.right + this->左边距;;
+            左 = this->活动区域_矩形.right + this->左边距;
             宽 = this->通知区域_矩形.left - this->活动区域_矩形.right - this->左边距 - this->右边距;
         }
         break;
@@ -177,11 +192,14 @@ void 呈现窗口类::绘制歌词(
     if (this->副歌词.empty())
     {
         D2D1_RECT_F 主歌词_矩形 = D2D1::RectF(
-            rect.left + this->DPI(10),
-            rect.top + this->DPI(10),
-            rect.right - this->DPI(10),
-            rect.bottom - this->DPI(10)
+            max(0, rect.left + this->DPI(10)),
+            max(0, rect.top + this->DPI(10)),
+            max(0, rect.right - this->DPI(10)),
+            max(0, rect.bottom - this->DPI(10))
         );
+
+        主歌词_矩形.right = max(主歌词_矩形.right, 主歌词_矩形.left);
+        主歌词_矩形.bottom = max(主歌词_矩形.bottom, 主歌词_矩形.top);
 
         // 创建文字格式
         this->DWrite工厂->CreateTextFormat(
@@ -228,11 +246,14 @@ void 呈现窗口类::绘制歌词(
     else
     {
         D2D1_RECT_F 主歌词_矩形 = D2D1::RectF(
-            rect.left + this->DPI(5),
-            rect.top + this->DPI(5),
-            rect.right - this->DPI(5),
-            rect.bottom / 2.0f
+            max(0, rect.left + this->DPI(5)),
+            max(0, rect.top + this->DPI(5)),
+            max(0, rect.right - this->DPI(5)),
+            max(0, rect.bottom / 2.0f)
         );
+
+        主歌词_矩形.right = max(主歌词_矩形.right, 主歌词_矩形.left);
+        主歌词_矩形.bottom = max(主歌词_矩形.bottom, 主歌词_矩形.top);
 
         // 创建文字格式
         this->DWrite工厂->CreateTextFormat(
@@ -274,11 +295,14 @@ void 呈现窗口类::绘制歌词(
         /******************************************/
 
         D2D1_RECT_F 副歌词_矩形 = D2D1::RectF(
-            rect.left + this->DPI(5),
-            rect.bottom / 2.0f,
-            rect.right - this->DPI(5),
-            rect.bottom - this->DPI(5)
+            max(0, rect.left + this->DPI(5)),
+            max(0, rect.bottom / 2.0f),
+            max(0, rect.right - this->DPI(5)),
+            max(0, rect.bottom - this->DPI(5))
         );
+
+        副歌词_矩形.right = max(副歌词_矩形.right, 副歌词_矩形.left);
+        副歌词_矩形.bottom = max(副歌词_矩形.bottom, 副歌词_矩形.top);
 
         // 创建文字格式
         this->DWrite工厂->CreateTextFormat(

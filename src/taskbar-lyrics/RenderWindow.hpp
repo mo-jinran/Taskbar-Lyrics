@@ -8,9 +8,10 @@
 
 enum WindowAlignment
 {
-    WindowAlignmentLeft = 0,
-    WindowAlignmentCenter = 1,
-    WindowAlignmentRight = 2
+    WindowAlignmentAdaptive = 0,
+    WindowAlignmentLeft = 1,
+    WindowAlignmentCenter = 2,
+    WindowAlignmentRight = 3
 };
 
 
@@ -68,13 +69,13 @@ class 呈现窗口类
     DWRITE_FONT_WEIGHT 字体样式_副歌词_字重 = DWRITE_FONT_WEIGHT_NORMAL;
     DWRITE_FONT_STYLE 字体样式_主歌词_斜体 = DWRITE_FONT_STYLE_NORMAL;
     DWRITE_FONT_STYLE 字体样式_副歌词_斜体 = DWRITE_FONT_STYLE_NORMAL;
+    
     bool 字体样式_主歌词_下划线 = false;
     bool 字体样式_副歌词_下划线 = false;
     bool 字体样式_主歌词_删除线 = false;
     bool 字体样式_副歌词_删除线 = false;
 
-
-    WindowAlignment 窗口位置 = WindowAlignment::WindowAlignmentLeft;
+    WindowAlignment 窗口位置 = WindowAlignment::WindowAlignmentAdaptive;
 
     int 左边距 = 0;
     int 右边距 = 0;
