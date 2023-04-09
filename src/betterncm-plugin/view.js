@@ -75,16 +75,16 @@ plugin.onLoad(async () => {
         const apply = configView.querySelector(".content.font .font-settings .apply");
         const reset = configView.querySelector(".content.font .font-settings .reset");
 
-        const font_family = configView.querySelector(".content.font .font-settings .font-family");
+        const fontFamily = configView.querySelector(".content.font .font-settings .font-family");
 
         const elements = {
-            font_family
+            fontFamily
         };
 
         apply.addEventListener("click", () => font.apply(elements));
         reset.addEventListener("click", () => font.reset(elements));
 
-        font_family.value = pluginConfig.get("font")["font_family"];
+        fontFamily.value = pluginConfig.get("font")["font_family"];
     }
 
 
