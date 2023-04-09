@@ -150,14 +150,20 @@ plugin.onLoad(async () => {
             "extra": WindowsEnum.DWRITE_TEXT_ALIGNMENT.DWRITE_TEXT_ALIGNMENT_LEADING
         },
         "position": {
-            "position": WindowsEnum.WindowAlignment.WindowAlignmentLeft
+            "position": {
+                "value": WindowsEnum.WindowAlignment.WindowAlignmentLeft,
+                "textContent": "靠左，占满剩余空间宽度"
+            }
         },
         "margin": {
             "left": 0,
             "right": 0
         },
         "screen": {
-            "parent_taskbar": "Shell_TrayWnd"
+            "parent_taskbar": {
+                "value": "Shell_TrayWnd",
+                "textContent": "主屏幕任务栏"
+            }
         }
     };
 

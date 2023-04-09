@@ -145,7 +145,7 @@ void 网络服务器类::位置(
 ) {
     auto json = nlohmann::json::parse(req.body);
 
-    this->任务栏窗口->呈现窗口->窗口位置 = json["position"].get<WindowAlignment>();
+    this->任务栏窗口->呈现窗口->窗口位置 = json["position"]["value"].get<WindowAlignment>();
 
     PostMessage(this->任务栏窗口->窗口句柄, WM_PAINT, NULL, NULL);
     res.status = 200;
@@ -171,7 +171,7 @@ void 网络服务器类::屏幕(
     httplib::Response& res
 ) {
     auto json = nlohmann::json::parse(req.body);
-    auto parent_taskbar = json["parent_taskbar"].get<std::string>();
+    auto parent_taskbar = json["parent_taskbar"]["value"].get<std::string>();
 
     this->任务栏窗口->呈现窗口->任务栏_句柄 = FindWindow(this->字符转换.from_bytes(parent_taskbar).c_str(), NULL);
     this->任务栏窗口->呈现窗口->开始按钮_句柄 = FindWindowEx(this->任务栏窗口->呈现窗口->任务栏_句柄, NULL, L"Start", NULL);

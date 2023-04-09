@@ -219,25 +219,15 @@ plugin.onLoad(async () => {
 
     // 修改位置
     const position = {
-        setLeft: () => {
+        setWindowPosition: (value, textContent) => {
             const config = JSON.parse(JSON.stringify(pluginConfig.get("position")));
-            config["position"] = WindowsEnum.WindowAlignment.WindowAlignmentLeft;
+            config["position"]["value"] = Number(value);
+            config["position"]["textContent"] = textContent;
             pluginConfig.set("position", config);
             TaskbarLyricsAPI.window.position(config);
         },
-        setCenter: () => {
-            const config = JSON.parse(JSON.stringify(pluginConfig.get("position")));
-            config["position"] = WindowsEnum.WindowAlignment.WindowAlignmentCenter;
-            pluginConfig.set("position", config);
-            TaskbarLyricsAPI.window.position(config);
-        },
-        setRight: () => {
-            const config = JSON.parse(JSON.stringify(pluginConfig.get("position")));
-            config["position"] = WindowsEnum.WindowAlignment.WindowAlignmentRight;
-            pluginConfig.set("position", config);
-            TaskbarLyricsAPI.window.position(config);
-        },
-        reset: () => {
+        reset: elements => {
+            elements.windowPositionValue.textContent = defaultConfig["position"]["position"]["textContent"];
             pluginConfig.set("position", undefined);
             TaskbarLyricsAPI.window.position(defaultConfig["position"]);
         }
@@ -264,19 +254,15 @@ plugin.onLoad(async () => {
 
     // 切换屏幕
     const screen = {
-        setPrimary: () => {
+        setParentTaskbar: (value, textContent) => {
             const config = JSON.parse(JSON.stringify(pluginConfig.get("screen")));
-            config["parent_taskbar"] = "Shell_TrayWnd";
+            config["parent_taskbar"]["value"] = value;
+            config["parent_taskbar"]["textContent"] = textContent;
             pluginConfig.set("screen", config);
             TaskbarLyricsAPI.window.screen(config);
         },
-        setSecondary: () => {
-            const config = JSON.parse(JSON.stringify(pluginConfig.get("screen")));
-            config["parent_taskbar"] = "Shell_SecondaryTrayWnd";
-            pluginConfig.set("screen", config);
-            TaskbarLyricsAPI.window.screen(config);
-        },
-        reset: () => {
+        reset: elements => {
+            elements.parentTaskbarValue.textContent = defaultConfig["screen"]["parent_taskbar"]["textContent"];
             pluginConfig.set("screen", undefined);
             TaskbarLyricsAPI.window.screen(defaultConfig["screen"]);
         }
