@@ -2,8 +2,7 @@
 
 
 plugin.onLoad(async () => {
-    const TaskbarLyricsAPI = this.api.TaskbarLyricsAPI;
-    const pluginConfig = this.base.pluginConfig;
+    const { TaskbarLyricsAPI, pluginConfig } = { ...this.base };
     const liblyric = loadedPlugins.liblyric;
 
 
@@ -128,10 +127,6 @@ plugin.onLoad(async () => {
                                     currentLine = 0;
                                 }
                             } break;
-
-                            default: {
-                                lyrics.extra = nextLyric?.originalLyric ?? "";
-                            } break;
                         }
                     } break;
 
@@ -146,12 +141,6 @@ plugin.onLoad(async () => {
                             ?? currentLyric?.translatedLyric
                             ?? nextLyric?.originalLyric
                             ?? "";
-                    } break;
-
-                    default: {
-                        lyrics.extra = currentLyric?.translatedLyric
-                            ?? nextLyric?.originalLyric
-                            ?? ""
                     } break;
                 }
 

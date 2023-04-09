@@ -2,8 +2,13 @@
 
 
 plugin.onLoad(async () => {
-    const { TaskbarLyricsPort, TaskbarLyricsAPI } = { ...this.api };
-    const { WindowsEnum, defaultConfig, pluginConfig } = { ...this.base };
+    const {
+        TaskbarLyricsPort,
+        TaskbarLyricsAPI,
+        WindowsEnum,
+        defaultConfig,
+        pluginConfig
+    } = { ...this.base };
     const { startGetLyric, stopGetLyric } = { ...this.lyric };
 
 
@@ -41,13 +46,13 @@ plugin.onLoad(async () => {
 
     // 更换字体
     const font = {
-        set: elements => {
+        apply: elements => {
             const config = JSON.parse(JSON.stringify(pluginConfig.get("font")));
             config.font_family = elements["font_family"].value;
             pluginConfig.set("font", config);
             TaskbarLyricsAPI.font(config);
         },
-        default: elements => {
+        reset: elements => {
             pluginConfig.set("font", undefined);
             TaskbarLyricsAPI.font(defaultConfig.font);
             elements["font_family"].value = defaultConfig.font.font_family;
@@ -57,7 +62,7 @@ plugin.onLoad(async () => {
 
     // 字体颜色
     const color = {
-        set: elements => {
+        apply: elements => {
             const config = JSON.parse(JSON.stringify(pluginConfig.get("color")));
             config.basic.light.hex_color = parseInt(elements.basicLightColor.value.slice(1), 16);
             config.basic.light.opacity = Number(elements.basicLightOpacity.value);
@@ -70,7 +75,7 @@ plugin.onLoad(async () => {
             pluginConfig.set("color", config);
             TaskbarLyricsAPI.color(config);
         },
-        default: elements => {
+        reset: elements => {
             elements.basicLightColor.value = `#${defaultConfig.color.basic.light.hex_color.toString(16).padStart(6, "0")}`;
             elements.basicLightOpacity.value = defaultConfig.color.basic.light.opacity;
             elements.basicDarkColor.value = `#${defaultConfig.color.basic.dark.hex_color.toString(16).padStart(6, "0")}`;
@@ -124,7 +129,7 @@ plugin.onLoad(async () => {
             pluginConfig.set("style", config);
             TaskbarLyricsAPI.style(config);
         },
-        default: elements => {
+        reset: elements => {
             pluginConfig.set("style", undefined);
             TaskbarLyricsAPI.style(defaultConfig.style);
             elements["basicWeightValue"].textContent = defaultConfig["style"]["basic"]["weight"]["textContent"];
@@ -139,7 +144,7 @@ plugin.onLoad(async () => {
 
     // 歌词设置
     const lyrics = {
-        switch: event => event.target.checked ? TaskbarLyricsStart() : TaskbarLyricsClose(),
+        lyricsSwitch: event => event.target.checked ? TaskbarLyricsStart() : TaskbarLyricsClose(),
         setRetrievalMethod: (value, textContent) => {
             const config = JSON.parse(JSON.stringify(pluginConfig.get("lyrics")));
             config.retrieval_method.value = value;
@@ -148,7 +153,7 @@ plugin.onLoad(async () => {
             pluginConfig.set("lyrics", config);
             startGetLyric();
         },
-        default: elements => {
+        reset: elements => {
             elements.retrievalMethodValue.textContent = defaultConfig.lyrics.retrieval_method.textContent;
             stopGetLyric();
             pluginConfig.set("lyrics", undefined);
@@ -171,12 +176,12 @@ plugin.onLoad(async () => {
             config.extra_show.textContent = textContent;
             pluginConfig.set("effect", config);
         },
-        set: elements => {
+        apply: elements => {
             const config = JSON.parse(JSON.stringify(pluginConfig.get("effect")));
             config.adjust = Number(elements.adjust.value);
             pluginConfig.set("effect", config);
         },
-        default: elements => {
+        reset: elements => {
             elements.nextLineLyricsPositionValue.textContent = defaultConfig.effect.next_line_lyrics_position.textContent;
             elements.extraShowValue.textContent = defaultConfig.effect.extra_show.textContent;
             elements.adjust.value = defaultConfig.effect.adjust;
@@ -205,7 +210,7 @@ plugin.onLoad(async () => {
             pluginConfig.set("align", config);
             TaskbarLyricsAPI.align(config);
         },
-        default: () => {
+        reset: () => {
             pluginConfig.set("align", undefined);
             TaskbarLyricsAPI.align(defaultConfig.align);
         }
@@ -232,7 +237,7 @@ plugin.onLoad(async () => {
             pluginConfig.set("position", config);
             TaskbarLyricsAPI.position(config);
         },
-        default: () => {
+        reset: () => {
             pluginConfig.set("position", undefined);
             TaskbarLyricsAPI.position(defaultConfig.position);
         }
@@ -241,14 +246,14 @@ plugin.onLoad(async () => {
 
     // 修改边距
     const margin = {
-        set: elements => {
+        apply: elements => {
             const config = JSON.parse(JSON.stringify(pluginConfig.get("margin")));
             config.left = Number(elements["left"].value);
             config.right = Number(elements["right"].value);
             pluginConfig.set("margin", config);
             TaskbarLyricsAPI.margin(config);
         },
-        default: elements => {
+        reset: elements => {
             pluginConfig.set("margin", undefined);
             TaskbarLyricsAPI.margin(defaultConfig.margin);
             elements["left"].value = defaultConfig.margin.left;
@@ -271,7 +276,7 @@ plugin.onLoad(async () => {
             pluginConfig.set("screen", config);
             TaskbarLyricsAPI.screen(config);
         },
-        default: () => {
+        reset: () => {
             pluginConfig.set("screen", undefined);
             TaskbarLyricsAPI.screen(defaultConfig.screen);
         }

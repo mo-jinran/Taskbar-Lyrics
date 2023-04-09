@@ -81,8 +81,8 @@ plugin.onLoad(async () => {
             font_family
         };
 
-        apply.addEventListener("click", () => font.set(elements));
-        reset.addEventListener("click", () => font.default(elements));
+        apply.addEventListener("click", () => font.apply(elements));
+        reset.addEventListener("click", () => font.reset(elements));
 
         font_family.value = pluginConfig.get("font")["font_family"];
     }
@@ -113,8 +113,8 @@ plugin.onLoad(async () => {
             extraDarkOpacity
         }
 
-        apply.addEventListener("click", () => color.set(elements));
-        reset.addEventListener("click", () => color.default(elements));
+        apply.addEventListener("click", () => color.apply(elements));
+        reset.addEventListener("click", () => color.reset(elements));
 
         basicLightColor.value = `#${pluginConfig.get("color")["basic"]["light"]["hex_color"].toString(16)}`;
         basicLightOpacity.value = pluginConfig.get("color")["basic"]["light"]["opacity"];
@@ -155,7 +155,7 @@ plugin.onLoad(async () => {
             extraStrikethrough
         }
 
-        reset.addEventListener("click", () => style.default(elements));
+        reset.addEventListener("click", () => style.reset(elements));
 
         basicNormal.addEventListener("click", event => style.setSlopeNormal(event));
         basicOblique.addEventListener("click", event => style.setSlopeOblique(event));
@@ -215,9 +215,9 @@ plugin.onLoad(async () => {
             retrievalMethodValue
         }
 
-        reset.addEventListener("click", () => lyrics.default(elements));
+        reset.addEventListener("click", () => lyrics.reset(elements));
 
-        lyricsSwitch.addEventListener("change", event => lyrics.switch(event));
+        lyricsSwitch.addEventListener("change", event => lyrics.lyricsSwitch(event));
 
         retrievalMethodValue.addEventListener("click", event => {
             const open = event.target.parentElement.classList.contains("z-open");
@@ -252,8 +252,8 @@ plugin.onLoad(async () => {
             adjust
         }
 
-        apply.addEventListener("click", () => effect.set(elements));
-        reset.addEventListener("click", () => effect.default(elements));
+        apply.addEventListener("click", () => effect.apply(elements));
+        reset.addEventListener("click", () => effect.reset(elements));
 
         nextLineLyricsPositionValue.addEventListener("click", event => {
             const open = event.target.parentElement.classList.contains("z-open");
@@ -296,7 +296,7 @@ plugin.onLoad(async () => {
         const extraCenter = configView.querySelector(".content.lyrics .align-settings .extra-center");
         const extraRight = configView.querySelector(".content.lyrics .align-settings .extra-right");
 
-        reset.addEventListener("click", () => align.default());
+        reset.addEventListener("click", () => align.reset());
 
         basicLeft.addEventListener("click", event => align.setLeft(event));
         basicCenter.addEventListener("click", event => align.setCenter(event));
@@ -315,7 +315,7 @@ plugin.onLoad(async () => {
         const center = configView.querySelector(".content.window .position-settings .center");
         const right = configView.querySelector(".content.window .position-settings .right");
 
-        reset.addEventListener("click", () => position.default());
+        reset.addEventListener("click", () => position.reset());
 
         left.addEventListener("click", () => position.setLeft());
         center.addEventListener("click", () => position.setCenter());
@@ -336,8 +336,8 @@ plugin.onLoad(async () => {
             right
         }
 
-        apply.addEventListener("click", () => margin.set(elements));
-        reset.addEventListener("click", () => margin.default(elements));
+        apply.addEventListener("click", () => margin.apply(elements));
+        reset.addEventListener("click", () => margin.reset(elements));
 
         left.value = pluginConfig.get("margin")["left"];
         right.value = pluginConfig.get("margin")["right"];
@@ -351,7 +351,7 @@ plugin.onLoad(async () => {
         const primary = configView.querySelector(".content.window .screen-settings .primary");
         const secondary = configView.querySelector(".content.window .screen-settings .secondary");
 
-        reset.addEventListener("click", () => screen.default());
+        reset.addEventListener("click", () => screen.reset());
 
         primary.addEventListener("click", () => screen.setPrimary());
         secondary.addEventListener("click", () => screen.setSecondary());

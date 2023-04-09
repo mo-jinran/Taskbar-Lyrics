@@ -19,9 +19,6 @@
     "injects": {
         "Main": [
             {
-                "file": "api.js"
-            },
-            {
                 "file": "base.js"
             },
             {
