@@ -7,9 +7,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\betterncm-plugin\api.js">
-      <Filter>源文件</Filter>
-    </None>
     <None Include="src\betterncm-plugin\base.js">
       <Filter>源文件</Filter>
     </None>

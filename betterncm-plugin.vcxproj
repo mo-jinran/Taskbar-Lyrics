@@ -11,7 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\betterncm-plugin\api.js" />
     <None Include="src\betterncm-plugin\base.js" />
     <None Include="src\betterncm-plugin\config.html" />
     <None Include="src\betterncm-plugin\func.js" />
