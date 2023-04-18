@@ -5,6 +5,7 @@
         <button class="tab_button">歌词</button>
         <button class="tab_button">窗口</button>
         <button class="tab_button">关于</button>
+        <button class="tab_button">日志</button>
     </header>
 
     <!-- 主体内容 -->
@@ -346,6 +347,364 @@
                     <p>本插件并非为BetterNCM提供的Native Plugin（DLL形式注入）</p>
                     <p>插件会启动任务栏歌词程序，并嵌入到任务栏中和开启HTTP服务器</p>
                     <p>插件端负责获取播放状态与歌词和一些个性化配置提供给软件端</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- 日志 -->
+        <div class="content changelog">
+            <section>
+                <h1>
+                    <strong>1.6.1</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 琐事调整，优化代码，统一风格</p>
+                    <p>-> | 将一些选项换成下拉式选择框</p>
+                    <p>-> | 添加窗口位置自适应</p>
+                    <p>-> | 修复程序某些情况崩溃问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.6.0</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 优化代码，区分API与设置的类别</p>
+                    <p>-> | 添加显示效果设置，下句歌词位置</p>
+                    <p>-> | 将副歌词显示与延迟调整移动到显示效果内</p>
+                    <p>-> | 修改默认字体为：Microsoft YaHei UI</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.5.7</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 纯音乐显示歌曲名与作曲家</p>
+                    <p>-> | 修改设置界面分类</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.5.6</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 修复获取的路径不标准导致无法启动软件的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.5.5</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 尝试解决软件不会启动的问题</p>
+                    <p>-> | 优化代码，移除没用到的引入</p>
+                    <p>-> | 解决刚打开软件时获取不到数据而报错的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.5.4</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 优化代码，删除无用的调试语句与注释</p>
+                    <p>-> | 调整配置界面样式，配置界面适配亮暗主题</p>
+                    <p>-> | 重写文字排版，修复文字右对齐后最后一个字只剩一半，修复文字超出部分没有被隐藏</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.5.3</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 优化代码，调整配置界面，调整代码位置，删除调试语句</p>
+                    <p>-> | 读取配置时，没有或无效的将使用默认值</p>
+                    <p>-> | 解决切换歌曲后再切换到新的歌词获取方式时无法重新获取歌词的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.5.2</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 移除对libsonginfo的依赖</p>
+                    <p>-> | 解决插件占用文件夹，复制软件到其他目录后运行</p>
+                    <p>-> | 添加切换歌词获取方式选项</p>
+                    <p>-> | 修改注意事项</p>
+                    <p>-> | 优化代码，调整配置界面布局</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.5.1</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 优化代码，调整配置界面</p>
+                    <p>-> | 添加歌词时间调整</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.5.0</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 重构/优化代码，重构配置界面，移除软件的互斥锁，修改一部分API</p>
+                    <p>-> | 添加libsonginfo与liblyric依赖</p>
+                    <p>-> | 添加通过liblyric获取歌词，并设为默认方式</p>
+                    <p>-> | 添加修改副歌词的选项</p>
+                    <p>-> | 修复下拉式选择框只能显示值的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.4.3</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 优化代码，修改函数导出导入，拆分代码</p>
+                    <p>-> | 修复样式设置不生效的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.4.2</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 优化代码</p>
+                    <p>-> | 添加回字体样式功能</p>
+                    <p>-> | 修复样式设置不生效的问题</p>
+                    <p>-> | 修复读取到不兼容的配置导致无法使用的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.4.1</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 优化代码，删除无用代码</p>
+                    <p>-> | 修复第一次打开某些输入框不显示默认值</p>
+                    <p>-> | 关闭歌词时停止对歌词变动的监控</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.4.0</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 优化代码，删除无用代码</p>
+                    <p>-> | 重构代码，从GDI+切换为Direct2D与DirectWrite</p>
+                    <p>-> | 重构代码，插件端，将单文件拆分代码为多文件并注入</p>
+                    <p>-> | 修复第一次打开某些输入框不显示默认值</p>
+                    <p>-> | 关闭歌词时停止对歌词变动的监控</p>
+                    <p>-> | 修复歌词位置无法设置在左边的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.3.1</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 微调歌词的字体大小与边距</p>
+                    <p>-> | 优化代码，优化设置界面</p>
+                    <p>-> | 更改为使用JSON传输数据</p>
+                    <p>-> | 添加基于整个任务栏宽度居中的按钮</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.3.0</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 添加修改边距选项</p>
+                    <p>-> | 添加字体样式选项</p>
+                    <p>-> | 修复歌词在手动关闭后再开启设置不生效的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.2.4</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 优化代码</p>
+                    <p>-> | 添加歌词开关选项</p>
+                    <p>-> | 修复关闭程序后本地http服务线程不会立刻结束的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.2.3</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 重构代码，软件端，优化代码</p>
+                    <p>-> | 微调歌词的字体渲染与边距</p>
+                    <p>-> | 更新插件预览图</p>
+                    <p>-> | 修复修改位置某些情况下失效的问题</p>
+                    <p>-> | 支持更多版本的任务栏</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.2.2</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 修复了会显示控制台的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.2.1</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 修复了插件商店安装插件后无法启动的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.2.0</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 重构代码，优化代码，将软件端单文件拆分代码为多文件</p>
+                    <p>-> | 添加启动，连接，关闭的提示</p>
+                    <p>-> | 兼容Windows 11 21H2版本任务栏</p>
+                    <p>-> | 修复页面刷新后不会关闭程序</p>
+                    <p>-> | 修复歌词过长导致换行的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.1.0</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 重构项目结构</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.0.4</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 优化代码</p>
+                    <p>-> | 添加配置界面</p>
+                    <p>-> | 自适应任务栏剩余宽度</p>
+                    <p>-> | 添加切换屏幕选项</p>
+                    <p>-> | 添加更换字体选项</p>
+                    <p>-> | 添加字体颜色选项</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.0.3</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 修复歌词带问号导致不显示</p>
+                    <p>-> | 添加互斥锁，修复重复启动软件导致重叠多个窗口</p>
+                    <p>-> | 监听网易云进程关闭</p>
+                    <p>-> | 移除心跳检测机制</p>
+                    <p>-> | 移除Worker</p>
+                    <p>-> | 移除Hijack</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.0.2</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 自适应windows深浅色模式</p>
+                    <p>-> | 单行歌词放大居中占满双行</p>
+                    <p>-> | 修复歌词上右键卡住的问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.0.1</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 修复软件路径问题</p>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <h1>
+                    <strong>1.0.0</strong>
+                </h1>
+                <div class="text_container">
+                    <p>-> | 添加任务栏歌词插件</p>
                 </div>
             </section>
         </div>
