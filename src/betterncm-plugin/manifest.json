@@ -11,7 +11,8 @@
     ],
     "type": "extension",
     "loadAfter": [
-        "liblyric"
+        "liblyric",
+        "RefinedNowPlaying"
     ],
     "requirements": [
         "liblyric"

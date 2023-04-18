@@ -131,8 +131,8 @@ plugin.onLoad(async () => {
         },
         "lyrics": {
             "retrieval_method": {
-                "value": 0,
-                "textContent": "[新] 发送网络请求解析歌词",
+                "value": 1,
+                "textContent": "使用LibLyric解析获取歌词",
             }
         },
         "effect": {

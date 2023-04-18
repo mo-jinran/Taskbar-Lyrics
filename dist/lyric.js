@@ -40,9 +40,7 @@ plugin.onLoad(async () => {
 
 
     // 音乐ID发生变化时
-    async function play_load() {
-        parsedLyric = null;
-
+    const play_load = async () => {
         // 获取歌曲信息
         const playingSong = betterncm.ncm.getPlayingSong();
         musicId = playingSong.data.id ?? 0;
@@ -60,14 +58,21 @@ plugin.onLoad(async () => {
             "extra": artistName
         });
 
-        // 解析歌词
-        const lyricData = await liblyric.getLyricData(musicId);
 
-        parsedLyric = liblyric.parseLyric(
-            lyricData?.lrc?.lyric ?? "",
-            lyricData?.tlyric?.lyric ?? "",
-            lyricData?.romalrc?.lyric ?? ""
-        ).filter(item => item.originalLyric != "");
+        // 解析歌词
+        const config = pluginConfig.get("lyrics");
+        if ((config["retrieval_method"]["value"] == "2") && window.currentLyrics) {
+            parsedLyric = window.currentLyrics.lyrics.filter(item => item.originalLyric != "");
+            console.log("正在使用refinedNowPlaying的歌词");
+        } else {
+            const lyricData = await liblyric.getLyricData(musicId);
+            parsedLyric = liblyric.parseLyric(
+                lyricData?.lrc?.lyric ?? "",
+                lyricData?.tlyric?.lyric ?? "",
+                lyricData?.romalrc?.lyric ?? ""
+            ).filter(item => item.originalLyric != "");
+        }
+
 
         // 纯音乐只显示歌曲名与作曲家
         if (
@@ -83,7 +88,7 @@ plugin.onLoad(async () => {
 
 
     // 音乐进度发生变化时
-    async function play_progress(_, time) {
+    const play_progress = async (_, time) => {
         const adjust = Number(pluginConfig.get("effect")["adjust"]);
         if (parsedLyric) {
             let nextIndex = parsedLyric.findIndex(item => item.time > (time + adjust) * 1000);
@@ -151,19 +156,31 @@ plugin.onLoad(async () => {
     }
 
 
+
     // 开始获取歌词
     function startGetLyric() {
         const config = pluginConfig.get("lyrics");
-        if (config["retrieval_method"]["value"] == "0") {
-            legacyNativeCmder.appendRegisterCall("Load", "audioplayer", play_load);
-            legacyNativeCmder.appendRegisterCall("PlayProgress", "audioplayer", play_progress);
-            const playingSong = betterncm.ncm.getPlayingSong();
-            if (playingSong && playingSong.data.id != musicId) {
-                play_load();
-            }
-        }
-        if (config["retrieval_method"]["value"] == "1") {
-            watchLyricsChange();
+        switch (config["retrieval_method"]["value"]) {
+            // 软件内词栏
+            case "0": {
+                watchLyricsChange();
+            } break;
+
+            // LibLyric
+            case "1": {
+                legacyNativeCmder.appendRegisterCall("Load", "audioplayer", play_load);
+                legacyNativeCmder.appendRegisterCall("PlayProgress", "audioplayer", play_progress);
+                const playingSong = betterncm.ncm.getPlayingSong();
+                if (playingSong && playingSong.data.id != musicId) {
+                    play_load();
+                }
+            } break;
+
+            // RefinedNowPlaying
+            case "2": {
+                legacyNativeCmder.appendRegisterCall("Load", "audioplayer", play_load);
+                legacyNativeCmder.appendRegisterCall("PlayProgress", "audioplayer", play_progress);
+            } break;
         }
     }
 
@@ -171,15 +188,26 @@ plugin.onLoad(async () => {
     // 停止获取歌词
     function stopGetLyric() {
         const config = pluginConfig.get("lyrics");
-        if (config["retrieval_method"]["value"] == "0") {
-            legacyNativeCmder.removeRegisterCall("Load", "audioplayer", play_load);
-            legacyNativeCmder.removeRegisterCall("PlayProgress", "audioplayer", play_progress);
-        }
-        if (config["retrieval_method"]["value"] == "1") {
-            if (observer) {
-                observer.disconnect();
-                observer = null;
-            }
+        switch (config["retrieval_method"]["value"]) {
+            // 软件内词栏
+            case "0": {
+                if (observer) {
+                    observer.disconnect();
+                    observer = null;
+                }
+            } break;
+
+            // LibLyric
+            case "1": {
+                legacyNativeCmder.removeRegisterCall("Load", "audioplayer", play_load);
+                legacyNativeCmder.removeRegisterCall("PlayProgress", "audioplayer", play_progress);
+            } break;
+
+            // RefinedNowPlaying
+            case "2": {
+                legacyNativeCmder.removeRegisterCall("Load", "audioplayer", play_load);
+                legacyNativeCmder.removeRegisterCall("PlayProgress", "audioplayer", play_progress);
+            } break;
         }
     }
 

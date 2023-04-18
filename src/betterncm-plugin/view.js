@@ -227,6 +227,20 @@ plugin.onLoad(async () => {
         retrievalMethodSelect.addEventListener("click", event => {
             const value = event.target.dataset.value;
             const textContent = event.target.textContent;
+            if ((value == "2") && (!window.currentLyrics)) {
+                channel.call(
+                    "trayicon.popBalloon",
+                    () => { },
+                    [{
+                        title: "任务栏歌词",
+                        text: "无法使用RefinedNowPlaying歌词！\n是否安装RefinedNowPlaying插件？\n将回退到使用LibLyric解析获取歌词",
+                        icon: "path",
+                        hasSound: true,
+                        delayTime: 2e3
+                    }]
+                );
+                return;
+            }
             lyrics.setRetrievalMethod(value, textContent);
             retrievalMethodValue.textContent = textContent;
         });
