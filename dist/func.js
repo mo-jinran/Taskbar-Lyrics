@@ -147,7 +147,7 @@ plugin.onLoad(async () => {
         lyricsSwitch: event => event.target.checked ? TaskbarLyricsStart() : TaskbarLyricsClose(),
         setRetrievalMethod: (value, textContent) => {
             const config = JSON.parse(JSON.stringify(pluginConfig.get("lyrics")));
-            config["retrieval_method"]["value"] = value;
+            config["retrieval_method"]["value"] = Number(value);
             config["retrieval_method"]["textContent"] = textContent;
             stopGetLyric();
             pluginConfig.set("lyrics", config);
@@ -166,13 +166,13 @@ plugin.onLoad(async () => {
     const effect = {
         setNextLineLyricsPosition: (value, textContent) => {
             const config = JSON.parse(JSON.stringify(pluginConfig.get("effect")));
-            config["next_line_lyrics_position"]["value"] = value;
+            config["next_line_lyrics_position"]["value"] = Number(value);
             config["next_line_lyrics_position"]["textContent"] = textContent;
             pluginConfig.set("effect", config);
         },
         setExtraShow: (value, textContent) => {
             const config = JSON.parse(JSON.stringify(pluginConfig.get("effect")));
-            config["extra_show"]["value"] = value;
+            config["extra_show"]["value"] = Number(value);
             config["extra_show"]["textContent"] = textContent;
             pluginConfig.set("effect", config);
         },

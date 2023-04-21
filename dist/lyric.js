@@ -105,23 +105,23 @@ plugin.onLoad(async () => {
 
                 const extra_show_value = pluginConfig.get("effect")["extra_show"]["value"];
                 switch (extra_show_value) {
-                    case "0": {
+                    case 0: {
                         lyrics.extra = "";
                     } break;
 
-                    case "1": {
+                    case 1: {
                         const next_line_lyrics_position_value = pluginConfig.get("effect")["next_line_lyrics_position"]["value"];
                         switch (next_line_lyrics_position_value) {
-                            case "0": {
+                            case 0: {
                                 lyrics.extra = nextLyric?.originalLyric ?? "";
                             } break;
 
-                            case "1": {
+                            case 1: {
                                 lyrics.basic = nextLyric?.originalLyric ?? "";
                                 lyrics.extra = currentLyric?.originalLyric ?? "";
                             } break;
 
-                            case "2": {
+                            case 2: {
                                 if (currentLine == 0) {
                                     lyrics.basic = currentLyric?.originalLyric ?? "";
                                     lyrics.extra = nextLyric?.originalLyric ?? "";
@@ -135,13 +135,13 @@ plugin.onLoad(async () => {
                         }
                     } break;
 
-                    case "2": {
+                    case 2: {
                         lyrics.extra = currentLyric?.translatedLyric
                             ?? nextLyric?.originalLyric
                             ?? "";
                     } break;
 
-                    case "3": {
+                    case 3: {
                         lyrics.extra = currentLyric?.romanLyric
                             ?? currentLyric?.translatedLyric
                             ?? nextLyric?.originalLyric
@@ -162,12 +162,12 @@ plugin.onLoad(async () => {
         const config = pluginConfig.get("lyrics");
         switch (config["retrieval_method"]["value"]) {
             // 软件内词栏
-            case "0": {
+            case 0: {
                 watchLyricsChange();
             } break;
 
             // LibLyric
-            case "1": {
+            case 1: {
                 legacyNativeCmder.appendRegisterCall("Load", "audioplayer", play_load);
                 legacyNativeCmder.appendRegisterCall("PlayProgress", "audioplayer", play_progress);
                 const playingSong = betterncm.ncm.getPlayingSong();
@@ -177,7 +177,7 @@ plugin.onLoad(async () => {
             } break;
 
             // RefinedNowPlaying
-            case "2": {
+            case 2: {
                 legacyNativeCmder.appendRegisterCall("Load", "audioplayer", play_load);
                 legacyNativeCmder.appendRegisterCall("PlayProgress", "audioplayer", play_progress);
             } break;
@@ -190,7 +190,7 @@ plugin.onLoad(async () => {
         const config = pluginConfig.get("lyrics");
         switch (config["retrieval_method"]["value"]) {
             // 软件内词栏
-            case "0": {
+            case 0: {
                 if (observer) {
                     observer.disconnect();
                     observer = null;
@@ -198,13 +198,13 @@ plugin.onLoad(async () => {
             } break;
 
             // LibLyric
-            case "1": {
+            case 1: {
                 legacyNativeCmder.removeRegisterCall("Load", "audioplayer", play_load);
                 legacyNativeCmder.removeRegisterCall("PlayProgress", "audioplayer", play_progress);
             } break;
 
             // RefinedNowPlaying
-            case "2": {
+            case 2: {
                 legacyNativeCmder.removeRegisterCall("Load", "audioplayer", play_load);
                 legacyNativeCmder.removeRegisterCall("PlayProgress", "audioplayer", play_progress);
             } break;
