@@ -62,16 +62,27 @@ plugin.onLoad(async () => {
         // 解析歌词
         const config = pluginConfig.get("lyrics");
         if ((config["retrieval_method"]["value"] == "2") && window.currentLyrics) {
-            parsedLyric = window.currentLyrics.lyrics.filter(item => item.originalLyric != "");
-            console.log("正在使用refinedNowPlaying的歌词");
+            // 解决RNP歌词对不上的问题
+            while (true) {
+                if (window.currentLyrics.hash.includes(musicId)) {
+                    parsedLyric = window.currentLyrics.lyrics;
+                    break;
+                } else {
+                    await betterncm.utils.delay(100);
+                }
+            }
         } else {
             const lyricData = await liblyric.getLyricData(musicId);
             parsedLyric = liblyric.parseLyric(
                 lyricData?.lrc?.lyric ?? "",
                 lyricData?.tlyric?.lyric ?? "",
                 lyricData?.romalrc?.lyric ?? ""
-            ).filter(item => item.originalLyric != "");
+            );
         }
+
+
+        // 清除歌词空白行
+        parsedLyric = parsedLyric.filter(item => item.originalLyric != "");
 
 
         // 纯音乐只显示歌曲名与作曲家
