@@ -2,7 +2,7 @@
 
 
 plugin.onLoad(async () => {
-    const TaskbarLyricsPort = BETTERNCM_API_PORT + 2;
+    const TaskbarLyricsPort = BETTERNCM_API_PORT - 2;
 
     const TaskbarLyricsFetch = (path, params) => fetch(
         `http://127.0.0.1:${TaskbarLyricsPort}/taskbar${path}`,
