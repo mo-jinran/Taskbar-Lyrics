@@ -27,7 +27,7 @@ plugin.onLoad(async () => {
 
 
     // 加载结构
-    const injectHTML = async () => {
+    {
         const path = `${this.pluginPath}/config.html`;
         const text = await betterncm.fs.readFileText(path);
         const parser = new DOMParser();
@@ -38,7 +38,7 @@ plugin.onLoad(async () => {
 
 
     // 加载样式
-    const injectCSS = async () => {
+    {
         const path = `${this.pluginPath}/style.css`;
         const text = await betterncm.fs.readFileText(path);
         const element = document.createElement("style");
@@ -48,7 +48,7 @@ plugin.onLoad(async () => {
 
 
     // 页面切换
-    const setTabSwitch = async () => {
+    {
         const tab_box = configView.querySelector(".tab_box");
         const content_box = configView.querySelector(".content_box")
 
@@ -70,8 +70,25 @@ plugin.onLoad(async () => {
     }
 
 
+    // 通用的下拉选择框控制函数
+    function selectController(event) {
+        const open = event.target.parentElement.classList.contains("z-open");
+        if (open) event.target.parentElement.classList.remove("z-open");
+        else event.target.parentElement.classList.add("z-open");
+    }
+
+
+    // 点击其他地方收起下拉选择框
+    addEventListener("pointerup", event => {
+        if (!event.target.classList.contains("value")) {
+            const open = configView.querySelectorAll(".u-select.z-open");
+            open.forEach(value => value.classList.remove("z-open"));
+        }
+    });
+
+
     // 更换字体
-    const setFontSettings = async () => {
+    {
         const apply = configView.querySelector(".content.font .font-settings .apply");
         const reset = configView.querySelector(".content.font .font-settings .reset");
 
@@ -89,7 +106,7 @@ plugin.onLoad(async () => {
 
 
     // 字体颜色
-    const setColorSettings = async () => {
+    {
         const apply = configView.querySelector(".content.font .color-settings .apply");
         const reset = configView.querySelector(".content.font .color-settings .reset");
 
@@ -128,7 +145,7 @@ plugin.onLoad(async () => {
 
 
     // 字体样式
-    const setStyleSettings = async () => {
+    {
         const reset = configView.querySelector(".content.font .style-settings .reset");
 
         const basicWeightValue = configView.querySelector(".content.font .style-settings .basic-weight .value");
@@ -168,11 +185,7 @@ plugin.onLoad(async () => {
         extraUnderline.addEventListener("change", event => style.setUnderline(event));
         extraStrikethrough.addEventListener("change", event => style.setStrikethrough(event));
 
-        basicWeightValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
+        basicWeightValue.addEventListener("click", selectController);
         basicWeightSelect.addEventListener("click", event => {
             const name = event.target.parentElement.dataset.type;
             const value = event.target.dataset.value;
@@ -181,11 +194,7 @@ plugin.onLoad(async () => {
             basicWeightValue.textContent = textContent;
         });
 
-        extraWeightValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
+        extraWeightValue.addEventListener("click", selectController);
         extraWeightSelect.addEventListener("click", event => {
             const name = event.target.parentElement.dataset.type;
             const value = event.target.dataset.value;
@@ -204,7 +213,7 @@ plugin.onLoad(async () => {
 
 
     // 歌词设置
-    const setLyricsSettings = async () => {
+    {
         const reset = configView.querySelector(".content.lyrics .lyrics-settings .reset");
 
         const lyricsSwitch = configView.querySelector(".content.lyrics .lyrics-settings .lyrics-switch");
@@ -219,11 +228,7 @@ plugin.onLoad(async () => {
 
         lyricsSwitch.addEventListener("change", event => lyrics.lyricsSwitch(event));
 
-        retrievalMethodValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
+        retrievalMethodValue.addEventListener("click", selectController);
         retrievalMethodSelect.addEventListener("click", event => {
             const value = event.target.dataset.value;
             const textContent = event.target.textContent;
@@ -250,7 +255,7 @@ plugin.onLoad(async () => {
 
 
     // 显示效果
-    const setEffectSettings = async () => {
+    {
         const apply = configView.querySelector(".content.lyrics .effect-settings .apply");
         const reset = configView.querySelector(".content.lyrics .effect-settings .reset");
 
@@ -269,11 +274,7 @@ plugin.onLoad(async () => {
         apply.addEventListener("click", () => effect.apply(elements));
         reset.addEventListener("click", () => effect.reset(elements));
 
-        nextLineLyricsPositionValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
+        nextLineLyricsPositionValue.addEventListener("click", selectController);
         nextLineLyricsPositionSelect.addEventListener("click", event => {
             const value = event.target.dataset.value;
             const textContent = event.target.textContent;
@@ -281,11 +282,7 @@ plugin.onLoad(async () => {
             nextLineLyricsPositionValue.textContent = textContent;
         });
 
-        extraShowValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
+        extraShowValue.addEventListener("click", selectController);
         extraShowSelect.addEventListener("click", event => {
             const value = event.target.dataset.value;
             const textContent = event.target.textContent;
@@ -300,7 +297,7 @@ plugin.onLoad(async () => {
 
 
     // 对齐方式
-    const setAlignSettings = async () => {
+    {
         const reset = configView.querySelector(".content.lyrics .align-settings .reset");
 
         const basicLeft = configView.querySelector(".content.lyrics .align-settings .basic-left");
@@ -322,7 +319,7 @@ plugin.onLoad(async () => {
 
 
     // 修改位置
-    const setPositionSettings = async () => {
+    {
         const reset = configView.querySelector(".content.window .position-settings .reset");
 
         const windowPositionValue = configView.querySelector(".content.window .position-settings .window-position .value");
@@ -334,11 +331,7 @@ plugin.onLoad(async () => {
 
         reset.addEventListener("click", () => position.reset(elements));
 
-        windowPositionValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
+        windowPositionValue.addEventListener("click", selectController);
         windowPositionSelect.addEventListener("click", event => {
             const value = event.target.dataset.value;
             const textContent = event.target.textContent;
@@ -351,7 +344,7 @@ plugin.onLoad(async () => {
 
 
     // 修改边距
-    const setMarginSettings = async () => {
+    {
         const apply = configView.querySelector(".content.window .margin-settings .apply");
         const reset = configView.querySelector(".content.window .margin-settings .reset");
 
@@ -372,7 +365,7 @@ plugin.onLoad(async () => {
 
 
     // 切换屏幕
-    const setScreenSettings = async () => {
+    {
         const reset = configView.querySelector(".content.window .screen-settings .reset");
 
         const parentTaskbarValue = configView.querySelector(".content.window .screen-settings .parent-taskbar .value");
@@ -384,11 +377,7 @@ plugin.onLoad(async () => {
 
         reset.addEventListener("click", () => screen.reset(elements));
 
-        parentTaskbarValue.addEventListener("click", event => {
-            const open = event.target.parentElement.classList.contains("z-open");
-            if (open) event.target.parentElement.classList.remove("z-open");
-            else event.target.parentElement.classList.add("z-open");
-        });
+        parentTaskbarValue.addEventListener("click", selectController);
         parentTaskbarSelect.addEventListener("click", event => {
             const value = event.target.dataset.value;
             const textContent = event.target.textContent;
@@ -398,20 +387,4 @@ plugin.onLoad(async () => {
 
         parentTaskbarValue.textContent = pluginConfig.get("screen")["parent_taskbar"]["textContent"];
     }
-
-
-    await injectHTML();
-    await injectCSS();
-
-
-    setTabSwitch();
-    setFontSettings();
-    setColorSettings();
-    setStyleSettings();
-    setLyricsSettings();
-    setEffectSettings();
-    setAlignSettings();
-    setPositionSettings();
-    setMarginSettings();
-    setScreenSettings();
 });
