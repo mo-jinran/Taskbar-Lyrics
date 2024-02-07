@@ -87,6 +87,7 @@ int APIENTRY wWinMain(
     while (GetMessage(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
+        Sleep(10);
     }
 
     return msg.wParam;
