@@ -11,6 +11,11 @@ plugin.onLoad(async () => {
     let currentIndex = 0;
     let musicId = 0;
     let currentLine = 0;
+	let laststatus = 1;
+	let lyrics = {
+		"basic": "",
+		"extra": ""
+	};
 
 
     // 监视软件内歌词变动
@@ -18,7 +23,7 @@ plugin.onLoad(async () => {
         const mLyric = await betterncm.utils.waitForElement("#x-g-mn .m-lyric");
         const MutationCallback = mutations => {
             for (const mutation of mutations) {
-                let lyrics = {
+                lyrics = {
                     basic: "",
                     extra: ""
                 };
@@ -100,6 +105,18 @@ plugin.onLoad(async () => {
 
     // 音乐进度发生变化时
     const play_progress = async (_, time) => {
+		// 暂停播放时隐藏歌词
+		const status = betterncm.ncm.getPlayingSong().state;
+		if(status != laststatus) {
+			if(status != 2) {
+				TaskbarLyricsAPI.lyrics.lyrics({"basic": "", "extra": ""});
+			}
+			else {
+				TaskbarLyricsAPI.lyrics.lyrics(lyrics);
+			}
+			laststatus = status;
+		}
+		
         const adjust = Number(pluginConfig.get("effect")["adjust"]);
         if (parsedLyric) {
             let nextIndex = parsedLyric.findIndex(item => item.time > (time + adjust) * 1000);
@@ -109,55 +126,56 @@ plugin.onLoad(async () => {
                 const currentLyric = parsedLyric[nextIndex - 1] ?? "";
                 const nextLyric = parsedLyric[nextIndex] ?? "";
 
-                const lyrics = {
+                lyrics = {
                     "basic": currentLyric?.originalLyric ?? "",
                     "extra": currentLyric?.translatedLyric ?? nextLyric?.originalLyric ?? ""
                 };
 
                 const extra_show_value = pluginConfig.get("effect")["extra_show"]["value"];
                 switch (extra_show_value) {
-                    case 0: {
-                        lyrics.extra = "";
-                    } break;
-
-                    case 1: {
-                        const next_line_lyrics_position_value = pluginConfig.get("effect")["next_line_lyrics_position"]["value"];
-                        switch (next_line_lyrics_position_value) {
-                            case 0: {
-                                lyrics.extra = nextLyric?.originalLyric ?? "";
-                            } break;
-
-                            case 1: {
-                                lyrics.basic = nextLyric?.originalLyric ?? "";
-                                lyrics.extra = currentLyric?.originalLyric ?? "";
-                            } break;
-
-                            case 2: {
-                                if (currentLine == 0) {
-                                    lyrics.basic = currentLyric?.originalLyric ?? "";
-                                    lyrics.extra = nextLyric?.originalLyric ?? "";
-                                    currentLine = 1;
-                                } else {
-                                    lyrics.basic = nextLyric?.originalLyric ?? "";
-                                    lyrics.extra = currentLyric?.originalLyric ?? "";
-                                    currentLine = 0;
-                                }
-                            } break;
+                    case 3:
+                        if (currentLyric?.romanLyric) {
+                            lyrics.extra = currentLyric?.romanLyric
+                            break;
                         }
-                    } break;
 
-                    case 2: {
-                        lyrics.extra = currentLyric?.translatedLyric
-                            ?? nextLyric?.originalLyric
-                            ?? "";
-                    } break;
+                    case 2:
+                        if (currentLyric?.translatedLyric) {
+                            lyrics.extra = currentLyric?.translatedLyric
+                            break;
+                        }
 
-                    case 3: {
-                        lyrics.extra = currentLyric?.romanLyric
-                            ?? currentLyric?.translatedLyric
-                            ?? nextLyric?.originalLyric
-                            ?? "";
-                    } break;
+                    case 1:
+                        if (nextLyric?.originalLyric) {
+                            const next_line_lyrics_position_value = pluginConfig.get("effect")["next_line_lyrics_position"]["value"];
+                            switch (next_line_lyrics_position_value) {
+                                case 0:
+                                    lyrics.extra = nextLyric?.originalLyric;
+                                    break;
+
+                                case 1:
+                                    lyrics.basic = nextLyric?.originalLyric;
+                                    lyrics.extra = currentLyric?.originalLyric;
+                                    break;
+
+                                case 2:
+                                    if (currentLine == 0) {
+                                        lyrics.basic = currentLyric?.originalLyric;
+                                        lyrics.extra = nextLyric?.originalLyric;
+                                        currentLine = 1;
+                                    } else {
+                                        lyrics.basic = nextLyric?.originalLyric;
+                                        lyrics.extra = currentLyric?.originalLyric;
+                                        currentLine = 0;
+                                    }
+                                    break;
+                            }
+                            break;
+                        }
+
+                    case 0:
+                        lyrics.extra = "";
+                        break;
                 }
 
                 TaskbarLyricsAPI.lyrics.lyrics(lyrics);
@@ -195,7 +213,6 @@ plugin.onLoad(async () => {
         }
     }
 
-
     // 停止获取歌词
     function stopGetLyric() {
         const config = pluginConfig.get("lyrics");
@@ -221,7 +238,6 @@ plugin.onLoad(async () => {
             } break;
         }
     }
-
 
     this.lyric = {
         startGetLyric,
