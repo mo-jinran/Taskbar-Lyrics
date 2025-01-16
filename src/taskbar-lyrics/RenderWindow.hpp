@@ -55,8 +55,8 @@ class 呈现窗口类
     bool 组件按钮 = false;
     bool 居中对齐 = true;
 
-    std::wstring 主歌词 = L"任务栏歌词启动成功";
-    std::wstring 副歌词 = L"等待插件传输歌词...";
+    std::wstring 主歌词 = L"";
+    std::wstring 副歌词 = L"";
 
     std::wstring 字体名称 = L"Microsoft YaHei UI";
 
