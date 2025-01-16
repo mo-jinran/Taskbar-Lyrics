@@ -58,10 +58,11 @@ plugin.onLoad(async () => {
         artistName = artistName.slice(3);
 
         // 发送歌曲信息
-        TaskbarLyricsAPI.lyrics.lyrics({
-            "basic": name,
-            "extra": artistName
-        });
+        lyrics = {
+		"basic": name,
+            	"extra": artistName
+	};
+        TaskbarLyricsAPI.lyrics.lyrics(lyrics);
 
 
         // 解析歌词
