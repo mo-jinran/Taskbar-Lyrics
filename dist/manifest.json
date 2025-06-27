@@ -1,0 +1,20 @@
+{
+    "manifest_version": 1,
+    "type": "extension",
+    "name": "任务栏歌词",
+    "slug": "taskbar_lyrics",
+    "description": "[新版本] 在任务栏显示歌词",
+    "preview": "./preview.png",
+    "version": "2.0.0",
+    "betterncm_version": ">=3.0.0",
+    "author": "沫烬染",
+    "author_link": "https://github.com/mo-jinran",
+    "injects": {
+        "Main": [
+            {
+                "file": "plugin.js"
+            }
+        ]
+    },
+    "native_plugin": "native.dll"
+}

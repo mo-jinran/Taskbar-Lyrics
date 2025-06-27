@@ -1,0 +1,58 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 30,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/${presetName}"
+        },
+        {
+            "name": "x64-release",
+            "inherits": "base",
+            "architecture": "x64"
+        },
+        {
+            "name": "x86-release",
+            "inherits": "base",
+            "architecture": "Win32"
+        },
+        {
+            "name": "x64-debug",
+            "inherits": "base",
+            "architecture": "x64"
+        },
+        {
+            "name": "x86-debug",
+            "inherits": "base",
+            "architecture": "Win32"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "x64-release",
+            "configurePreset": "x64-release",
+            "configuration": "Release"
+        },
+        {
+            "name": "x86-release",
+            "configurePreset": "x86-release",
+            "configuration": "Release"
+        },
+        {
+            "name": "x64-debug",
+            "configurePreset": "x64-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "x86-debug",
+            "configurePreset": "x86-debug",
+            "configuration": "Debug"
+        }
+    ]
+}
