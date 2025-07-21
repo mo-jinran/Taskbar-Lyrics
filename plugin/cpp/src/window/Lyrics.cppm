@@ -16,14 +16,19 @@ private:
     Microsoft::WRL::ComPtr<IDWriteTextLayout> layout2{};
     DWRITE_TEXT_METRICS metrics1{};
     DWRITE_TEXT_METRICS metrics2{};
+
 public:
     Lyrics(ID2D1RenderTarget *render, IDWriteFactory *dwrite) {
         this->render = render;
         this->dwrite = dwrite;
-        this->onDraw();
     }
 
     auto onDraw() -> void {
+        this->format1.Reset();
+        this->format2.Reset();
+        this->layout1.Reset();
+        this->layout2.Reset();
+
         const auto [width, height] = this->render->GetSize();
 
         this->dwrite->CreateTextFormat(
@@ -49,6 +54,8 @@ public:
 
         this->dwrite->CreateTextLayout(config.lyric_primary.data(), config.lyric_primary.size(), this->format1.Get(), width, height, &this->layout1);
         this->dwrite->CreateTextLayout(config.lyric_secondary.data(), config.lyric_secondary.size(), this->format2.Get(), width, height, &this->layout2);
+        this->layout1->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        this->layout2->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
         this->layout1->GetMetrics(&metrics1);
         this->layout2->GetMetrics(&metrics2);
 

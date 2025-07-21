@@ -56,7 +56,10 @@ public:
 
     auto getRectForTaskbarFrame() const -> RECT {
         RECT rect{};
-        this->root->get_CurrentBoundingRectangle(&rect);
+        const auto condition = this->createConditionByProperty(UIA_ClassNamePropertyId, L"Taskbar.TaskbarFrameAutomationPeer");
+        Microsoft::WRL::ComPtr<IUIAutomationElement> element{};
+        this->root->FindFirst(TreeScope_Children, condition.Get(), &element);
+        element->get_CurrentBoundingRectangle(&rect);
         return rect;
     }
 

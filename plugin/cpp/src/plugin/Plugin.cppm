@@ -42,7 +42,7 @@ private:
     }
 
 public:
-    static auto &getInstance() {
+    static auto getInstance() -> Plugin & {
         static Plugin instance;
         return instance;
     }

@@ -35,7 +35,8 @@ private:
             case WM_SIZE: {
                 const auto width = LOWORD(lParam);
                 const auto height = HIWORD(lParam);
-                this->renderer.onSize(width, height);
+                const auto dpi = GetDpiForWindow(hwnd);
+                this->renderer.onSize(width, height, dpi);
                 break;
             }
             case WM_PAINT: {
@@ -86,6 +87,10 @@ public:
     }
 
     auto update() -> void {
+        if (this->hwnd == nullptr) [[unlikely]] {
+            return;
+        }
+
         const auto taskbarFrame = this->taskbar.getRectForTaskbarFrame();
         const auto trayFrameRect = this->taskbar.getRectForTrayFrame();
         const auto widgetsButtonRect = this->taskbar.getRectForWidgetsButton();

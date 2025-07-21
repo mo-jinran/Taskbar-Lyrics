@@ -70,7 +70,7 @@ public:
         this->initializeComposition(hwnd);
     }
 
-    auto onSize(const UINT width, const UINT height) -> void {
+    auto onSize(const UINT width, const UINT height, const UINT dpi) -> void {
         this->dxgiSurface.Reset();
         this->d2dRenderTarget.Reset();
         this->dxgiSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
@@ -80,17 +80,21 @@ public:
             D2D1::RenderTargetProperties(
                 D2D1_RENDER_TARGET_TYPE_DEFAULT,
                 D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-                96.f,
-                96.f
+                dpi,
+                dpi
             ),
             &this->d2dRenderTarget
         );
     }
 
     auto onPaint() -> void {
+        Lyrics lyrics{
+            this->d2dRenderTarget.Get(),
+            this->dwriteFactory.Get()
+        };
         this->d2dRenderTarget->BeginDraw();
         this->d2dRenderTarget->Clear();
-        Lyrics(this->d2dRenderTarget.Get(), this->dwriteFactory.Get());
+        lyrics.onDraw();
         this->d2dRenderTarget->EndDraw();
         this->dxgiSwapChain->Present(1, 0);
         this->dcompDevice->Commit();
