@@ -4,38 +4,65 @@ function timeToSeconds(time) {
 }
 
 
-function parseLyric(lyricText) {
+export function parseLyric(lyricText) {
     const result = [];
     try {
         const lines = lyricText.split("\n");
         for (const line of lines) {
-            if (line[0] == "[") {
-                const timeEndIndex = line.indexOf("]");
-                if (timeEndIndex === -1) continue;
-                const lyric = {
-                    time: timeToSeconds(line.slice(1, timeEndIndex)),
-                    text: line.slice(timeEndIndex + 1)
-                };
-                if (lyric.text.trim()) {
-                    result.push(lyric);
-                }
+            const timestamps = [...line.matchAll(/\[(\d{1,3}:\d{1,2}(?:\.\d{1,3})?)\]/g)];
+            if (!timestamps.length) {
+                continue;
+            }
+            const text = line.slice(timestamps[timestamps.length - 1].index + timestamps[timestamps.length - 1][0].length).trim();
+            if (!text) {
+                continue;
+            }
+            for (const timestamp of timestamps) {
+                result.push({
+                    time: timeToSeconds(timestamp[1]),
+                    text
+                });
             }
         }
     } catch (error) {
         console.error("[Taskbar Lyrics] Error parsing lyrics:", error);
     }
-    return result;
+    return result.sort((left, right) => left.time - right.time);
+}
+
+
+export function mergeLyrics(originalLyrics, translatedLyrics) {
+    let translationIndex = 0;
+    return originalLyrics.map(original => {
+        while (
+            translationIndex + 1 < translatedLyrics.length &&
+            Math.abs(translatedLyrics[translationIndex + 1].time - original.time) <=
+                Math.abs(translatedLyrics[translationIndex].time - original.time)
+        ) {
+            translationIndex++;
+        }
+        const translation = translatedLyrics[translationIndex];
+        return {
+            time: original.time,
+            text: original.text,
+            translation: translation && Math.abs(translation.time - original.time) <= 0.75
+                ? translation.text
+                : ""
+        };
+    });
 }
 
 
 async function getLyric(id) {
     try {
-        const response = await fetch(`https://music.163.com/api/song/lyric/v1?tv=0&lv=0&rv=0&kv=0&yv=0&ytv=0&yrv=0&cp=false&id=${id}`);
+        const response = await fetch(`https://music.163.com/api/song/lyric/v1?tv=-1&lv=-1&rv=0&kv=0&yv=0&ytv=0&yrv=0&cp=false&id=${id}`);
         if (!response.ok) {
             throw new Error(`Failed to fetch lyrics: ${response.status} ${response.statusText}`);
         }
         const lyric = await response.json();
-        return parseLyric(lyric.lrc.lyric);
+        const originalLyrics = parseLyric(lyric.lrc?.lyric ?? "");
+        const translatedLyrics = parseLyric(lyric.tlyric?.lyric ?? "");
+        return mergeLyrics(originalLyrics, translatedLyrics);
     } catch (error) {
         console.error("[Taskbar Lyrics] Error fetching lyrics:", error);
         return [];
@@ -88,16 +115,18 @@ export class LyricObserver {
             const id = args[0].split("_")[0];
             const [detail, lyric] = await Promise.all([getDetail(id), getLyric(id)]);
             this.currentLyric = [
-                { time: -1, text: detail.name },
-                { time: -1, text: detail.artists }
+                { time: -1, text: detail.name, translation: detail.artists }
             ].concat(lyric);
             this.isLoaded = true;
             this.callback?.(this.currentLyric, 0);
         } catch (error) {
             console.error("[Taskbar Lyrics] Error in onLoad:", error);
             this.currentLyric = [
-                { time: -1, text: "Error loading song" },
-                { time: -1, text: error.message || "Unknown error" }
+                {
+                    time: -1,
+                    text: "Error loading song",
+                    translation: error.message || "Unknown error"
+                }
             ];
             this.isLoaded = true;
         }
@@ -105,11 +134,11 @@ export class LyricObserver {
 
     async onPlayProgress(...args) {
         try {
-            if (!this.isLoaded || this.currentLyric.length <= 2) {
+            if (!this.isLoaded || this.currentLyric.length <= 1) {
                 return;
             }
             const currentTime = args[1];
-            const nextIndex = this.currentLyric.findIndex(lyric => lyric.time >= currentTime);
+            const nextIndex = this.currentLyric.findIndex(lyric => lyric.time > currentTime);
             const currentIndex = (nextIndex <= -1 ? this.currentLyric.length : nextIndex) - 1;
             if (this.lastIndex != currentIndex) {
                 this.lastIndex = currentIndex;
