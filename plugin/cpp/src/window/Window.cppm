@@ -10,6 +10,8 @@ import window.Renderer;
 export class Window {
 private:
     HWND hwnd = nullptr;
+    static constexpr auto UPDATE_MESSAGE = WM_APP + 1;
+    static constexpr auto ANIMATION_TIMER = 1;
 
     static auto CALLBACK WindowProc(const HWND hwnd, const UINT message, const WPARAM wParam, const LPARAM lParam) -> LRESULT {
         if (message == WM_CREATE) [[unlikely]] {
@@ -44,53 +46,29 @@ private:
                 ValidateRect(hwnd, nullptr);
                 break;
             }
+            case UPDATE_MESSAGE: {
+                this->updateWindow();
+                if (this->renderer.startTransition()) {
+                    SetTimer(hwnd, ANIMATION_TIMER, 16, nullptr);
+                }
+                RedrawWindow(hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
+                break;
+            }
+            case WM_TIMER: {
+                if (wParam == ANIMATION_TIMER) {
+                    RedrawWindow(hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
+                    if (!this->renderer.isAnimating()) {
+                        KillTimer(hwnd, ANIMATION_TIMER);
+                    }
+                }
+                break;
+            }
             default: return DefWindowProc(hwnd, message, wParam, lParam);
         }
         return 0;
     }
 
-public:
-    Renderer renderer{};
-    Taskbar taskbar{};
-
-    auto create() -> void {
-        const auto dll_instance = GetModuleHandle(nullptr);
-        const auto class_name = L"taskbar_lyrics";
-        RegisterClassEx(new WNDCLASSEX{
-            .cbSize = sizeof(WNDCLASSEX),
-            .lpfnWndProc = Window::WindowProc,
-            .hInstance = dll_instance,
-            .lpszClassName = class_name,
-        });
-        CreateWindowEx(
-            WS_EX_NOPARENTNOTIFY | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE | WS_EX_NOREDIRECTIONBITMAP,
-            class_name,
-            nullptr,
-            WS_CHILD | WS_VISIBLE,
-            CW_USEDEFAULT,
-            CW_USEDEFAULT,
-            CW_USEDEFAULT,
-            CW_USEDEFAULT,
-            Taskbar::getHWND(),
-            nullptr,
-            dll_instance,
-            this
-        );
-    }
-
-    auto runner() -> void {
-        MSG msg{};
-        while (GetMessage(&msg, nullptr, 0, 0)) {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
-
-    auto update() -> void {
-        if (this->hwnd == nullptr) [[unlikely]] {
-            return;
-        }
-
+    auto updateWindow() -> void {
         const auto taskbarFrame = this->taskbar.getRectForTaskbarFrame();
         const auto trayFrameRect = this->taskbar.getRectForTrayFrame();
         const auto widgetsButtonRect = this->taskbar.getRectForWidgetsButton();
@@ -136,6 +114,49 @@ public:
 
         BringWindowToTop(this->hwnd);
         MoveWindow(this->hwnd, offset, 0, width, height, false);
-        RedrawWindow(this->hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
+    }
+
+public:
+    Renderer renderer{};
+    Taskbar taskbar{};
+
+    auto create() -> void {
+        const auto dll_instance = GetModuleHandle(nullptr);
+        const auto class_name = L"taskbar_lyrics";
+        RegisterClassEx(new WNDCLASSEX{
+            .cbSize = sizeof(WNDCLASSEX),
+            .lpfnWndProc = Window::WindowProc,
+            .hInstance = dll_instance,
+            .lpszClassName = class_name,
+        });
+        CreateWindowEx(
+            WS_EX_NOPARENTNOTIFY | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE | WS_EX_NOREDIRECTIONBITMAP,
+            class_name,
+            nullptr,
+            WS_CHILD | WS_VISIBLE,
+            CW_USEDEFAULT,
+            CW_USEDEFAULT,
+            CW_USEDEFAULT,
+            CW_USEDEFAULT,
+            Taskbar::getHWND(),
+            nullptr,
+            dll_instance,
+            this
+        );
+    }
+
+    auto runner() -> void {
+        MSG msg{};
+        while (GetMessage(&msg, nullptr, 0, 0)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
+
+    auto update() -> void {
+        if (this->hwnd == nullptr) [[unlikely]] {
+            return;
+        }
+        PostMessage(this->hwnd, UPDATE_MESSAGE, 0, 0);
     }
 };

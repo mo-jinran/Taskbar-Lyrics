@@ -6,10 +6,20 @@ import <dwrite.h>;
 import <dcomp.h>;
 import <dxgi.h>;
 import <wrl/client.h>;
+import <chrono>;
+import <string>;
+import plugin.Config;
 import window.Lyrics;
 
 export class Renderer {
 private:
+    struct LyricGroup {
+        std::wstring primary{L" "};
+        std::wstring secondary{L" "};
+
+        auto operator==(const LyricGroup &) const -> bool = default;
+    };
+
     Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice{};
     Microsoft::WRL::ComPtr<ID2D1Factory> d2dFactory{};
     Microsoft::WRL::ComPtr<ID2D1RenderTarget> d2dRenderTarget{};
@@ -21,6 +31,15 @@ private:
     Microsoft::WRL::ComPtr<IDCompositionDevice> dcompDevice{};
     Microsoft::WRL::ComPtr<IDCompositionTarget> dcompTarget{};
     Microsoft::WRL::ComPtr<IDCompositionVisual> dcompVisual{};
+    LyricGroup previousLyrics{};
+    LyricGroup currentLyrics{};
+    std::chrono::steady_clock::time_point transitionStart{};
+    bool lyricsInitialized = false;
+    bool animating = false;
+    float direction = 1.f;
+
+    static constexpr auto transitionDuration = std::chrono::milliseconds(260);
+    static constexpr auto transitionDistance = 10.f;
 
     auto initializeDirectX() -> void {
         D3D11CreateDevice(
@@ -71,6 +90,9 @@ public:
     }
 
     auto onSize(const UINT width, const UINT height, const UINT dpi) -> void {
+        if (width == 0 || height == 0) {
+            return;
+        }
         this->dxgiSurface.Reset();
         this->d2dRenderTarget.Reset();
         this->dxgiSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
@@ -87,14 +109,81 @@ public:
         );
     }
 
+    auto startTransition() -> bool {
+        const auto nextLyrics = LyricGroup{
+            .primary = config.lyric_primary,
+            .secondary = config.lyric_secondary
+        };
+
+        if (!this->lyricsInitialized) {
+            this->currentLyrics = nextLyrics;
+            this->lyricsInitialized = true;
+            return false;
+        }
+        if (nextLyrics == this->currentLyrics) {
+            return false;
+        }
+
+        this->previousLyrics = this->currentLyrics;
+        this->currentLyrics = nextLyrics;
+        this->direction = -this->direction;
+        this->transitionStart = std::chrono::steady_clock::now();
+        this->animating = true;
+        return true;
+    }
+
+    auto isAnimating() const -> bool {
+        return this->animating;
+    }
+
     auto onPaint() -> void {
+        if (this->d2dRenderTarget == nullptr) {
+            return;
+        }
+        if (!this->lyricsInitialized) {
+            this->currentLyrics = {
+                .primary = config.lyric_primary,
+                .secondary = config.lyric_secondary
+            };
+            this->lyricsInitialized = true;
+        }
+
         Lyrics lyrics{
             this->d2dRenderTarget.Get(),
             this->dwriteFactory.Get()
         };
         this->d2dRenderTarget->BeginDraw();
         this->d2dRenderTarget->Clear();
-        lyrics.onDraw();
+
+        if (this->animating) {
+            const auto elapsed = std::chrono::steady_clock::now() - this->transitionStart;
+            auto progress = std::chrono::duration<float>(elapsed).count() /
+                std::chrono::duration<float>(transitionDuration).count();
+            if (progress >= 1.f) {
+                progress = 1.f;
+                this->animating = false;
+            }
+
+            const auto remaining = 1.f - progress;
+            const auto eased = 1.f - remaining * remaining * remaining;
+            lyrics.onDraw(
+                this->previousLyrics.primary,
+                this->previousLyrics.secondary,
+                1.f - eased,
+                -this->direction * transitionDistance * eased,
+                -2.f * eased
+            );
+            lyrics.onDraw(
+                this->currentLyrics.primary,
+                this->currentLyrics.secondary,
+                eased,
+                this->direction * transitionDistance * (1.f - eased),
+                2.f * (1.f - eased)
+            );
+        } else {
+            lyrics.onDraw(this->currentLyrics.primary, this->currentLyrics.secondary);
+        }
+
         this->d2dRenderTarget->EndDraw();
         this->dxgiSwapChain->Present(1, 0);
         this->dcompDevice->Commit();
