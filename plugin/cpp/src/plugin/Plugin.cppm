@@ -1,6 +1,7 @@
 export module plugin.Plugin;
 
 import <Windows.h>;
+import <atomic>;
 import <thread>;
 import plugin.Config;
 import window.Window;
@@ -8,11 +9,14 @@ import window.Window;
 export class Plugin {
 public:
     HANDLE mutex = nullptr;
-    Window *window = nullptr;
+    std::atomic<Window *> window{nullptr};
 
 private:
     Plugin() {
         this->mutex = CreateMutex(nullptr, true, L"Global\\Taskbar-Lyrics");
+        if (this->mutex == nullptr) {
+            return;
+        }
         if (GetLastError() == ERROR_ALREADY_EXISTS) {
             CloseHandle(this->mutex);
             this->mutex = nullptr;
@@ -27,17 +31,14 @@ private:
             CloseHandle(this->mutex);
             this->mutex = nullptr;
         }
-        if (this->window) {
-            delete this->window;
-            this->window = nullptr;
-        }
     }
 
     auto initialize() -> void {
         std::thread([this] {
-            this->window = new Window();
-            this->window->create();
-            this->window->runner();
+            auto *window = new Window();
+            this->window.store(window, std::memory_order_release);
+            window->create();
+            window->runner();
         }).detach();
     }
 

@@ -1,6 +1,7 @@
 export module window.Window;
 
 import <Windows.h>;
+import <atomic>;
 import <functional>;
 import plugin.Config;
 import taskbar.Taskbar;
@@ -9,7 +10,8 @@ import window.Renderer;
 
 export class Window {
 private:
-    HWND hwnd = nullptr;
+    std::atomic<HWND> hwnd{nullptr};
+    std::atomic<bool> updatePending{false};
     static constexpr auto UPDATE_MESSAGE = WM_APP + 1;
     static constexpr auto ANIMATION_TIMER = 1;
 
@@ -28,10 +30,13 @@ private:
     auto handleMessage(const HWND hwnd, const UINT message, const WPARAM wParam, const LPARAM lParam) -> LRESULT {
         switch (message) {
             case WM_CREATE: {
-                this->hwnd = hwnd;
+                this->hwnd.store(hwnd, std::memory_order_release);
+                this->renderer.onCreate(hwnd);
                 this->taskbar.initialize();
                 this->taskbar.setListener(std::bind(&Window::update, this));
-                this->renderer.onCreate(hwnd);
+                if (this->updatePending.exchange(false, std::memory_order_acq_rel)) {
+                    PostMessage(hwnd, UPDATE_MESSAGE, 0, 0);
+                }
                 break;
             }
             case WM_SIZE: {
@@ -63,22 +68,36 @@ private:
                 }
                 break;
             }
+            case WM_DESTROY: {
+                KillTimer(hwnd, ANIMATION_TIMER);
+                this->hwnd.store(nullptr, std::memory_order_release);
+                break;
+            }
             default: return DefWindowProc(hwnd, message, wParam, lParam);
         }
         return 0;
     }
 
     auto updateWindow() -> void {
+        if (!this->taskbar.ensureInitialized()) {
+            return;
+        }
+
         const auto taskbarFrame = this->taskbar.getRectForTaskbarFrame();
         const auto trayFrameRect = this->taskbar.getRectForTrayFrame();
         const auto widgetsButtonRect = this->taskbar.getRectForWidgetsButton();
         const auto taskListRect = this->taskbar.getRectForTaskList();
+        if (taskbarFrame.right <= taskbarFrame.left || taskbarFrame.bottom <= taskbarFrame.top) {
+            return;
+        }
+
+        const auto snapshot = getConfigSnapshot();
 
         auto offset = 0L;
         auto width = 0L;
         auto height = 0L;
 
-        switch (config.window_alignment) {
+        switch (snapshot.window_alignment) {
             case TASKBAR_WINDOW_ALIGNMENT::TASKBAR_WINDOW_ALIGNMENT_AUTO: [[fallthrough]];
             case TASKBAR_WINDOW_ALIGNMENT::TASKBAR_WINDOW_ALIGNMENT_LEFT: {
                 if (Registry::isTaskbarCentered()) {
@@ -108,12 +127,18 @@ private:
             }
         }
 
-        offset += config.margin_left;
-        width -= config.margin_right + offset;
+        offset += snapshot.margin_left;
+        width -= snapshot.margin_right + offset;
         height += taskbarFrame.bottom - taskbarFrame.top;
+        if (width <= 0 || height <= 0) {
+            return;
+        }
 
-        BringWindowToTop(this->hwnd);
-        MoveWindow(this->hwnd, offset, 0, width, height, false);
+        const auto window = this->hwnd.load(std::memory_order_acquire);
+        if (window != nullptr) {
+            BringWindowToTop(window);
+            MoveWindow(window, offset, 0, width, height, false);
+        }
     }
 
 public:
@@ -154,9 +179,11 @@ public:
     }
 
     auto update() -> void {
-        if (this->hwnd == nullptr) [[unlikely]] {
+        this->updatePending.store(true, std::memory_order_release);
+        const auto window = this->hwnd.load(std::memory_order_acquire);
+        if (window == nullptr) [[unlikely]] {
             return;
         }
-        PostMessage(this->hwnd, UPDATE_MESSAGE, 0, 0);
+        PostMessage(window, UPDATE_MESSAGE, 0, 0);
     }
 };

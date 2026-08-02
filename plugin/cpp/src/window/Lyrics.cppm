@@ -40,40 +40,45 @@ public:
         this->layout2.Reset();
 
         const auto [width, height] = this->render->GetSize();
+        const auto snapshot = getConfigSnapshot();
         const auto primaryText = primary.empty() ? std::wstring(L" ") : primary;
         const auto secondaryText = secondary.empty() ? std::wstring(L" ") : secondary;
 
-        this->dwrite->CreateTextFormat(
-            config.font_family.data(),
+        if (FAILED(this->dwrite->CreateTextFormat(
+            snapshot.font_family.data(),
             nullptr,
-            config.weight_primary,
-            config.slope_primary,
+            snapshot.weight_primary,
+            snapshot.slope_primary,
             DWRITE_FONT_STRETCH_NORMAL,
-            config.size_primary,
+            snapshot.size_primary,
             L"zh-CN",
             &format1
-        );
-        this->dwrite->CreateTextFormat(
-            config.font_family.data(),
+        )) || FAILED(this->dwrite->CreateTextFormat(
+            snapshot.font_family.data(),
             nullptr,
-            config.weight_secondary,
-            config.slope_secondary,
+            snapshot.weight_secondary,
+            snapshot.slope_secondary,
             DWRITE_FONT_STRETCH_NORMAL,
-            config.size_secondary,
+            snapshot.size_secondary,
             L"zh-CN",
             &format2
-        );
+        )) || !this->format1 || !this->format2) {
+            return;
+        }
 
-        this->dwrite->CreateTextLayout(primaryText.data(), primaryText.size(), this->format1.Get(), width, height, &this->layout1);
-        this->dwrite->CreateTextLayout(secondaryText.data(), secondaryText.size(), this->format2.Get(), width, height, &this->layout2);
+        if (FAILED(this->dwrite->CreateTextLayout(primaryText.data(), primaryText.size(), this->format1.Get(), width, height, &this->layout1)) ||
+            FAILED(this->dwrite->CreateTextLayout(secondaryText.data(), secondaryText.size(), this->format2.Get(), width, height, &this->layout2)) ||
+            !this->layout1 || !this->layout2) {
+            return;
+        }
         this->layout1->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
         this->layout2->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-        this->layout1->SetTextAlignment(config.align_primary);
-        this->layout2->SetTextAlignment(config.align_secondary);
-        this->layout1->SetUnderline(config.underline_primary, DWRITE_TEXT_RANGE(0, primaryText.size()));
-        this->layout2->SetUnderline(config.underline_secondary, DWRITE_TEXT_RANGE(0, secondaryText.size()));
-        this->layout1->SetStrikethrough(config.strikethrough_primary, DWRITE_TEXT_RANGE(0, primaryText.size()));
-        this->layout2->SetStrikethrough(config.strikethrough_secondary, DWRITE_TEXT_RANGE(0, secondaryText.size()));
+        this->layout1->SetTextAlignment(snapshot.align_primary);
+        this->layout2->SetTextAlignment(snapshot.align_secondary);
+        this->layout1->SetUnderline(snapshot.underline_primary, DWRITE_TEXT_RANGE(0, primaryText.size()));
+        this->layout2->SetUnderline(snapshot.underline_secondary, DWRITE_TEXT_RANGE(0, secondaryText.size()));
+        this->layout1->SetStrikethrough(snapshot.strikethrough_primary, DWRITE_TEXT_RANGE(0, primaryText.size()));
+        this->layout2->SetStrikethrough(snapshot.strikethrough_secondary, DWRITE_TEXT_RANGE(0, secondaryText.size()));
         this->layout1->GetMetrics(&metrics1);
         this->layout2->GetMetrics(&metrics2);
 
@@ -89,8 +94,8 @@ public:
         );
         const auto rect2 = D2D1::RectF(rect1.left, rect1.bottom, rect1.right, rect1.bottom + this->metrics2.height);
 
-        this->drawText(rect1, this->layout1.Get(), config.color_primary, opacity);
-        this->drawText(rect2, this->layout2.Get(), config.color_secondary, opacity);
+        this->drawText(rect1, this->layout1.Get(), snapshot.color_primary, opacity);
+        this->drawText(rect2, this->layout2.Get(), snapshot.color_secondary, opacity);
     }
 
     auto drawText(

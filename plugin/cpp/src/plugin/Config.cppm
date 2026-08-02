@@ -1,6 +1,7 @@
 export module plugin.Config;
 
 import <dwrite.h>;
+import <mutex>;
 import <string>;
 import <unordered_map>;
 
@@ -44,6 +45,13 @@ export struct Config {
     DWRITE_TEXT_ALIGNMENT align_secondary = DWRITE_TEXT_ALIGNMENT::DWRITE_TEXT_ALIGNMENT_LEADING;
 } config;
 
+export inline std::mutex configMutex{};
+
+export auto getConfigSnapshot() -> Config {
+    std::lock_guard<std::mutex> lock(configMutex);
+    return config;
+}
+
 export auto setConfig(const std::string &key, const std::string &value) {
     static const auto setters = std::unordered_map<std::string, void(*)(const std::string &)>{
         // 歌词内容
@@ -72,6 +80,12 @@ export auto setConfig(const std::string &key, const std::string &value) {
         {"align_secondary", [](const std::string &str) { config.align_secondary = static_cast<DWRITE_TEXT_ALIGNMENT>(std::stoi(str)); }},
     };
     if (const auto it = setters.find(key); it != setters.end()) {
-        it->second(value);
+        try {
+            std::lock_guard<std::mutex> lock(configMutex);
+            it->second(value);
+        } catch (...) {
+            // Ignore malformed values from a configuration input instead of
+            // allowing an exception to escape through the native API boundary.
+        }
     }
 }

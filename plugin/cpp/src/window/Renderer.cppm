@@ -90,7 +90,7 @@ public:
     }
 
     auto onSize(const UINT width, const UINT height, const UINT dpi) -> void {
-        if (width == 0 || height == 0) {
+        if (width == 0 || height == 0 || !this->dxgiSwapChain || !this->d2dFactory) {
             return;
         }
         this->dxgiSurface.Reset();
@@ -110,9 +110,10 @@ public:
     }
 
     auto startTransition() -> bool {
+        const auto snapshot = getConfigSnapshot();
         const auto nextLyrics = LyricGroup{
-            .primary = config.lyric_primary,
-            .secondary = config.lyric_secondary
+            .primary = snapshot.lyric_primary,
+            .secondary = snapshot.lyric_secondary
         };
 
         if (!this->lyricsInitialized) {
@@ -137,13 +138,14 @@ public:
     }
 
     auto onPaint() -> void {
-        if (this->d2dRenderTarget == nullptr) {
+        if (!this->d2dRenderTarget || !this->dxgiSwapChain || !this->dcompDevice) {
             return;
         }
         if (!this->lyricsInitialized) {
+            const auto snapshot = getConfigSnapshot();
             this->currentLyrics = {
-                .primary = config.lyric_primary,
-                .secondary = config.lyric_secondary
+                .primary = snapshot.lyric_primary,
+                .secondary = snapshot.lyric_secondary
             };
             this->lyricsInitialized = true;
         }
@@ -184,7 +186,12 @@ public:
             lyrics.onDraw(this->currentLyrics.primary, this->currentLyrics.secondary);
         }
 
-        this->d2dRenderTarget->EndDraw();
+        const auto drawResult = this->d2dRenderTarget->EndDraw();
+        if (drawResult == D2DERR_RECREATE_TARGET) {
+            this->d2dRenderTarget.Reset();
+            this->dxgiSurface.Reset();
+            return;
+        }
         this->dxgiSwapChain->Present(1, 0);
         this->dcompDevice->Commit();
     }
