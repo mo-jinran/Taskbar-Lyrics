@@ -44,25 +44,31 @@ public:
         const auto primaryText = primary.empty() ? std::wstring(L" ") : primary;
         const auto secondaryText = secondary.empty() ? std::wstring(L" ") : secondary;
 
-        if (FAILED(this->dwrite->CreateTextFormat(
-            snapshot.font_family.data(),
-            nullptr,
-            snapshot.weight_primary,
-            snapshot.slope_primary,
-            DWRITE_FONT_STRETCH_NORMAL,
-            snapshot.size_primary,
-            L"zh-CN",
-            &format1
-        )) || FAILED(this->dwrite->CreateTextFormat(
-            snapshot.font_family.data(),
-            nullptr,
-            snapshot.weight_secondary,
-            snapshot.slope_secondary,
-            DWRITE_FONT_STRETCH_NORMAL,
-            snapshot.size_secondary,
-            L"zh-CN",
-            &format2
-        )) || !this->format1 || !this->format2) {
+        const auto createFormats = [&](const std::wstring &fontFamily) {
+            this->format1.Reset();
+            this->format2.Reset();
+            return SUCCEEDED(this->dwrite->CreateTextFormat(
+                fontFamily.data(),
+                nullptr,
+                snapshot.weight_primary,
+                snapshot.slope_primary,
+                DWRITE_FONT_STRETCH_NORMAL,
+                snapshot.size_primary,
+                L"zh-CN",
+                &this->format1
+            )) && SUCCEEDED(this->dwrite->CreateTextFormat(
+                fontFamily.data(),
+                nullptr,
+                snapshot.weight_secondary,
+                snapshot.slope_secondary,
+                DWRITE_FONT_STRETCH_NORMAL,
+                snapshot.size_secondary,
+                L"zh-CN",
+                &this->format2
+            )) && this->format1 && this->format2;
+        };
+
+        if (!createFormats(snapshot.font_family) && !createFormats(L"Microsoft YaHei UI")) {
             return;
         }
 

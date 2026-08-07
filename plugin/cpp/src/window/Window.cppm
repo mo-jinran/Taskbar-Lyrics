@@ -12,6 +12,8 @@ export class Window {
 private:
     std::atomic<HWND> hwnd{nullptr};
     std::atomic<bool> updatePending{false};
+    RECT lastWindowRect{};
+    bool hasWindowRect = false;
     static constexpr auto UPDATE_MESSAGE = WM_APP + 1;
     static constexpr auto ANIMATION_TIMER = 1;
 
@@ -52,6 +54,11 @@ private:
                 break;
             }
             case UPDATE_MESSAGE: {
+                // Shell can emit a burst of structure notifications while a
+                // taskbar button is being activated. Clear the coalescing
+                // flag before doing the work so a notification arriving
+                // during the refresh queues one follow-up refresh only.
+                this->updatePending.store(false, std::memory_order_release);
                 this->updateWindow();
                 if (this->renderer.startTransition()) {
                     SetTimer(hwnd, ANIMATION_TIMER, 16, nullptr);
@@ -71,6 +78,7 @@ private:
             case WM_DESTROY: {
                 KillTimer(hwnd, ANIMATION_TIMER);
                 this->hwnd.store(nullptr, std::memory_order_release);
+                this->hasWindowRect = false;
                 break;
             }
             default: return DefWindowProc(hwnd, message, wParam, lParam);
@@ -136,8 +144,32 @@ private:
 
         const auto window = this->hwnd.load(std::memory_order_acquire);
         if (window != nullptr) {
-            BringWindowToTop(window);
-            MoveWindow(window, offset, 0, width, height, false);
+            const RECT nextRect{
+                .left = offset,
+                .top = 0,
+                .right = offset + width,
+                .bottom = height
+            };
+            if (!this->hasWindowRect || this->lastWindowRect.left != nextRect.left ||
+                this->lastWindowRect.top != nextRect.top ||
+                this->lastWindowRect.right != nextRect.right ||
+                this->lastWindowRect.bottom != nextRect.bottom) {
+                // Keep the overlay above taskbar button children without
+                // activating the taskbar.  The overlay is itself a child of
+                // Shell_TrayWnd, so leaving the child z-order unchanged can
+                // make otherwise successful drawing invisible behind buttons.
+                SetWindowPos(
+                    window,
+                    HWND_TOP,
+                    nextRect.left,
+                    nextRect.top,
+                    width,
+                    height,
+                    SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING
+                );
+                this->lastWindowRect = nextRect;
+                this->hasWindowRect = true;
+            }
         }
     }
 
@@ -179,7 +211,10 @@ public:
     }
 
     auto update() -> void {
-        this->updatePending.store(true, std::memory_order_release);
+        // Coalesce multiple Shell notifications into one queued message.
+        if (this->updatePending.exchange(true, std::memory_order_acq_rel)) {
+            return;
+        }
         const auto window = this->hwnd.load(std::memory_order_acquire);
         if (window == nullptr) [[unlikely]] {
             return;
