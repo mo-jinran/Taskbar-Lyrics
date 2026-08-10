@@ -75,7 +75,7 @@ class 呈现窗口类
     bool 字体样式_主歌词_删除线 = false;
     bool 字体样式_副歌词_删除线 = false;
 
-    WindowAlignment 窗口位置 = WindowAlignment::WindowAlignmentAdaptive;
+    WindowAlignment 窗口位置 = WindowAlignment::WindowAlignmentCenter;
 
     int 左边距 = 0;
     int 右边距 = 0;
