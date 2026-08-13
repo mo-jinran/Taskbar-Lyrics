@@ -11,10 +11,13 @@ import window.Renderer;
 export class Window {
 private:
     std::atomic<HWND> hwnd{nullptr};
-    std::atomic<bool> updatePending{false};
+    std::atomic<bool> layoutPending{false};
+    std::atomic<bool> lyricsPending{false};
     RECT lastWindowRect{};
     bool hasWindowRect = false;
-    static constexpr auto UPDATE_MESSAGE = WM_APP + 1;
+    UINT taskbarCreatedMessage = 0;
+    static constexpr auto LAYOUT_MESSAGE = WM_APP + 1;
+    static constexpr auto LYRICS_MESSAGE = WM_APP + 2;
     static constexpr auto ANIMATION_TIMER = 1;
 
     static auto CALLBACK WindowProc(const HWND hwnd, const UINT message, const WPARAM wParam, const LPARAM lParam) -> LRESULT {
@@ -30,14 +33,24 @@ private:
     }
 
     auto handleMessage(const HWND hwnd, const UINT message, const WPARAM wParam, const LPARAM lParam) -> LRESULT {
+        if (this->taskbarCreatedMessage != 0 && message == this->taskbarCreatedMessage) {
+            this->hasWindowRect = false;
+            this->updateLayout();
+            return 0;
+        }
         switch (message) {
             case WM_CREATE: {
                 this->hwnd.store(hwnd, std::memory_order_release);
                 this->renderer.onCreate(hwnd);
                 this->taskbar.initialize();
-                this->taskbar.setListener(std::bind(&Window::update, this));
-                if (this->updatePending.exchange(false, std::memory_order_acq_rel)) {
-                    PostMessage(hwnd, UPDATE_MESSAGE, 0, 0);
+                this->taskbar.setListener(std::bind(&Window::updateLayout, this));
+                if (this->layoutPending.exchange(false, std::memory_order_acq_rel)) {
+                    PostMessage(hwnd, LAYOUT_MESSAGE, 0, 0);
+                } else {
+                    this->updateLayout();
+                }
+                if (this->lyricsPending.exchange(false, std::memory_order_acq_rel)) {
+                    PostMessage(hwnd, LYRICS_MESSAGE, 0, 0);
                 }
                 break;
             }
@@ -49,26 +62,32 @@ private:
                 break;
             }
             case WM_PAINT: {
+                PAINTSTRUCT paint{};
+                BeginPaint(hwnd, &paint);
                 this->renderer.onPaint();
-                ValidateRect(hwnd, nullptr);
+                EndPaint(hwnd, &paint);
                 break;
             }
-            case UPDATE_MESSAGE: {
-                // Shell can emit a burst of structure notifications while a
-                // taskbar button is being activated. Clear the coalescing
-                // flag before doing the work so a notification arriving
-                // during the refresh queues one follow-up refresh only.
-                this->updatePending.store(false, std::memory_order_release);
+            case LAYOUT_MESSAGE: {
                 this->updateWindow();
+                this->layoutPending.store(false, std::memory_order_release);
                 if (this->renderer.startTransition()) {
                     SetTimer(hwnd, ANIMATION_TIMER, 16, nullptr);
                 }
-                RedrawWindow(hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
+                InvalidateRect(hwnd, nullptr, false);
+                break;
+            }
+            case LYRICS_MESSAGE: {
+                this->lyricsPending.store(false, std::memory_order_release);
+                if (this->renderer.startTransition()) {
+                    SetTimer(hwnd, ANIMATION_TIMER, 16, nullptr);
+                }
+                InvalidateRect(hwnd, nullptr, false);
                 break;
             }
             case WM_TIMER: {
                 if (wParam == ANIMATION_TIMER) {
-                    RedrawWindow(hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
+                    InvalidateRect(hwnd, nullptr, false);
                     if (!this->renderer.isAnimating()) {
                         KillTimer(hwnd, ANIMATION_TIMER);
                     }
@@ -81,6 +100,9 @@ private:
                 this->hasWindowRect = false;
                 break;
             }
+            case WM_NCHITTEST: return HTTRANSPARENT;
+            case WM_MOUSEACTIVATE: return MA_NOACTIVATE;
+            case WM_ERASEBKGND: return 1;
             default: return DefWindowProc(hwnd, message, wParam, lParam);
         }
         return 0;
@@ -96,6 +118,9 @@ private:
         const auto widgetsButtonRect = this->taskbar.getRectForWidgetsButton();
         const auto taskListRect = this->taskbar.getRectForTaskList();
         if (taskbarFrame.right <= taskbarFrame.left || taskbarFrame.bottom <= taskbarFrame.top) {
+            if (const auto window = this->hwnd.load(std::memory_order_acquire)) {
+                ShowWindow(window, SW_HIDE);
+            }
             return;
         }
 
@@ -139,6 +164,9 @@ private:
         width -= snapshot.margin_right + offset;
         height += taskbarFrame.bottom - taskbarFrame.top;
         if (width <= 0 || height <= 0) {
+            if (const auto window = this->hwnd.load(std::memory_order_acquire)) {
+                ShowWindow(window, SW_HIDE);
+            }
             return;
         }
 
@@ -146,27 +174,19 @@ private:
         if (window != nullptr) {
             const RECT nextRect{
                 .left = offset,
-                .top = 0,
+                .top = taskbarFrame.top,
                 .right = offset + width,
-                .bottom = height
+                .bottom = taskbarFrame.top + height
             };
-            if (!this->hasWindowRect || this->lastWindowRect.left != nextRect.left ||
-                this->lastWindowRect.top != nextRect.top ||
-                this->lastWindowRect.right != nextRect.right ||
-                this->lastWindowRect.bottom != nextRect.bottom) {
-                // Keep the overlay above taskbar button children without
-                // activating the taskbar.  The overlay is itself a child of
-                // Shell_TrayWnd, so leaving the child z-order unchanged can
-                // make otherwise successful drawing invisible behind buttons.
-                SetWindowPos(
-                    window,
-                    HWND_TOP,
-                    nextRect.left,
-                    nextRect.top,
-                    width,
-                    height,
-                    SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING
-                );
+            if (SetWindowPos(
+                window,
+                HWND_TOPMOST,
+                nextRect.left,
+                nextRect.top,
+                width,
+                height,
+                SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING | SWP_SHOWWINDOW
+            )) {
                 this->lastWindowRect = nextRect;
                 this->hasWindowRect = true;
             }
@@ -180,6 +200,7 @@ public:
     auto create() -> void {
         const auto dll_instance = GetModuleHandle(nullptr);
         const auto class_name = L"taskbar_lyrics";
+        this->taskbarCreatedMessage = RegisterWindowMessage(L"TaskbarCreated");
         RegisterClassEx(new WNDCLASSEX{
             .cbSize = sizeof(WNDCLASSEX),
             .lpfnWndProc = Window::WindowProc,
@@ -187,15 +208,15 @@ public:
             .lpszClassName = class_name,
         });
         CreateWindowEx(
-            WS_EX_NOPARENTNOTIFY | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE | WS_EX_NOREDIRECTIONBITMAP,
+            WS_EX_TRANSPARENT | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_NOREDIRECTIONBITMAP,
             class_name,
             nullptr,
-            WS_CHILD | WS_VISIBLE,
+            WS_POPUP | WS_DISABLED,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            Taskbar::getHWND(),
+            nullptr,
             nullptr,
             dll_instance,
             this
@@ -210,15 +231,31 @@ public:
         }
     }
 
-    auto update() -> void {
-        // Coalesce multiple Shell notifications into one queued message.
-        if (this->updatePending.exchange(true, std::memory_order_acq_rel)) {
+    auto updateLayout() -> void {
+        if (this->layoutPending.exchange(true, std::memory_order_acq_rel)) {
             return;
         }
         const auto window = this->hwnd.load(std::memory_order_acquire);
         if (window == nullptr) [[unlikely]] {
+            this->layoutPending.store(false, std::memory_order_release);
             return;
         }
-        PostMessage(window, UPDATE_MESSAGE, 0, 0);
+        if (!PostMessage(window, LAYOUT_MESSAGE, 0, 0)) {
+            this->layoutPending.store(false, std::memory_order_release);
+        }
+    }
+
+    auto updateLyrics() -> void {
+        if (this->lyricsPending.exchange(true, std::memory_order_acq_rel)) {
+            return;
+        }
+        const auto window = this->hwnd.load(std::memory_order_acquire);
+        if (window == nullptr) [[unlikely]] {
+            this->lyricsPending.store(false, std::memory_order_release);
+            return;
+        }
+        if (!PostMessage(window, LYRICS_MESSAGE, 0, 0)) {
+            this->lyricsPending.store(false, std::memory_order_release);
+        }
     }
 };

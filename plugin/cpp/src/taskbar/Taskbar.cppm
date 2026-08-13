@@ -33,9 +33,21 @@ private:
         if (var.bstrVal != nullptr) {
             this->automation->CreatePropertyCondition(propertyId, var, &condition);
         }
-        SysFreeString(var.bstrVal);
         VariantClear(&var);
         return condition;
+    }
+
+    auto resetAutomation() -> void {
+        if (this->structureListenerRegistered && this->automation && this->handler) {
+            this->automation->RemoveStructureChangedEventHandler(
+                this->root.Get(),
+                this->handler.Get()
+            );
+        }
+        this->structureListenerRegistered = false;
+        this->handler.Reset();
+        this->root.Reset();
+        this->automation.Reset();
     }
 
 public:
@@ -44,6 +56,7 @@ public:
     }
 
     ~Taskbar() {
+        this->resetAutomation();
         CoUninitialize();
     }
 
@@ -56,10 +69,7 @@ public:
             return true;
         }
 
-        this->handler.Reset();
-        this->root.Reset();
-        this->automation.Reset();
-        this->structureListenerRegistered = false;
+        this->resetAutomation();
         this->taskbarWindow = currentTaskbar;
 
         if (FAILED(CoCreateInstance(CLSID_CUIAutomation, nullptr, CLSCTX_INPROC_SERVER, IID_IUIAutomation, &this->automation)) || !this->automation) {

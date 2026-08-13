@@ -37,6 +37,10 @@ private:
     bool lyricsInitialized = false;
     bool animating = false;
     float direction = 1.f;
+    HWND window = nullptr;
+    UINT renderWidth = 0;
+    UINT renderHeight = 0;
+    UINT renderDpi = 96;
 
     static constexpr auto transitionDuration = std::chrono::milliseconds(260);
     static constexpr auto transitionDistance = 10.f;
@@ -82,8 +86,30 @@ private:
         this->dcompTarget->SetRoot(this->dcompVisual.Get());
     }
 
+    auto createRenderTarget() -> bool {
+        this->dxgiSurface.Reset();
+        this->d2dRenderTarget.Reset();
+        if (!this->dxgiSwapChain || !this->d2dFactory || this->renderWidth == 0 || this->renderHeight == 0) {
+            return false;
+        }
+        if (FAILED(this->dxgiSwapChain->GetBuffer(0, IID_PPV_ARGS(&this->dxgiSurface))) || !this->dxgiSurface) {
+            return false;
+        }
+        return SUCCEEDED(this->d2dFactory->CreateDxgiSurfaceRenderTarget(
+            this->dxgiSurface.Get(),
+            D2D1::RenderTargetProperties(
+                D2D1_RENDER_TARGET_TYPE_DEFAULT,
+                D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+                this->renderDpi,
+                this->renderDpi
+            ),
+            &this->d2dRenderTarget
+        )) && this->d2dRenderTarget;
+    }
+
 public:
     auto onCreate(const HWND hwnd) -> void {
+        this->window = hwnd;
         this->initializeDirectX();
         this->initializeSwapChain();
         this->initializeComposition(hwnd);
@@ -93,20 +119,14 @@ public:
         if (width == 0 || height == 0 || !this->dxgiSwapChain || !this->d2dFactory) {
             return;
         }
+        this->renderWidth = width;
+        this->renderHeight = height;
+        this->renderDpi = dpi;
         this->dxgiSurface.Reset();
         this->d2dRenderTarget.Reset();
-        this->dxgiSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
-        this->dxgiSwapChain->GetBuffer(0, IID_PPV_ARGS(&this->dxgiSurface));
-        this->d2dFactory->CreateDxgiSurfaceRenderTarget(
-            this->dxgiSurface.Get(),
-            D2D1::RenderTargetProperties(
-                D2D1_RENDER_TARGET_TYPE_DEFAULT,
-                D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-                dpi,
-                dpi
-            ),
-            &this->d2dRenderTarget
-        );
+        if (SUCCEEDED(this->dxgiSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0))) {
+            this->createRenderTarget();
+        }
     }
 
     auto startTransition() -> bool {
@@ -138,7 +158,8 @@ public:
     }
 
     auto onPaint() -> void {
-        if (!this->d2dRenderTarget || !this->dxgiSwapChain || !this->dcompDevice) {
+        if ((!this->d2dRenderTarget && !this->createRenderTarget()) || !this->dxgiSwapChain || !this->dcompDevice) {
+            this->animating = false;
             return;
         }
         if (!this->lyricsInitialized) {
@@ -187,9 +208,11 @@ public:
         }
 
         const auto drawResult = this->d2dRenderTarget->EndDraw();
-        if (drawResult == D2DERR_RECREATE_TARGET) {
-            this->d2dRenderTarget.Reset();
-            this->dxgiSurface.Reset();
+        if (FAILED(drawResult)) {
+            this->animating = false;
+            if (this->createRenderTarget() && this->window != nullptr) {
+                InvalidateRect(this->window, nullptr, false);
+            }
             return;
         }
         this->dxgiSwapChain->Present(1, 0);

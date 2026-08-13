@@ -29,6 +29,7 @@ extern "C" __declspec(dllexport) auto BetterNCMPluginMain(const PluginAPI *api) 
         if (Plugin::getInstance().mutex && api->addNativeAPI != nullptr) {
             api->addNativeAPI(new NativeAPIType[]{String, String}, 2, "taskbar_lyrics.config", Receiver::config);
             api->addNativeAPI(nullptr, 0, "taskbar_lyrics.update", Receiver::update);
+            api->addNativeAPI(new NativeAPIType[]{String, String}, 2, "taskbar_lyrics.lyrics", Receiver::lyrics);
         }
     }
     return 0;

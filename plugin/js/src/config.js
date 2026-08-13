@@ -91,3 +91,8 @@ export const config = (() => {
 export function updateConfig() {
     betterncm_native.native_plugin.call("taskbar_lyrics.update", []);
 }
+
+
+export function updateLyrics(primary, secondary) {
+    betterncm_native.native_plugin.call("taskbar_lyrics.lyrics", [primary, secondary]);
+}
