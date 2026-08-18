@@ -32,8 +32,12 @@ new class {
         try {
             new LyricObserver((lyrics, index) => {
                 try {
-                    config.lyric_primary = lyrics[lyrics[index].time == -1 ? 0 : index + (index & 1)]?.text ?? "";
-                    config.lyric_secondary = lyrics[lyrics[index].time == -1 ? 1 : index + !(index & 1)]?.text ?? "";
+                    const lyric = lyrics[index];
+                    const hasTranslation = lyrics.some(item => item.time >= 0 && item.translation?.trim());
+                    config.lyric_primary = lyric?.text ?? "";
+                    config.lyric_secondary = hasTranslation
+                        ? lyric?.translation ?? ""
+                        : lyrics[index + 1]?.text ?? "";
                     updateConfig();
                 } catch (error) {
                     console.error("[Taskbar Lyrics] Error updating lyrics:", error);
