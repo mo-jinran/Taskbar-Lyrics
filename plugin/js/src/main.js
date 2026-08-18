@@ -15,6 +15,7 @@ import {
 import {
     config,
     updateConfig,
+    updateLyrics,
     DWRITE_TEXT_ALIGNMENT,
     DWRITE_FONT_WEIGHT,
     DWRITE_FONT_STYLE,
@@ -24,6 +25,7 @@ import {
 
 new class {
     constructor() {
+        this.lyricObserver = null;
         plugin.onLoad(this.onLoad.bind(this));
         plugin.onConfig(this.onConfig.bind(this));
     }
@@ -42,15 +44,18 @@ new class {
             if (!supportedFonts.includes(config.font_family)) {
                 config.font_family = supportedFonts[0];
             }
-            new LyricObserver((lyrics, index) => {
+            if (this.lyricObserver) {
+                updateConfig();
+                return;
+            }
+            this.lyricObserver = new LyricObserver((lyrics, index, hasTranslation) => {
                 try {
                     const lyric = lyrics[index];
-                    const hasTranslation = lyrics.some(item => item.time >= 0 && item.translation?.trim());
-                    config.lyric_primary = lyric?.text ?? "";
-                    config.lyric_secondary = hasTranslation
+                    const primary = lyric?.text ?? "";
+                    const secondary = hasTranslation
                         ? lyric?.translation ?? ""
                         : lyrics[index + 1]?.text ?? "";
-                    updateConfig();
+                    updateLyrics(primary, secondary);
                 } catch (error) {
                     console.error("[Taskbar Lyrics] Error updating lyrics:", error);
                 }

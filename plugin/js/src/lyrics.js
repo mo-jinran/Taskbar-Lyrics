@@ -4,6 +4,37 @@ function timeToSeconds(time) {
 }
 
 
+const REQUEST_TIMEOUT_MS = 8000;
+const REQUEST_ATTEMPTS = 2;
+
+
+async function fetchJson(url, signal) {
+    let lastError;
+    for (let attempt = 0; attempt < REQUEST_ATTEMPTS; attempt++) {
+        const controller = new AbortController();
+        const abort = () => controller.abort();
+        const timeout = setTimeout(abort, REQUEST_TIMEOUT_MS);
+        signal?.addEventListener("abort", abort, {once: true});
+        try {
+            const response = await fetch(url, {signal: controller.signal});
+            if (!response.ok) {
+                throw new Error(`Request failed: ${response.status} ${response.statusText}`);
+            }
+            return await response.json();
+        } catch (error) {
+            lastError = error;
+            if (signal?.aborted) {
+                throw error;
+            }
+        } finally {
+            clearTimeout(timeout);
+            signal?.removeEventListener("abort", abort);
+        }
+    }
+    throw lastError ?? new Error("Request failed");
+}
+
+
 export function parseLyric(lyricText) {
     const result = [];
     try {
@@ -53,13 +84,12 @@ export function mergeLyrics(originalLyrics, translatedLyrics) {
 }
 
 
-async function getLyric(id) {
+async function getLyric(id, signal) {
     try {
-        const response = await fetch(`https://music.163.com/api/song/lyric/v1?tv=-1&lv=-1&rv=0&kv=0&yv=0&ytv=0&yrv=0&cp=false&id=${id}`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch lyrics: ${response.status} ${response.statusText}`);
-        }
-        const lyric = await response.json();
+        const lyric = await fetchJson(
+            `https://music.163.com/api/song/lyric/v1?tv=-1&lv=-1&rv=0&kv=0&yv=0&ytv=0&yrv=0&cp=false&id=${id}`,
+            signal
+        );
         const originalLyrics = parseLyric(lyric.lrc?.lyric ?? "");
         const translatedLyrics = parseLyric(lyric.tlyric?.lyric ?? "");
         return mergeLyrics(originalLyrics, translatedLyrics);
@@ -70,13 +100,12 @@ async function getLyric(id) {
 }
 
 
-async function getDetail(id) {
+async function getDetail(id, signal) {
     try {
-        const response = await fetch(`https://music.163.com/api/song/detail?ids=[${id}]`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch song details: ${response.status} ${response.statusText}`);
-        }
-        const detail = await response.json();
+        const detail = await fetchJson(
+            `https://music.163.com/api/song/detail?ids=[${id}]`,
+            signal
+        );
         return {
             name: detail.songs[0].name,
             artists: detail.songs[0].artists?.map(value => value.name).join(" / ")
@@ -97,6 +126,9 @@ export class LyricObserver {
         this.isLoaded = false;
         this.lastIndex = -1;
         this.currentLyric = [];
+        this.hasTranslation = false;
+        this.loadGeneration = 0;
+        this.loadController = null;
         try {
             channel.registerCall("audioplayer.onLoad", this.onLoad.bind(this));
             channel.registerCall("audioplayer.onPlayProgress", this.onPlayProgress.bind(this));
@@ -106,20 +138,39 @@ export class LyricObserver {
     }
 
     async onLoad(...args) {
+        const rawId = args?.[0];
+        if (typeof rawId !== "string") {
+            return;
+        }
+        const id = rawId.split("_")[0];
+        if (!/^\d+$/.test(id)) {
+            return;
+        }
+
+        this.loadController?.abort();
+        const controller = new AbortController();
+        const generation = ++this.loadGeneration;
+        this.loadController = controller;
+        this.isLoaded = false;
+        this.lastIndex = -1;
         try {
-            this.isLoaded = false;
-            this.lastIndex = -1;
-            if (!args || !args[0]) {
+            const [detail, lyric] = await Promise.all([
+                getDetail(id, controller.signal),
+                getLyric(id, controller.signal)
+            ]);
+            if (generation !== this.loadGeneration) {
                 return;
             }
-            const id = args[0].split("_")[0];
-            const [detail, lyric] = await Promise.all([getDetail(id), getLyric(id)]);
             this.currentLyric = [
                 { time: -1, text: detail.name, translation: detail.artists }
             ].concat(lyric);
+            this.hasTranslation = lyric.some(item => item.translation?.trim());
             this.isLoaded = true;
-            this.callback?.(this.currentLyric, 0);
+            this.callback?.(this.currentLyric, 0, this.hasTranslation);
         } catch (error) {
+            if (generation !== this.loadGeneration) {
+                return;
+            }
             console.error("[Taskbar Lyrics] Error in onLoad:", error);
             this.currentLyric = [
                 {
@@ -129,20 +180,38 @@ export class LyricObserver {
                 }
             ];
             this.isLoaded = true;
+            this.hasTranslation = false;
+            this.callback?.(this.currentLyric, 0, false);
+        } finally {
+            if (generation === this.loadGeneration) {
+                this.loadController = null;
+            }
         }
     }
 
-    async onPlayProgress(...args) {
+    onPlayProgress(...args) {
         try {
             if (!this.isLoaded || this.currentLyric.length <= 1) {
                 return;
             }
-            const currentTime = args[1];
-            const nextIndex = this.currentLyric.findIndex(lyric => lyric.time > currentTime);
-            const currentIndex = (nextIndex <= -1 ? this.currentLyric.length : nextIndex) - 1;
+            const currentTime = Number(args[1]);
+            if (!Number.isFinite(currentTime)) {
+                return;
+            }
+            let low = 0;
+            let high = this.currentLyric.length;
+            while (low < high) {
+                const middle = Math.floor((low + high) / 2);
+                if (this.currentLyric[middle].time <= currentTime) {
+                    low = middle + 1;
+                } else {
+                    high = middle;
+                }
+            }
+            const currentIndex = Math.max(0, low - 1);
             if (this.lastIndex != currentIndex) {
                 this.lastIndex = currentIndex;
-                this.callback?.(this.currentLyric, currentIndex);
+                this.callback?.(this.currentLyric, currentIndex, this.hasTranslation);
             }
         } catch (error) {
             console.error("[Taskbar Lyrics] Error in onPlayProgress:", error);
