@@ -30,6 +30,18 @@ new class {
 
     onLoad() {
         try {
+            const supportedFonts = [
+                "Microsoft YaHei UI",
+                "SimSun",
+                "SimHei",
+                "KaiTi",
+                "Arial",
+                "Times New Roman",
+                "Consolas"
+            ];
+            if (!supportedFonts.includes(config.font_family)) {
+                config.font_family = supportedFonts[0];
+            }
             new LyricObserver((lyrics, index) => {
                 try {
                     const lyric = lyrics[index];
