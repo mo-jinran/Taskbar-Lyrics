@@ -53,7 +53,10 @@ export function createSelect(options, currentValue, onChangeCallback) {
         min-width: 150px;
         background-color: #fff;
     `;
-    for (const [value, text] of Object.entries(options)) {
+    const entries = Array.isArray(options)
+        ? options.map(value => [value, value])
+        : Object.entries(options);
+    for (const [value, text] of entries) {
         const option = document.createElement("option");
         option.value = value;
         option.textContent = text;

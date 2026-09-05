@@ -15,6 +15,7 @@ import {
 import {
     config,
     updateConfig,
+    updateLyrics,
     DWRITE_TEXT_ALIGNMENT,
     DWRITE_FONT_WEIGHT,
     DWRITE_FONT_STYLE,
@@ -24,17 +25,38 @@ import {
 
 new class {
     constructor() {
+        this.lyricObserver = null;
         plugin.onLoad(this.onLoad.bind(this));
         plugin.onConfig(this.onConfig.bind(this));
     }
 
     onLoad() {
         try {
-            new LyricObserver((lyrics, index) => {
+            const supportedFonts = [
+                "Microsoft YaHei UI",
+                "SimSun",
+                "SimHei",
+                "KaiTi",
+                "Arial",
+                "Times New Roman",
+                "Consolas",
+                "MiSans"
+            ];
+            if (!supportedFonts.includes(config.font_family)) {
+                config.font_family = supportedFonts[0];
+            }
+            if (this.lyricObserver) {
+                updateConfig();
+                return;
+            }
+            this.lyricObserver = new LyricObserver((lyrics, index, hasTranslation) => {
                 try {
-                    config.lyric_primary = lyrics[lyrics[index].time == -1 ? 0 : index + (index & 1)]?.text ?? "";
-                    config.lyric_secondary = lyrics[lyrics[index].time == -1 ? 1 : index + !(index & 1)]?.text ?? "";
-                    updateConfig();
+                    const lyric = lyrics[index];
+                    const primary = lyric?.text ?? "";
+                    const secondary = hasTranslation
+                        ? lyric?.translation ?? ""
+                        : lyrics[index + 1]?.text ?? "";
+                    updateLyrics(primary, secondary);
                 } catch (error) {
                     console.error("[Taskbar Lyrics] Error updating lyrics:", error);
                 }
@@ -50,6 +72,13 @@ new class {
         // 通用设置
         const generalSection = createSection("general", "通用设置");
         generalSection.appendChild(createRow(
+            "显示歌词",
+            createCheckbox(config.show_lyrics, value => {
+                config.show_lyrics = value;
+                updateConfig();
+            })
+        ));
+        generalSection.appendChild(createRow(
             "字体",
             createSelect([
                 "Microsoft YaHei UI",
@@ -58,7 +87,8 @@ new class {
                 "KaiTi",
                 "Arial",
                 "Times New Roman",
-                "Consolas"
+                "Consolas",
+                "MiSans"
             ], config.font_family, value => {
                 config.font_family = value;
                 updateConfig();

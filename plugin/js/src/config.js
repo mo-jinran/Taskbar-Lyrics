@@ -47,6 +47,7 @@ export const DEFAULT_CONFIG = Object.freeze({
     lyric_primary: "",
     lyric_secondary: "",
     // 通用设置
+    show_lyrics: true,
     font_family: "Microsoft YaHei UI",
     margin_left: 0,
     margin_right: 0,
@@ -90,4 +91,9 @@ export const config = (() => {
 
 export function updateConfig() {
     betterncm_native.native_plugin.call("taskbar_lyrics.update", []);
+}
+
+
+export function updateLyrics(primary, secondary) {
+    betterncm_native.native_plugin.call("taskbar_lyrics.lyrics", [primary, secondary]);
 }

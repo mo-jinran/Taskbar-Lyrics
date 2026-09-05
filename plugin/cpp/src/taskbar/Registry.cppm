@@ -15,13 +15,23 @@ public:
     static auto onWatch(const Registry::Callback &callback) -> void {
         HKEY key = nullptr;
         HANDLE event = CreateEventW(nullptr, true, false, nullptr);
-        RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion", 0, KEY_NOTIFY, &key);
-        while (true) {
-            RegNotifyChangeKeyValue(key, true, REG_NOTIFY_CHANGE_LAST_SET, event, true);
-            WaitForSingleObject(event, INFINITE);
-            ResetEvent(event);
-            callback();
+        if (event == nullptr || RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion", 0, KEY_NOTIFY, &key) != ERROR_SUCCESS || key == nullptr) {
+            if (event != nullptr) {
+                CloseHandle(event);
+            }
+            return;
         }
+        while (RegNotifyChangeKeyValue(key, true, REG_NOTIFY_CHANGE_LAST_SET, event, true) == ERROR_SUCCESS) {
+            if (WaitForSingleObject(event, INFINITE) != WAIT_OBJECT_0) {
+                break;
+            }
+            ResetEvent(event);
+            if (callback) {
+                callback();
+            }
+        }
+        RegCloseKey(key);
+        CloseHandle(event);
     }
 
     static auto isLightTheme() -> bool {

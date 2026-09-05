@@ -1,6 +1,7 @@
 export module plugin.Config;
 
 import <dwrite.h>;
+import <mutex>;
 import <string>;
 import <unordered_map>;
 
@@ -22,6 +23,7 @@ export struct Config {
     std::wstring lyric_primary = L" ";
     std::wstring lyric_secondary = L" ";
     // 通用设置
+    bool show_lyrics = true;
     std::wstring font_family = L"Microsoft YaHei UI";
     int margin_left = 0;
     int margin_right = 0;
@@ -44,12 +46,20 @@ export struct Config {
     DWRITE_TEXT_ALIGNMENT align_secondary = DWRITE_TEXT_ALIGNMENT::DWRITE_TEXT_ALIGNMENT_LEADING;
 } config;
 
+export inline std::mutex configMutex{};
+
+export auto getConfigSnapshot() -> Config {
+    std::lock_guard<std::mutex> lock(configMutex);
+    return config;
+}
+
 export auto setConfig(const std::string &key, const std::string &value) {
     static const auto setters = std::unordered_map<std::string, void(*)(const std::string &)>{
         // 歌词内容
         {"lyric_primary", [](const std::string &str) { config.lyric_primary = stringToWString(str); }},
         {"lyric_secondary", [](const std::string &str) { config.lyric_secondary = stringToWString(str); }},
         // 通用设置
+        {"show_lyrics", [](const std::string &str) { config.show_lyrics = (str == "true"); }},
         {"font_family", [](const std::string &str) { config.font_family = stringToWString(str); }},
         {"margin_left", [](const std::string &str) { config.margin_left = std::stoi(str); }},
         {"margin_right", [](const std::string &str) { config.margin_right = std::stoi(str); }},
@@ -72,6 +82,12 @@ export auto setConfig(const std::string &key, const std::string &value) {
         {"align_secondary", [](const std::string &str) { config.align_secondary = static_cast<DWRITE_TEXT_ALIGNMENT>(std::stoi(str)); }},
     };
     if (const auto it = setters.find(key); it != setters.end()) {
-        it->second(value);
+        try {
+            std::lock_guard<std::mutex> lock(configMutex);
+            it->second(value);
+        } catch (...) {
+            // Ignore malformed values from a configuration input instead of
+            // allowing an exception to escape through the native API boundary.
+        }
     }
 }
